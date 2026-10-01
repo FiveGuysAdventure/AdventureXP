@@ -34,19 +34,19 @@ INSERT INTO activity_equipment (activity_id, equipment_id, qnt_per_participant)
 VALUES (1, 1, 1);
 
 INSERT INTO booking_equipment (booking_id, equipment_id, qnt_reserved)
-VALUES (1, 1, 12), // Booking where maximum equipment is reserved
+VALUES (1, 1, 12), -- Booking where maximum equipment is reserved
        (2, 2, 20),
        (3, 3, 4),
        (4, 4, 24),
 
-       (1, 1, 2), // Booking where minimum requirement is reserved
+       (1, 1, 2), -- Booking where minimum requirement is reserved
        (2, 2, 4),
        (3, 3, 2),
        (4, 4, 1);
 
 INSERT INTO booking (num_of_participants, contact_email, contact_nr, start_time, end_time, booking_price, activity_id, employee_id)
 VALUES
-    // GOKART
+    -- GOKART
             (12,
             'customer1@email.com',
             22334400,
@@ -56,7 +56,7 @@ VALUES
              1,
              3),
 
-    // Paintball
+    -- Paintball
             (20,
             'customer2@email.com',
             22334400,
@@ -66,7 +66,7 @@ VALUES
             2,
             4),
 
-    // Sumo Wrestling
+    -- Sumo Wrestling
             (4,
             'customer3@email.com',
             22334400,
@@ -76,7 +76,7 @@ VALUES
             3,
             5),
 
-    // Minigolf
+    -- Minigolf
             (24,
             'customer4@email.com',
             22334400,
