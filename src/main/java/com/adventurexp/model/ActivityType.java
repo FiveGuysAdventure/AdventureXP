@@ -7,7 +7,7 @@ import java.util.List;
 
     @Entity
     @Table(name = "activity_type")
-    public class Activity {
+    public class ActivityType {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +32,13 @@ import java.util.List;
 
 
 
-        public Activity() {
+        public ActivityType() {
     }
 
-    public Activity(String activityName,
-                    int durationSeconds,
-                    int pricePerPerson,
-                    int tagId) {
+    public ActivityType(String activityName,
+                        int durationSeconds,
+                        int pricePerPerson,
+                        int tagId) {
 
         this.activityName = activityName;
         this.durationSeconds = durationSeconds;
