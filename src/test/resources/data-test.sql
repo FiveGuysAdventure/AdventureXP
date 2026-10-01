@@ -8,7 +8,6 @@ VALUES ('Joakim', '22003344', 'Joakim@mail.com', 1),
        ('Emil', '25003344', 'Emil@mail.com', 2),
        ('Simon', '26003344', 'Simon@mail.com', 2);
 
-
 INSERT INTO activity_tag (tag_name)
 VALUES ('Speed'),
        ('Shooting'),
@@ -86,6 +85,7 @@ VALUES
             4800,
             4,
             5);
+
 
 
 
