@@ -30,7 +30,7 @@ VALUES ('Gokart', 30, 400),
        ('Sumo Wrestling', 30, 150),
        ('Minigolf', 1, 200);
 
-INSERT INTO activity_equipment (activity_id, equiptment_id, qnt_per_participant)
+INSERT INTO activity_equipment (activity_id, equipment_id, qnt_per_participant)
 VALUES (1, 1, 1);
 
 INSERT INTO booking_equipment (booking_id, equipment_id, qnt_reserved)
