@@ -1,12 +1,13 @@
 package com.adventurexp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "employee")
 public class Employee {
 
     @Id
@@ -17,15 +18,17 @@ public class Employee {
     @Column(name = "emp_name", nullable = false, length = 60)
     private String employeeName;
 
-    @Column(name = "emp_phone_nr", length = 60)
+    @Column(name = "emp_phone_nr", nullable = false , unique = true,length = 60)
     private String employeePhoneNumber;
 
-    @Column(name = "emp_email", length = 100)
+    @Column(name = "emp_email", nullable = false, unique = true ,length = 100)
     private String employeeEmail;
 
-    @Column(name = "role_id")
-    private int roleId;
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role roleId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "employee")
     private List<Booking> bookings = new ArrayList<>();
 
@@ -36,7 +39,7 @@ public class Employee {
     public Employee(String employeeName,
                     String employeePhoneNumber,
                     String employeeEmail,
-                    int roleId) {
+                    Role roleId) {
 
         this.employeeName = employeeName;
         this.employeePhoneNumber = employeePhoneNumber;
@@ -76,11 +79,11 @@ public class Employee {
         this.employeeEmail = employeeEmail;
     }
 
-    public int getRoleId() {
+    public Role getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(int roleId) {
+    public void setRoleId(Role roleId) {
         this.roleId = roleId;
     }
 
