@@ -23,7 +23,7 @@ CREATE TABLE equipment (
   equipment_name VARCHAR(60),
   total_quantity INT,
   currently_in_use BOOLEAN NOT NULL DEFAULT FALSE
-);
+
 
 CREATE TABLE role (
   role_id INT AUTO_INCREMENT PRIMARY KEY,
