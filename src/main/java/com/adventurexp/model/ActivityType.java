@@ -30,8 +30,6 @@ import java.util.List;
         private List<Booking> bookings = new ArrayList<>();
 
 
-
-
         public ActivityType() {
     }
 
