@@ -6,10 +6,9 @@ spring:
     driver-class-name: org.h2.Driver
   sql:
     init:
-      # Change to "always" once h2-test-schema.sql and test-data.sql contain SQL (Spring fails on scripts with no statements)
-      mode: never
-      schema-locations: classpath:h2-test-schema.sql
-      data-locations: classpath:test-data.sql
+      mode: always
+      schema-locations: classpath:h2init.sql
+      #data-locations: classpath:data-test.sql
   h2:
     console:
       enabled: true
