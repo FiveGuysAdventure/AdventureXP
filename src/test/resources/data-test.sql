@@ -4,7 +4,7 @@ VALUES ('Manager'), ('Employee');
 INSERT INTO employee (emp_name, emp_phone_nr, emp_email, role_id)
 VALUES ('Joakim', '22003344', 'Joakim@mail.com', 1),
        ('Malthe', '23003344', 'Malthe@mail.com', 1),
-       ('Chibuike', '24003344', 'Cibuike@mail.com', 2),
+       ('Chibuike', '24003344', 'Chibuike@mail.com', 2),
        ('Emil', '25003344', 'Emil@mail.com', 2),
        ('Simon', '26003344', 'Simon@mail.com', 2);
 
