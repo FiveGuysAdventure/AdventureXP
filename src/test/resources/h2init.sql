@@ -18,11 +18,13 @@ CREATE TABLE activity_type_tag (
   FOREIGN KEY (tag_id) REFERENCES activity_tag(tag_id)
 );
 
-CREATE TABLE equipment (
-  equipment_id INT AUTO_INCREMENT PRIMARY KEY,
-  equipment_name VARCHAR(60),
-  total_quantity INT,
-  currently_in_use BOOLEAN NOT NULL DEFAULT FALSE
+CREATE TABLE equipment
+(
+    equipment_id     INT AUTO_INCREMENT PRIMARY KEY,
+    equipment_name   VARCHAR(60),
+    total_quantity   INT,
+    currently_in_use BOOLEAN NOT NULL DEFAULT FALSE
+);
 
 
 CREATE TABLE role (
