@@ -26,7 +26,7 @@ import java.util.List;
         @Column(name = "tag_id")
         private int tagId;
 
-        @OneToMany(mappedBy = "activity")
+        @OneToMany(mappedBy = "activityType")
         private List<Booking> bookings = new ArrayList<>();
 
 
