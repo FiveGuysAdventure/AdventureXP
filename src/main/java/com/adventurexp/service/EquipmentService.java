@@ -1,5 +1,7 @@
 package com.adventurexp.service;
 
+import com.adventurexp.model.ActivityType;
+import com.adventurexp.model.Booking;
 import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.EquipmentRepo;
 import org.springframework.stereotype.Service;
@@ -18,4 +20,8 @@ public class EquipmentService {
     public List<Equipment> getEquipmentOverview() {
         return equipmentRepo.findAll();
     }
+//
+//    public boolean availabilityCheck(Booking booking, Equipment equipment, ActivityType activityType) {
+//
+//    }
 }
