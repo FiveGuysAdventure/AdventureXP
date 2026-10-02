@@ -23,7 +23,9 @@ CREATE TABLE equipment
     equipment_id     INT AUTO_INCREMENT PRIMARY KEY,
     equipment_name   VARCHAR(60),
     total_quantity   INT,
-    currently_in_use BOOLEAN NOT NULL DEFAULT FALSE
+    currently_in_use BOOLEAN NOT NULL DEFAULT FALSE,
+    out_of_service INT NOT NULL 0,
+    last_checked DATE
 );
 
 

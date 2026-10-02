@@ -3,6 +3,8 @@ package com.adventurexp.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "equipment")
 public class Equipment {
@@ -20,6 +22,13 @@ public class Equipment {
 
     @Column(name = "currently_in_use")
     private boolean currentlyInUse;
+
+    @Column(name = "out_of_service", nullable = false)
+    private int outOfService = 0;
+
+    @Column(name = "last_checked")
+    private LocalDate lastChecked;
+
 
 
     public Equipment() {
@@ -64,5 +73,26 @@ public class Equipment {
 
     public void setCurrentlyInUse(boolean currentlyInUse) {
         this.currentlyInUse = currentlyInUse;
+    }
+
+    public int getOutOfService() {
+        return outOfService;
+    }
+
+    public void setOutOfService(int outOfService) {
+        this.outOfService = outOfService;
+    }
+
+    public LocalDate getLastChecked() {
+        return lastChecked;
+    }
+
+    public void setLastChecked(LocalDate lastChecked) {
+        this.lastChecked = lastChecked;
+    }
+
+    //Hvis vi skal bruge det i selve bookingen til at tjekke availability
+    public int getAvailableQuantity() {
+        return totalQuantity - outOfService;
     }
 }
