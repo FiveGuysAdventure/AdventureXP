@@ -31,7 +31,7 @@ public class ActivitySchedule {
     private boolean active;
 
 
-    // Required by JPA
+
     protected ActivitySchedule() {
     }
 
