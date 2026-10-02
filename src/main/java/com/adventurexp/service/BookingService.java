@@ -20,12 +20,17 @@ public class BookingService {
 
     public Booking getBooking(Long id) {
        Optional<Booking> booking = bookingRepo.findById(id);
-
        if (booking.isEmpty()) {
            throw new EntityNotFoundException("No booking with given id was found: " + id);
        }
-
        return booking.get();
+    }
+
+    public Booking createBooking(Booking booking) {
+        if (booking == null) {
+            throw new EntityNotFoundException("No booking object was found");
+        }
+        return bookingRepo.save(booking);
     }
 
     public List<Booking> getAllBookings() {
@@ -37,6 +42,7 @@ public class BookingService {
 
         return bookings;
     }
+  
     public void setBookingDate(Booking booking, LocalDate date) {
         booking.setBookingDate(date);
         bookingRepo.save(booking);
