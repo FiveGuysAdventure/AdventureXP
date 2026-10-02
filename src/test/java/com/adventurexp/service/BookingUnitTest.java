@@ -135,16 +135,21 @@ public class BookingUnitTest {
         Booking booking = new Booking();
         ActivityType activityType = new ActivityType();
         List<Booking> result = service.getBookings();
-        assertThat(result).isSameAs(bookings);
+        assertThat(result).isSameAs(booking);
     }
 
-        @Test
-        void getBookings_shouldReturnBookingsCouldNotBeLoaded() {
-            List<Booking> bookings = new ArrayList<>();
-            when(bookingRepo.findAll()).thenReturn(bookings);
+    @Test
+    void getBookings_shouldReturnBookingsCouldNotBeLoaded() {
+        List<Booking> bookings = new ArrayList<>();
+        when(bookingRepo.findAll()).thenReturn(bookings);
 
-            assertThatThrownBy(() -> service.getBookings()).isInstanceOf(IllegalArgumentException.class);
-        }
+        assertThatThrownBy(() -> service.getBookings()).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createBookingActivityType_shouldReturnBookingsCouldNotBeLoaded() {
+        Booking booking = new Booking();
+        ActivityType activityType = new ActivityType();
 
         service.setActivityType(booking, activityType);
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
