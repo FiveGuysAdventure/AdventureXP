@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int bookingId;
+    private Long bookingId;
 
     private LocalDate bookingDate;
     private String contactEmail;
@@ -47,6 +47,10 @@ public class Booking {
     //Getters
     public LocalDate getBookingDate() {
         return bookingDate;
+    }
+
+    public Long getBookingId() {
+        return bookingId;
     }
 
     public String getContactEmail() {
