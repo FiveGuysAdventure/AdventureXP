@@ -139,7 +139,10 @@ public class BookingUnitTest {
 
         @Test
         void getBookings_shouldReturnBookingsCouldNotBeLoaded() {
-            
+            List<Booking> bookings = new ArrayList<>();
+            when(bookingRepo.findAll()).thenReturn(bookings);
+
+            assertThatThrownBy(() -> service.getBookings()).isInstanceOf(IllegalArgumentException.class);
         }
 
         service.setActivityType(booking, activityType);
