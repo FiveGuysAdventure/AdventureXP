@@ -32,7 +32,7 @@ public class EquipmentMaintenance {
     private int numEquipment;
 
 
-    // Required by JPA
+
     protected EquipmentMaintenance() {
     }
 
@@ -98,5 +98,6 @@ public class EquipmentMaintenance {
     public void setNumEquipment(int numEquipment) {
         this.numEquipment = numEquipment;
     }
+
 }
 

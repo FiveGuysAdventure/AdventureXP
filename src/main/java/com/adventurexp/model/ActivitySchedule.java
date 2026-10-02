@@ -35,13 +35,13 @@ public class ActivitySchedule {
     protected ActivitySchedule() {
     }
 
-    public ActivitySchedule(ActivityType ActivityType,
+    public ActivitySchedule(ActivityType activityType,
                             Employee employee,
                             LocalDateTime startTime,
                             LocalDateTime endTime,
                             boolean active) {
 
-        this.ActivityType = ActivityType;
+        this.ActivityType = activityType;
         this.employee = employee;
         this.startTime = startTime;
         this.endTime = endTime;
