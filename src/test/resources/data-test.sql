@@ -1,4 +1,4 @@
-INSERT INTO role (role_name)
+/* INSERT INTO role (role_name)
 VALUES ('Manager'), ('Employee');
 
 INSERT INTO employee (emp_name, emp_phone_nr, emp_email, role_id)
@@ -92,3 +92,4 @@ VALUES
      4800,
      4,
      5);
+*/
