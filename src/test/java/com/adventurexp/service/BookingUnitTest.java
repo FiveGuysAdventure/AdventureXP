@@ -134,7 +134,9 @@ public class BookingUnitTest {
     void createBookingActivityType_shouldReturnBookingActivityTypeWhenFound() {
         Booking booking = new Booking();
         ActivityType activityType = new ActivityType();
-        List<Booking> result = service.getBookings();
+        service.setActivityType(booking, activityType);
+        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
+        Booking result = service.getBooking(1L);
         assertThat(result).isSameAs(booking);
     }
 
