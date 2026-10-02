@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,12 +44,20 @@ public class BookingUnitTest {
         assertThat(result).isSameAs(booking);
     }
 
-    @Test
-    void getBooking_throwErrorWhenBookingNotFound() {
-        when(bookingRepo.findById(1L)).thenReturn(Optional.empty());
+        @Test
+        void getBooking_throwErrorWhenBookingNotFound() {
+            when(bookingRepo.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.getBooking(1L)).isInstanceOf(EntityNotFoundException.class);
-    }
+            assertThatThrownBy(() -> service.getBooking(1L)).isInstanceOf(EntityNotFoundException.class);
+        }
+
+    @Test
+    void getBookings_shouldReturnBookings() {
+        List<Booking> bookings = new ArrayList<>();
+        Booking booking = new Booking();
+        bookings.add(booking);
+
+        when(bookingRepo.findAll()).thenReturn(bookings);
 
     @Test
     void createBookingDate_shouldReturnBookingDateWhenFound() {
@@ -123,6 +133,14 @@ public class BookingUnitTest {
     void createBookingActivityType_shouldReturnBookingActivityTypeWhenFound() {
         Booking booking = new Booking();
         ActivityType activityType = new ActivityType();
+        List<Booking> result = service.getBookings();
+        assertThat(result).isSameAs(bookings);
+    }
+
+        @Test
+        void getBookings_shouldReturnBookingsCouldNotBeLoaded() {
+            
+        }
 
         service.setActivityType(booking, activityType);
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
