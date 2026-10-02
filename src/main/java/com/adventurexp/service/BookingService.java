@@ -27,7 +27,7 @@ public class BookingService {
         List<Booking> bookings = bookingRepo.findAll();
 
         if (bookings.isEmpty()) {
-            throw new EntityNotFoundException("Could not load bookings...");
+            throw new IllegalArgumentException("Could not load bookings...");
         }
 
         return bookings;
