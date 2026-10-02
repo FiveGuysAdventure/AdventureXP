@@ -43,8 +43,8 @@ public class BookingService {
         bookingRepo.save(booking);
     }
 
-    public void setNumOfParticipants(Booking booking, int numOfParticipants) {
-        booking.setNumOfParticipants(numOfParticipants);
+    public void setNumOfParticipants(Booking booking, int numOfGuests) {
+        booking.setNumOfGuests(numOfGuests);
         bookingRepo.save(booking);
     }
 

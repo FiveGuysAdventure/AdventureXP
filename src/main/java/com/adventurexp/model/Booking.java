@@ -15,7 +15,7 @@ public class Booking {
     private LocalDate bookingDate;
     private String contactEmail;
     private String contactNumber;
-    private int numOfParticipants;
+    private int numOfGuests;
     private double price;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -31,12 +31,12 @@ public class Booking {
     public Booking(){};
 
     public Booking(LocalDate bookingDate, String contactEmail,
-        String contactNumber, int numOfParticipants, double price, LocalDateTime startTime,
+        String contactNumber, int numOfGuests, double price, LocalDateTime startTime,
         LocalDateTime endTime, ActivityType activityType, Employee employee) {
         this.bookingDate = bookingDate;
         this.contactEmail = contactEmail;
         this.contactNumber = contactNumber;
-        this.numOfParticipants = numOfParticipants;
+        this.numOfGuests = numOfGuests;
         this.price = price;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -57,8 +57,8 @@ public class Booking {
         return contactNumber;
     }
 
-    public int getNumOfParticipants() {
-        return numOfParticipants;
+    public int getNumOfGuests() {
+        return numOfGuests;
     }
 
     public double getPrice() {
@@ -96,8 +96,8 @@ public class Booking {
         this.contactNumber = contactNumber;
     }
 
-    public void setNumOfParticipants(int numOfParticipants) {
-        this.numOfParticipants = numOfParticipants;
+    public void setNumOfGuests(int numOfGuests) {
+        this.numOfGuests = numOfGuests;
     }
 
     public void setPrice(double price) {
