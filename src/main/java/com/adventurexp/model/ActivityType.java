@@ -12,7 +12,7 @@ import java.util.List;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "activity_id")
-        private int activityId;
+        private Long activityId;
 
         @Column(name = "activity_name", nullable = false, length = 60)
         private String activityName;
@@ -23,8 +23,10 @@ import java.util.List;
         @Column(name = "price_per_person")
         private int pricePerPerson;
 
-        @Column(name = "tag_id")
-        private int tagId;
+
+        @ManyToOne
+        @JoinColumn(name = "tag_id")
+        private ActivityTag tagId;
 
         @OneToMany(mappedBy = "activityType")
         private List<Booking> bookings = new ArrayList<>();
@@ -36,7 +38,7 @@ import java.util.List;
     public ActivityType(String activityName,
                         int durationSeconds,
                         int pricePerPerson,
-                        int tagId) {
+                        ActivityTag tagId) {
 
         this.activityName = activityName;
         this.durationSeconds = durationSeconds;
@@ -44,11 +46,11 @@ import java.util.List;
         this.tagId = tagId;
     }
 
-    public int getActivityId() {
+    public Long getActivityId() {
         return activityId;
     }
 
-    public void setActivityId(int activityId) {
+    public void setActivityId(Long activityId) {
         this.activityId = activityId;
     }
 
@@ -77,11 +79,11 @@ import java.util.List;
     }
 
 
-    public int getTagId() {
+    public ActivityTag getTagId() {
         return tagId;
     }
 
-    public void setTagId(int tagId) {
+    public void setTagId(ActivityTag tagId) {
         this.tagId = tagId;
     }
 
@@ -93,7 +95,3 @@ import java.util.List;
         this.bookings = bookings;
     }
 }
-
-
-
-

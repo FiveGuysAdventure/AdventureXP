@@ -54,13 +54,23 @@ public class BookingUnitTest {
         }
 
     @Test
-    void getBookings_shouldReturnBookings() {
-        List<Booking> bookings = new ArrayList<>();
+    void getAllBookings_shouldReturnBookings() {
+        List<Booking> allBookings = new ArrayList<>();
         Booking booking = new Booking();
-        bookings.add(booking);
+        allBookings.add(booking);
 
-        when(bookingRepo.findAll()).thenReturn(bookings);
+        when(bookingRepo.findAll()).thenReturn(allBookings);
+
+        assertThat(service.getAllBookings()).isSameAs(allBookings);
     }
+
+        @Test
+        void getAllBookings_shouldReturnBookingsCouldNotBeLoaded() {
+            List<Booking> bookings = new ArrayList<>();
+            when(bookingRepo.findAll()).thenReturn(bookings);
+
+            assertThatThrownBy(() -> service.getAllBookings()).isInstanceOf(IllegalArgumentException.class);
+        }
 
     @Test
     void createBookingDate_shouldReturnBookingDateWhenFound() {
@@ -99,7 +109,7 @@ public class BookingUnitTest {
 
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
         Booking result = service.getBooking(1L);
-        assertThat(result.getNumOfParticipants()).isEqualTo(2);
+        assertThat(result.getNumOfGuests()).isEqualTo(2);
     }
 
     @Test

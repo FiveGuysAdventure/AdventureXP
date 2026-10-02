@@ -10,7 +10,7 @@ public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "equipment_id")
-    private int equipmentId;
+    private Long equipmentId;
 
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
@@ -34,11 +34,11 @@ public class Equipment {
         this.currentlyInUse = currentlyInUse;
     }
 
-    public int getEquipmentId() {
+    public Long getEquipmentId() {
         return equipmentId;
     }
 
-    public void setEquipmentId(int equipmentId) {
+    public void setEquipmentId(Long equipmentId) {
         this.equipmentId = equipmentId;
     }
 

@@ -33,6 +33,16 @@ public class BookingService {
         return bookingRepo.save(booking);
     }
 
+    public List<Booking> getAllBookings() {
+        List<Booking> bookings = bookingRepo.findAll();
+
+        if (bookings.isEmpty()) {
+            throw new IllegalArgumentException("Could not load bookings...");
+        }
+
+        return bookings;
+    }
+  
     public void setBookingDate(Booking booking, LocalDate date) {
         booking.setBookingDate(date);
         bookingRepo.save(booking);
@@ -48,8 +58,8 @@ public class BookingService {
         bookingRepo.save(booking);
     }
 
-    public void setNumOfParticipants(Booking booking, int numOfParticipants) {
-        booking.setNumOfParticipants(numOfParticipants);
+    public void setNumOfParticipants(Booking booking, int numOfGuests) {
+        booking.setNumOfGuests(numOfGuests);
         bookingRepo.save(booking);
     }
 
@@ -78,13 +88,4 @@ public class BookingService {
         bookingRepo.save(booking);
     }
 
-    public List<Booking> getAllBookings() {
-        List<Booking> bookings = bookingRepo.findAll();
-
-        if (bookings.isEmpty()) {
-            throw new IllegalArgumentException("Could not load bookings...");
-        }
-
-        return bookings;
-    }
 }
