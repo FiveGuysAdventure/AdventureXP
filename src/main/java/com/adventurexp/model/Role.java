@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 public class Role {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private int roleId;
+    private Long roleId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false)
@@ -19,7 +19,7 @@ public class Role {
         this.roleName = roleName;
     }
 
-    public int getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 

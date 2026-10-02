@@ -12,7 +12,7 @@ import java.util.List;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "activity_id")
-        private int activityId;
+        private Long activityId;
 
         @Column(name = "activity_name", nullable = false, length = 60)
         private String activityName;
@@ -46,11 +46,11 @@ import java.util.List;
         this.tagId = tagId;
     }
 
-    public int getActivityId() {
+    public Long getActivityId() {
         return activityId;
     }
 
-    public void setActivityId(int activityId) {
+    public void setActivityId(Long activityId) {
         this.activityId = activityId;
     }
 
