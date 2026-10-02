@@ -17,6 +17,7 @@ import java.util.Optional;
 public class BookingService {
 
     private BookingRepo bookingRepo;
+    private ActivityType activityType;
 
     public Booking getBooking(Long id) {
        Optional<Booking> booking = bookingRepo.findById(id);
@@ -86,6 +87,25 @@ public class BookingService {
     public void setEmployee(Booking booking, Employee employee) {
         booking.setEmployee(employee);
         bookingRepo.save(booking);
+    }
+
+    // Tjek for booking overlap
+    // Start time + Duration = end time
+
+    // booking kl 15 newstart
+    // existing 15-1530
+    // endtime = newstart(15) + 30 min
+
+    public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
+        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationSeconds());
+
+        for (Booking existing : getAllBookings()) {
+            LocalDateTime existingStart = existing.getStartTime();
+            LocalDateTime existingEnd = existing.getEndTime();
+
+            return newStart.isBefore(existingEnd) && endTime.isAfter(existingStart);
+        }
+        return false;
     }
 
 }
