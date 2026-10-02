@@ -73,6 +73,14 @@ public class Booking {
         return endTime;
     }
 
+    public ActivityType getActivityType() {
+        return activityType;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
     //Setters
 
 
