@@ -5,6 +5,7 @@ import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
 import com.adventurexp.repository.*;
 import jakarta.persistence.EntityNotFoundException;
+import net.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -145,7 +147,28 @@ public class BookingUnitTest {
         List<Booking> bookings = new ArrayList<>();
         when(bookingRepo.findAll()).thenReturn(bookings);
 
-        assertThatThrownBy(() -> service.getBookings()).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> service.getAllBookings()).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void createBooking_shouldReturnCreatedBookingWhenFound() {
+        ActivityType activityType = new ActivityType();
+        Employee employee = new Employee();
+        Booking booking = new Booking(
+                LocalDate.of(2026,10,2),
+                "testemail@gmail.com",
+                "60614475",
+                12,
+                1200 ,
+                LocalDateTime.of(LocalDate.now(), LocalTime.now()),
+                LocalDateTime.of(LocalDate.now(), LocalTime.now()),
+                activityType,
+                employee);
+        service.createBooking(booking);
+
+        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
+        Booking result = service.getBooking(1L);
+        assertThat(result).isSameAs(booking);
     }
 
     @Test
