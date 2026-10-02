@@ -28,6 +28,15 @@ public class BookingService {
        return booking.get();
     }
 
+    public List<Booking> getAllBookings() {
+        List<Booking> bookings = bookingRepo.findAll();
+
+        if (bookings.isEmpty()) {
+            throw new IllegalArgumentException("Could not load bookings...");
+        }
+
+        return bookings;
+    }
     public void setBookingDate(Booking booking, LocalDate date) {
         booking.setBookingDate(date);
         bookingRepo.save(booking);
@@ -73,13 +82,4 @@ public class BookingService {
         bookingRepo.save(booking);
     }
 
-    public List<Booking> getBookings() {
-        List<Booking> bookings = bookingRepo.findAll();
-
-        if (bookings.isEmpty()) {
-            throw new IllegalArgumentException("Could not load bookings...");
-        }
-
-        return bookings;
-    }
 }
