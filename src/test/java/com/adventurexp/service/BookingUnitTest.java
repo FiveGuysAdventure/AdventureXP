@@ -58,6 +58,7 @@ public class BookingUnitTest {
         bookings.add(booking);
 
         when(bookingRepo.findAll()).thenReturn(bookings);
+    }
 
     @Test
     void createBookingDate_shouldReturnBookingDateWhenFound() {

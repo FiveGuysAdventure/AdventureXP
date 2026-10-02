@@ -71,6 +71,8 @@ public class BookingService {
     public void setEmployee(Booking booking, Employee employee) {
         booking.setEmployee(employee);
         bookingRepo.save(booking);
+    }
+
     public List<Booking> getBookings() {
         List<Booking> bookings = bookingRepo.findAll();
 
