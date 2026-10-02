@@ -97,7 +97,7 @@ public class BookingUnitTest {
 
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
         Booking result = service.getBooking(1L);
-        assertThat(result.getNumOfParticipants()).isEqualTo(2);
+        assertThat(result.getNumOfGuests()).isEqualTo(2);
     }
 
     @Test

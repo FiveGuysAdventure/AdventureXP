@@ -14,7 +14,7 @@ public class ActivityTag {
     public ActivityTag(String tagName) {
         this.tagName = tagName;
     }
-    protected ActivityTag(){}
+    public ActivityTag(){}
 
     public Long getTagId() {
         return tagId;

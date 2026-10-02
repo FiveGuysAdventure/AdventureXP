@@ -28,7 +28,7 @@ public class Booking {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    protected Booking(){};
+    public Booking(){};
 
     public Booking(LocalDate bookingDate, String contactEmail,
         String contactNumber, int numOfGuests, double price, LocalDateTime startTime,

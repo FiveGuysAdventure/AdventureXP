@@ -32,7 +32,7 @@ import java.util.List;
         private List<Booking> bookings = new ArrayList<>();
 
 
-        protected ActivityType() {
+        public ActivityType() {
     }
 
     public ActivityType(String activityName,
