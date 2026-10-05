@@ -56,8 +56,8 @@ public class Equipment {
         return outOfService;
     }
 
-    public void setOutOfService(boolean currentlyInUse) {
-        this.outOfService = currentlyInUse;
+    public void setOutOfService(boolean outOfService) {
+        this.outOfService = outOfService;
     }
 
     public boolean getOutOfService() {
