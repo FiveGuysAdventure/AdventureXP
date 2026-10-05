@@ -17,27 +17,22 @@ public class Equipment {
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
 
-    @Column(name = "currently_in_use")
-    private boolean currentlyInUse;
-
-    @Column(name = "out_of_service", nullable = false)
+    @Column(name = "out_of_service")
     private boolean outOfService;
 
     @Column(name = "last_checked")
     private LocalDate lastChecked;
+
+    @JoinColumn(name="activity_id")
+    private Long activityId;
 
 
 
     public Equipment() {
     }
 
-    public Equipment(String equipmentName,
-                     boolean currentlyInUse, boolean outOfService, LocalDate lastChecked) {
-
+    public Equipment(String equipmentName) {
         this.equipmentName = equipmentName;
-        this.currentlyInUse = currentlyInUse;
-        this.outOfService = outOfService;
-        this.lastChecked = lastChecked;
     }
 
     public Long getEquipmentId() {
@@ -56,20 +51,12 @@ public class Equipment {
         this.equipmentName = equipmentName;
     }
 
-    public boolean isCurrentlyInUse() {
-        return currentlyInUse;
-    }
-
-    public void setCurrentlyInUse(boolean currentlyInUse) {
-        this.currentlyInUse = currentlyInUse;
-    }
-
-    public boolean getOutOfService() {
+    public boolean isOutOfService() {
         return outOfService;
     }
 
-    public void setOutOfService(boolean outOfService) {
-        this.outOfService = outOfService;
+    public void setOutOfService(boolean isBroken) {
+        this.outOfService = isBroken;
     }
 
     public LocalDate getLastChecked() {
@@ -78,5 +65,13 @@ public class Equipment {
 
     public void setLastChecked(LocalDate lastChecked) {
         this.lastChecked = lastChecked;
+    }
+
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
     }
 }

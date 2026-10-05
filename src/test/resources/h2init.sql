@@ -21,11 +21,11 @@ CREATE TABLE activity_type_tag (
 CREATE TABLE equipment
 (
     equipment_id     INT AUTO_INCREMENT PRIMARY KEY,
+    activity_id      INT NOT NULL,
     equipment_name   VARCHAR(60),
-    total_quantity   INT,
-    currently_in_use BOOLEAN NOT NULL DEFAULT FALSE,
-    out_of_service INT NOT NULL 0,
-    last_checked DATE
+    out_of_service BOOLEAN NOT NULL DEFAULT FALSE,
+    last_checked DATE,
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id)
 );
 
 
@@ -57,23 +57,22 @@ CREATE TABLE booking (
   FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
 );
 
-CREATE TABLE activity_equipment (
-  activity_id INT NOT NULL,
-  equipment_id INT NOT NULL,
-  qnt_per_participant INT,
-  PRIMARY KEY (activity_id, equipment_id),
-  FOREIGN KEY (activity_id) REFERENCES activity_type(activity_id),
-  FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
-);
-
-CREATE TABLE booking_equipment (
-  booking_id INT NOT NULL,
-  equipment_id INT NOT NULL,
-  qnt_reserved INT,
-  PRIMARY KEY (booking_id, equipment_id),
-  FOREIGN KEY (booking_id) REFERENCES booking(booking_id),
-  FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
-);
+-- CREATE TABLE activity_equipment (
+--   activity_id INT NOT NULL,
+--   equipment_id INT NOT NULL,
+--   PRIMARY KEY (activity_id, equipment_id),
+--   FOREIGN KEY (activity_id) REFERENCES activity_type(activity_id),
+--   FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
+-- );
+--
+-- CREATE TABLE booking_equipment (
+--   booking_id INT NOT NULL,
+--   equipment_id INT NOT NULL,
+--   qnt_reserved INT,
+--   PRIMARY KEY (booking_id, equipment_id),
+--   FOREIGN KEY (booking_id) REFERENCES booking(booking_id),
+--   FOREIGN KEY (equipment_id) REFERENCES equipment(equipment_id)
+-- );
 
 
 
