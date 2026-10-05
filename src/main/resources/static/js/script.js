@@ -28,6 +28,7 @@ function employeeLogin() {
                 <label for="password"><b>Password</b></label>
                 <input type="password" id="password" placeholder="Enter Password" required>
 
+                <p id="login-error" role="alert" hidden></p>
                 <button type="submit">Login</button>
             </div>
         </form>
@@ -36,6 +37,18 @@ function employeeLogin() {
 
 function customerBookingPage() {
     return 'BOOKING OVERVIEW CUSTOMERS'
+}
+
+const API_EMPLOYEES_URL = "";
+
+async function fetchEmployees() {
+    const data = await fetch(API_EMPLOYEES_URL);
+
+    if (!data.ok) {
+        throw new Error("Request failed (" + data.status + ").")
+    }
+
+    return await data.json();
 }
 
 const routes = {
@@ -59,8 +72,8 @@ function renderApp(html) {
 
 function handleRoute() {
     const path = location.pathname;
-    const page = routes[path] || homePage;
-    renderApp(page());
+    const page = routes[path] || ["/"];
+    renderApp(page.side());
 }
 
 document.addEventListener("click", (e) => {
@@ -73,6 +86,5 @@ document.addEventListener("click", (e) => {
     }
 });
 
-
-
 window.onpopstate = handleRoute;
+handleRoute();
