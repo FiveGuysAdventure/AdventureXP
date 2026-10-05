@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,9 +125,16 @@ public class BookingService {
     public boolean checkBookingOverlapV2(Booking newBooking) {
 //        LocalDateTime newStart = newBooking.getStartTime();
 //        LocalDateTime endTime = newBooking.getEndTime();
-//
 
-        for (Booking existing : getAllBookings()) {
+        List<Booking> allActivityBookings = new ArrayList<>();
+
+        for (Booking booking : getAllBookings()) {
+            if (booking.getActivityType().equals(newBooking.getActivityType())) {
+                allActivityBookings.add(booking);
+            }
+        }
+
+        for (Booking existing : allActivityBookings) {
             LocalDateTime existingStart = existing.getStartTime();
             LocalDateTime existingEnd = existing.getEndTime();
 
