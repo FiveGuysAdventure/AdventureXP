@@ -97,7 +97,7 @@ public class BookingService {
     // endtime = newstart(15) + 30 min
 
     public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
-        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationSeconds());
+        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationMinutes());
 
         for (Booking existing : getAllBookings()) {
             LocalDateTime existingStart = existing.getStartTime();
