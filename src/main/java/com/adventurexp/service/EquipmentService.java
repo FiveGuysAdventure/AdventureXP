@@ -22,6 +22,19 @@ public class EquipmentService {
         return equipmentRepo.findAll();
     }
 
+    //ASC = GAMMEL til NY - DESC = NY til GAMMEL
+    public List<Equipment> getEquipmentSortedByLastChecked(boolean oldestFirst) {
+        if (oldestFirst) {
+            return equipmentRepo.findAllByOrderByLastCheckedAsc();
+        }
+        return equipmentRepo.findAllByOrderByLastCheckedDesc();
+    }
+
+    //UDSTYR aldrig tjekket
+    public List<Equipment> getNeverCheckedEquipment() {
+        return equipmentRepo.findAllByLastCheckedIsNull();
+    }
+
     public List<Equipment> getEquipmentOutOfService() {
 
         List<Equipment> outOfServiceList = equipmentRepo.outOfService();
