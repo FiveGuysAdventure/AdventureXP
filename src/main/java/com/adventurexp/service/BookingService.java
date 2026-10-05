@@ -5,6 +5,7 @@ import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
 import com.adventurexp.repository.BookingRepo;
+import com.adventurexp.repository.EquipmentRepo;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class BookingService {
 
     private BookingRepo bookingRepo;
     private ActivityType activityType;
+    private EquipmentService equipmentService;
 
     public Booking getBooking(Long id) {
         Optional<Booking> booking = bookingRepo.findById(id);
@@ -36,6 +38,10 @@ public class BookingService {
 
         if (checkBookingOverlapV2(booking)){
             throw new BookingConflictException ("Time slot is taken");
+        }
+
+        if (!equipmentService.availabilityCheckForBooking(booking.getActivityType(), booking)) {
+            throw new BookingConflictException ("Group size is too big.");
         }
         return bookingRepo.save(booking);
     }
