@@ -31,7 +31,6 @@ public class EmployeeSchedule {
     public EmployeeSchedule(
             Employee employee,
             LocalDateTime startTime,
-            LocalDateTime endTime,
             ActivityType activity
             ) {
 
