@@ -41,7 +41,7 @@ public class EquipmentService {
 
         for (Equipment equipmentInService : equipmentRepo.findAll()) {
 
-            if (!equipmentInService.isCurrentlyInUse()) {
+            if (!equipmentInService.isOutOfService()) {
                 outOfServiceList.add(equipmentInService);
             }
         }
