@@ -25,7 +25,7 @@ public class EmployeeService {
         this.bookingRepo = bookingRepo;
     }
 
-    // Finder alle tilgængelige medarbejdere som ikke allerede er Booked til den tidsperiode.
+    // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
 
     public List<Employee> getAvailableEmployees(
             LocalDateTime start,
