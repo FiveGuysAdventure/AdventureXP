@@ -17,7 +17,7 @@ import java.util.List;
         @Column(name = "activity_name", nullable = false, length = 60)
         private String activityName;
 
-        @Column(name = "duration_minutes")
+        @Column(name = "duration_seconds")
         private int durationMinutes;
 
         @Column(name = "price_per_person")
@@ -36,7 +36,7 @@ import java.util.List;
     }
 
     public ActivityType(String activityName,
-                        int durationSeconds,
+                        int durationMinutes,
                         int pricePerPerson,
                         ActivityTag tagId) {
 
