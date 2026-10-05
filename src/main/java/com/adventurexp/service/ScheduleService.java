@@ -47,7 +47,7 @@ public class ScheduleService {
     }
 
     public Map<DayOfWeek, List<CalendarEvent>> toCalendar(SequencedCollection<TimeSlot> slots) {
-        final LocalTime dayStart = LocalTime.of(7, 0);
+        LocalTime dayStart = LocalTime.of(7, 0);
         Map<DayOfWeek, List<CalendarEvent>> byDay = new EnumMap<>(DayOfWeek.class);
         for (DayOfWeek d : DayOfWeek.values()) byDay.put(d, new ArrayList<>());
 
