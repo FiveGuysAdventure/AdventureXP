@@ -29,9 +29,10 @@ CREATE TABLE equipment
     equipment_id     INT AUTO_INCREMENT PRIMARY KEY,
     equipment_name   VARCHAR(60) NOT NULL,
     total_quantity   INT,
-    currently_in_use BOOLEAN     NOT NULL DEFAULT FALSE,
-    out_of_service INT NOT NULL DEFAULT 0,
-    last_checked DATE
+    out_of_service   BOOLEAN     NOT NULL DEFAULT FALSE,
+    last_checked     DATE,
+    activity_id      INT NOT NULL,
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id)
 );
 
 CREATE TABLE role
