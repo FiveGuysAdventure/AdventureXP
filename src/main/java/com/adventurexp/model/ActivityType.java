@@ -5,34 +5,34 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-    @Entity
-    @Table(name = "activity_type")
-    public class ActivityType {
+@Entity
+@Table(name = "activity_type")
+public class ActivityType {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "activity_id")
-        private Long activityId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "activity_id")
+    private Long activityId;
 
-        @Column(name = "activity_name", nullable = false, length = 60)
-        private String activityName;
+    @Column(name = "activity_name", nullable = false, length = 60)
+    private String activityName;
 
-        @Column(name = "duration_minutes")
-        private int durationMinutes;
+    @Column(name = "duration_minutes")
+    private int durationMinutes;
 
-        @Column(name = "price_per_person")
-        private int pricePerPerson;
-
-
-        @ManyToOne
-        @JoinColumn(name = "tag_id")
-        private ActivityTag tagId;
-
-        @OneToMany(mappedBy = "activityType")
-        private List<Booking> bookings = new ArrayList<>();
+    @Column(name = "price_per_person")
+    private int pricePerPerson;
 
 
-        public ActivityType() {
+    @ManyToOne
+    @JoinColumn(name = "tag_id")
+    private ActivityTag tagId;
+
+    @OneToMany(mappedBy = "activityType")
+    private List<Booking> bookings = new ArrayList<>();
+
+
+    public ActivityType() {
     }
 
     public ActivityType(String activityName,

@@ -65,3 +65,14 @@ CREATE TABLE booking
     FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id),
     FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
 );
+
+CREATE TABLE employee_schedule
+(
+    employee_schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id INT NOT NULL,
+    activity_id INT NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    FOREIGN KEY (employee_id) REFERENCES employee (employee_id),
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id)
+);

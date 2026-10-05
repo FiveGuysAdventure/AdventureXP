@@ -17,14 +17,13 @@ public class EmployeeSchedule {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employee employee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "activity_id", nullable = false)
+    private ActivityType activity;
+
+
     @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
-
-    @Column(name = "end_time", nullable = false)
-    private LocalDateTime endTime;
-
-    @Column(name = "available", nullable = false)
-    private boolean available;
 
     protected EmployeeSchedule() {
     }
@@ -33,12 +32,12 @@ public class EmployeeSchedule {
             Employee employee,
             LocalDateTime startTime,
             LocalDateTime endTime,
-            boolean available) {
+            ActivityType activity
+            ) {
 
         this.employee = employee;
         this.startTime = startTime;
-        this.endTime = endTime;
-        this.available = available;
+        this.activity = activity;
     }
 
     public Integer getEmployeeScheduleId() {
@@ -65,19 +64,11 @@ public class EmployeeSchedule {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
+    public ActivityType getActivity() {
+        return activity;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setActivity(ActivityType activity) {
+        this.activity = activity;
     }
 }
