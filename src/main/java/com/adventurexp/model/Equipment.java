@@ -26,6 +26,8 @@ public class Equipment {
     @Column(name = "last_checked")
     private LocalDate lastChecked;
 
+    @JoinColumn(name="activity_id")
+    private Long activityId;
 
 
     public Equipment() {
@@ -74,5 +76,13 @@ public class Equipment {
 
     public void setLastChecked(LocalDate lastChecked) {
         this.lastChecked = lastChecked;
+    }
+
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
     }
 }

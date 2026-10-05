@@ -47,4 +47,28 @@ public class EquipmentService {
         }
         return outOfServiceList;
     }
+
+    public boolean availabilityCheckForBooking(ActivityType activity, Booking booking) {
+        List<Equipment> allEquipment = getEquipmentOverview();
+        List<Equipment> activityEquipment = new ArrayList<>();
+
+        for (Equipment equipment : allEquipment) {
+            if (equipment.getActivityId().equals(activity.getActivityId())) {
+                activityEquipment.add(equipment);
+            }
+        }
+        return activityEquipment.size() >= booking.getNumOfGuests();
+    }
+
+    public List<Equipment> getEquipmentForActivity(ActivityType activity) {
+        List<Equipment> allEquipment = getEquipmentOverview();
+        List<Equipment> activityEquipment = new ArrayList<>();
+
+        for (Equipment equipment : allEquipment) {
+            if (equipment.getActivityId().equals(activity.getActivityId())) {
+                activityEquipment.add(equipment);
+            }
+        }
+        return activityEquipment;
+    }
 }
