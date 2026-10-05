@@ -32,8 +32,9 @@ class EmployeeUnitTest {
 
     // Arrange - Act - Assert:
 
+    // Test for " All available employees"
     @Test
-    void getAvailableInstructors_returnsBoth_whenNoBookingsExist() {
+    void getAvailableEmployees_returnsBoth_whenNoBookingsExist() {
 
         Role instructorRole = new Role(RoleName.EMPLOYEE);
 
@@ -55,13 +56,15 @@ class EmployeeUnitTest {
         when(employeeRepo.findAll()).thenReturn(List.of(anna, emil));
         when(bookingRepo.findAll()).thenReturn(List.of());
 
-        List<Employee> available =
-                service.getAvailableInstructors(start, end);
+        List<Employee> availableEmployees =
+                service.getAvailableEmployees(start, end);
 
-        assertThat(available).containsExactlyInAnyOrder(anna, emil);
+        assertThat(availableEmployees).containsExactlyInAnyOrder(anna, emil);
     }
+
+    // Test for " All available" employees, when one is already assigned ( Only 2 employees)
     @Test
-    void getAvailableInstructors_returnsEmil_WhenAnnaIsBooked() {
+    void getAvailableEmployees_returnsEmil_WhenAnnaIsBooked() {
 
         Role EmployeeRole = new Role(RoleName.EMPLOYEE);
 
@@ -90,9 +93,42 @@ class EmployeeUnitTest {
         when(employeeRepo.findAll()).thenReturn(List.of(anna, emil));
         when(bookingRepo.findAll()).thenReturn(List.of(annasBooking));
 
-        List<Employee> available =
-                service.getAvailableInstructors(start, end);
+        List<Employee> availableEmployees = service.getAvailableEmployees(start, end);
 
-        assertThat(available).containsExactly(emil);
+        assertThat(availableEmployees).containsExactly(emil);
+    }
+
+
+    // Test - Check for tilgængelighed af Employee på samme dag, efter endt bookingtid.
+
+    @Test
+    void getAvailableEmployees_returnsAnna_whenBookingEndsAtNewStart() {
+        // Arrange
+        Role EmployeeRole = new Role(RoleName.EMPLOYEE);
+
+        Employee anna = new Employee(
+                "Anna", "11111111", "anna@example.com", EmployeeRole
+        );
+        anna.setEmployeeId(101L);
+
+        LocalDateTime start =
+                LocalDateTime.of(2026, 10, 5, 10, 0);
+        LocalDateTime end =
+                LocalDateTime.of(2026, 10, 5, 11, 0);
+
+
+
+        Booking previousBooking = new Booking();
+        previousBooking.setEmployee(anna);
+        previousBooking.setStartTime(start.minusHours(1));
+        previousBooking.setEndTime(start);
+
+        when(employeeRepo.findAll()).thenReturn(List.of(anna));
+        when(bookingRepo.findAll()).thenReturn(List.of(previousBooking));
+
+        List<Employee> available =
+                service.getAvailableEmployees(start, end);
+
+        assertThat(available).containsExactly(anna);
     }
     }
