@@ -2,6 +2,7 @@ package com.adventurexp.repository;
 
 import com.adventurexp.model.Equipment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -16,6 +17,6 @@ public interface EquipmentRepo extends JpaRepository<Equipment, Integer> {
     //UDSTYR aldrig tjekket
     List<Equipment> findAllByLastCheckedIsNull();
 
-    List<Equipment> outOfService();
-
+    @Query("SELECT e FROM Equipment e WHERE e.outOfService = true")
+    List<Equipment> findByOutOfService();
 }
