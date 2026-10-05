@@ -4,6 +4,7 @@ import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
+import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import net.bytebuddy.asm.Advice;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.*;
 public class BookingUnitTest {
 
     @Mock private BookingRepo bookingRepo;
+
+    @Mock private EquipmentService equipmentService;
 
     @InjectMocks
     private BookingService service;
@@ -161,6 +164,8 @@ public class BookingUnitTest {
     void createBooking_shouldReturnCreatedBookingWhenFound() {
         ActivityType activityType = new ActivityType();
         Employee employee = new Employee();
+
+
         Booking booking = new Booking(
                 LocalDate.of(2026,10,2),
                 "testemail@gmail.com",
@@ -182,6 +187,7 @@ public class BookingUnitTest {
                 employee
         );
 
+        when(equipmentService.availabilityCheckForBooking(activityType, booking)).thenReturn(true);
         when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
         when(bookingRepo.save(booking)).thenReturn(booking);
 
