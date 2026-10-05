@@ -1,5 +1,7 @@
 package com.adventurexp.service;
 
+import com.adventurexp.model.ActivityType;
+import com.adventurexp.model.Booking;
 import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.*;
 import org.junit.jupiter.api.Test;
@@ -15,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.test.context.ActiveProfiles;
@@ -99,4 +99,25 @@ public class EquipmentUnitTest {
         assertThat(result).isEqualTo(neverChecked);
         assertThat(result).allMatch(equipment -> equipment.getLastChecked() == null);
     }
+    @Test
+    void checkEquipmentAvailabilityForBooking_throwErrorIfDatabaseFails() {
+        ActivityType activity = new ActivityType();
+        Booking booking = new Booking();
+        when(equipmentRepo.findAll()).thenThrow(new DataAccessResourceFailureException("Database utilgængelig"));
+
+        assertThatThrownBy(() -> service.availabilityCheckForBooking(activity, booking))
+                .isInstanceOf(DataAccessResourceFailureException.class);
+    }
+
+    @Test
+    void checkEquipmentAvailabilityForActivityType_shouldReturnListOfEquipment() {
+        ActivityType activity = new ActivityType();
+        Equipment equipment = new Equipment("Gokarts");
+        equipment.setActivityId(1L);
+        activity.setActivityId(1L);
+
+        when(equipmentRepo.findAll()).thenReturn(List.of(equipment));
+        assertThat((service.getEquipmentForActivity(activity))).isEqualTo(List.of(equipment));
+    }
+
 }
