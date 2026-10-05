@@ -26,18 +26,16 @@ public class Equipment {
     @Column(name = "last_checked")
     private LocalDate lastChecked;
 
+    @JoinColumn(name="activity_id")
+    private Long activityId;
 
 
     public Equipment() {
     }
 
-    public Equipment(String equipmentName,
-                     boolean currentlyInUse, boolean outOfService, LocalDate lastChecked) {
+    public Equipment(String equipmentName) {
 
         this.equipmentName = equipmentName;
-        this.currentlyInUse = currentlyInUse;
-        this.outOfService = outOfService;
-        this.lastChecked = lastChecked;
     }
 
     public Integer getEquipmentId() {
@@ -78,5 +76,13 @@ public class Equipment {
 
     public void setLastChecked(LocalDate lastChecked) {
         this.lastChecked = lastChecked;
+    }
+
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
     }
 }
