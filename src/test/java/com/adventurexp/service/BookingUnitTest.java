@@ -174,10 +174,9 @@ public class BookingUnitTest {
                 LocalDateTime.of(LocalDate.now(), LocalTime.now()),
                 activityType,
                 employee);
-        service.createBooking(booking);
 
-        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
-        Booking result = service.getBooking(1L);
+        when(bookingRepo.save(booking)).thenReturn(booking);
+        Booking result = service.createBooking(booking);
         assertThat(result).isSameAs(booking);
     }
 
@@ -202,9 +201,5 @@ public class BookingUnitTest {
         Booking result = service.getBooking(1L);
         assertThat(result.getEmployee()).isEqualTo(employee);
     }
-
-
-
-
 
 }

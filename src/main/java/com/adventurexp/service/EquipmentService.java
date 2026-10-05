@@ -4,8 +4,10 @@ import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.EquipmentRepo;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,8 +22,28 @@ public class EquipmentService {
     public List<Equipment> getEquipmentOverview() {
         return equipmentRepo.findAll();
     }
-//
-//    public boolean availabilityCheck(Booking booking, Equipment equipment, ActivityType activityType) {
-//
-//    }
+
+    public boolean availabilityCheckForBooking(ActivityType activity, Booking booking) {
+        List<Equipment> allEquipment = getEquipmentOverview();
+        List<Equipment> activityEquipment = new ArrayList<>();
+
+        for (Equipment equipment : allEquipment) {
+            if (equipment.getActivityId().equals(activity.getActivityId())) {
+                activityEquipment.add(equipment);
+            }
+        }
+        return activityEquipment.size() >= booking.getNumOfGuests();
+    }
+
+    public List<Equipment> getEquipmentForActivity(ActivityType activity) {
+        List<Equipment> allEquipment = getEquipmentOverview();
+        List<Equipment> activityEquipment = new ArrayList<>();
+
+        for (Equipment equipment : allEquipment) {
+            if (equipment.getActivityId().equals(activity.getActivityId())) {
+                activityEquipment.add(equipment);
+            }
+        }
+        return activityEquipment;
+    }
 }

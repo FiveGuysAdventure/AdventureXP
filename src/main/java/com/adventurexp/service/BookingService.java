@@ -20,11 +20,11 @@ public class BookingService {
     private ActivityType activityType;
 
     public Booking getBooking(Long id) {
-       Optional<Booking> booking = bookingRepo.findById(id);
-       if (booking.isEmpty()) {
-           throw new EntityNotFoundException("No booking with given id was found: " + id);
-       }
-       return booking.get();
+        Optional<Booking> booking = bookingRepo.findById(id);
+        if (booking.isEmpty()) {
+            throw new EntityNotFoundException("No booking with given id was found: " + id);
+        }
+        return booking.get();
     }
 
     public Booking createBooking(Booking booking) {
@@ -43,7 +43,6 @@ public class BookingService {
 
         return bookings;
     }
-  
     public void setBookingDate(Booking booking, LocalDate date) {
         booking.setBookingDate(date);
         bookingRepo.save(booking);
@@ -97,7 +96,7 @@ public class BookingService {
     // endtime = newstart(15) + 30 min
 
     public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
-        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationSeconds());
+        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationMinutes());
 
         for (Booking existing : getAllBookings()) {
             LocalDateTime existingStart = existing.getStartTime();
