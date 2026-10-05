@@ -28,7 +28,9 @@ public class Booking {
     @JoinColumn(name = "employee_id")
     private Employee employee;
 
-    public Booking(){};
+    public Booking() {
+    }
+
 
     public Booking(LocalDate bookingDate, String contactEmail,
                    String contactNumber, int numOfGuests, double price, LocalDateTime startTime, ActivityType activityType, Employee employee) {
@@ -129,7 +131,7 @@ public class Booking {
     }
 
     //Method for calculating the last reservation
-    private void calculateEndTime(){
+    private void calculateEndTime() {
         if (startTime != null && activityType != null) {
             this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
         }
