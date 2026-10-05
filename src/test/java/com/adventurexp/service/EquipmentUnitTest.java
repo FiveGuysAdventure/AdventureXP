@@ -1,6 +1,5 @@
 package com.adventurexp.service;
 
-
 import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.*;
 import org.junit.jupiter.api.Test;
@@ -55,10 +54,34 @@ public class EquipmentUnitTest {
 
         assertThatThrownBy(() -> service.getEquipmentOverview())
                 .isInstanceOf(DataAccessResourceFailureException.class);
-
     }
 
+    //HAPPY PATH: Medarbejderen sorterer ud fra dato - Udstyr vises sorteret enten fra ældste eller nyeste tjek
+   @Test
+   void getEquipmentSortedByLastedChecked_shouldReturnOldestFirst() {
+        Equipment oldCheck = new Equipment("Gokarts", 12, false);
+        oldCheck.setLastChecked(LocalDate.of(2026, 10, 1));
+        Equipment newCheck = new Equipment("Sumo Suits", 4, false);
+        newCheck.setLastChecked(LocalDate.of(2026, 9, 12));
+        when(equipmentRepo.findAllByOrderByLastCheckedAsc()).thenReturn(List.of(oldCheck, newCheck));
 
+        List<Equipment> result = service.getEquipmentSortedByLastChecked(true);
 
+        assertThat(result).containsExactly(oldCheck, newCheck);
+   }
 
+    //HAPPY PATH: Medarbejderen sorterer ud fra status check - Udstyr som aldrig er tjekket vises
+    @Test
+    void getNeverCheckedEquipment_shouldReturnUncheckedEquipment() {
+        List<Equipment> neverChecked = List.of(
+                new Equipment("Gokarts", 12, false),
+                new Equipment("Sumo Suits", 4, false)
+        );
+        when(equipmentRepo.findAllByLastCheckedIsNull()).thenReturn(neverChecked);
+
+        List<Equipment> result = service.getNeverCheckedEquipment();
+
+        assertThat(result).isEqualTo(neverChecked);
+        assertThat(result).allMatch(equipment -> equipment.getLastChecked() == null);
+    }
 }

@@ -20,6 +20,19 @@ public class EquipmentService {
     public List<Equipment> getEquipmentOverview() {
         return equipmentRepo.findAll();
     }
+
+    //ASC = GAMMEL til NY - DESC = NY til GAMMEL
+    public List<Equipment> getEquipmentSortedByLastChecked(boolean oldestFirst) {
+        if (oldestFirst) {
+            return equipmentRepo.findAllByOrderByLastCheckedAsc();
+        }
+        return equipmentRepo.findAllByOrderByLastCheckedDesc();
+    }
+
+    //UDSTYR aldrig tjekket
+    public List<Equipment> getNeverCheckedEquipment() {
+        return equipmentRepo.findAllByLastCheckedIsNull();
+    }
 //
 //    public boolean availabilityCheck(Booking booking, Equipment equipment, ActivityType activityType) {
 //

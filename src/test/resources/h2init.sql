@@ -24,7 +24,7 @@ CREATE TABLE equipment
     equipment_name   VARCHAR(60),
     total_quantity   INT,
     currently_in_use BOOLEAN NOT NULL DEFAULT FALSE,
-    out_of_service INT NOT NULL 0,
+    out_of_service INT NOT NULL DEFAULT 0,
     last_checked DATE
 );
 
