@@ -17,30 +17,22 @@ public class Equipment {
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
 
-    @Column(name = "total_quantity")
-    private int totalQuantity;
-
-    @Column(name = "currently_in_use")
-    private boolean currentlyInUse;
-
-    @Column(name = "out_of_service", nullable = false)
-    private int outOfService = 0;
+    @Column(name = "out_of_service")
+    private boolean outOfService;
 
     @Column(name = "last_checked")
     private LocalDate lastChecked;
+
+    @JoinColumn(name="activity_id")
+    private Long activityId;
 
 
 
     public Equipment() {
     }
 
-    public Equipment(String equipmentName,
-                     int totalQuantity,
-                     boolean currentlyInUse) {
-
+    public Equipment(String equipmentName) {
         this.equipmentName = equipmentName;
-        this.totalQuantity = totalQuantity;
-        this.currentlyInUse = currentlyInUse;
     }
 
     public Long getEquipmentId() {
@@ -59,28 +51,12 @@ public class Equipment {
         this.equipmentName = equipmentName;
     }
 
-    public int getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public void setTotalQuantity(int totalQuantity) {
-        this.totalQuantity = totalQuantity;
-    }
-
-    public boolean isCurrentlyInUse() {
-        return currentlyInUse;
-    }
-
-    public void setCurrentlyInUse(boolean currentlyInUse) {
-        this.currentlyInUse = currentlyInUse;
-    }
-
-    public int getOutOfService() {
+    public boolean isOutOfService() {
         return outOfService;
     }
 
-    public void setOutOfService(int outOfService) {
-        this.outOfService = outOfService;
+    public void setOutOfService(boolean isBroken) {
+        this.outOfService = isBroken;
     }
 
     public LocalDate getLastChecked() {
@@ -91,8 +67,11 @@ public class Equipment {
         this.lastChecked = lastChecked;
     }
 
-    //Hvis vi skal bruge det i selve bookingen til at tjekke availability
-    public int getAvailableQuantity() {
-        return totalQuantity - outOfService;
+    public Long getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(Long activityId) {
+        this.activityId = activityId;
     }
 }
