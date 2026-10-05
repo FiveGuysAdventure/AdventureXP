@@ -17,8 +17,8 @@ import java.util.List;
         @Column(name = "activity_name", nullable = false, length = 60)
         private String activityName;
 
-        @Column(name = "duration_seconds")
-        private int durationSeconds;
+        @Column(name = "duration_minutes")
+        private int durationMinutes;
 
         @Column(name = "price_per_person")
         private int pricePerPerson;
@@ -36,12 +36,12 @@ import java.util.List;
     }
 
     public ActivityType(String activityName,
-                        int durationSeconds,
+                        int durationMinutes,
                         int pricePerPerson,
                         ActivityTag tagId) {
 
         this.activityName = activityName;
-        this.durationSeconds = durationSeconds;
+        this.durationMinutes = durationMinutes;
         this.pricePerPerson = pricePerPerson;
         this.tagId = tagId;
     }
@@ -62,12 +62,12 @@ import java.util.List;
         this.activityName = activityName;
     }
 
-    public int getDurationSeconds() {
-        return durationSeconds;
+    public int getDurationMinutes() {
+        return durationMinutes;
     }
 
-    public void setDurationSeconds(int durationSeconds) {
-        this.durationSeconds = durationSeconds;
+    public void setDurationMinutes(int durationMinutes) {
+        this.durationMinutes = durationMinutes;
     }
 
     public int getPricePerPerson() {

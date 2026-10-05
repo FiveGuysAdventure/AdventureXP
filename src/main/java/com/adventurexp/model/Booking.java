@@ -131,7 +131,7 @@ public class Booking {
     //Method for calculating the last reservation
     private void calculateEndTime(){
         if (startTime != null && activityType != null) {
-            this.endTime = startTime.plusMinutes(activityType.getDurationSeconds());
+            this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
         }
     }
 
