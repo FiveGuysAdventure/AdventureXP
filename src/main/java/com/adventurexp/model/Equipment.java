@@ -17,14 +17,11 @@ public class Equipment {
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
 
-    @Column(name = "total_quantity")
-    private int totalQuantity;
-
     @Column(name = "currently_in_use")
     private boolean currentlyInUse;
 
     @Column(name = "out_of_service", nullable = false)
-    private int outOfService = 0;
+    private boolean outOfService;
 
     @Column(name = "last_checked")
     private LocalDate lastChecked;
@@ -35,12 +32,12 @@ public class Equipment {
     }
 
     public Equipment(String equipmentName,
-                     int totalQuantity,
-                     boolean currentlyInUse) {
+                     boolean currentlyInUse, boolean outOfService, LocalDate lastChecked) {
 
         this.equipmentName = equipmentName;
-        this.totalQuantity = totalQuantity;
         this.currentlyInUse = currentlyInUse;
+        this.outOfService = outOfService;
+        this.lastChecked = lastChecked;
     }
 
     public Long getEquipmentId() {
@@ -59,14 +56,6 @@ public class Equipment {
         this.equipmentName = equipmentName;
     }
 
-    public int getTotalQuantity() {
-        return totalQuantity;
-    }
-
-    public void setTotalQuantity(int totalQuantity) {
-        this.totalQuantity = totalQuantity;
-    }
-
     public boolean isCurrentlyInUse() {
         return currentlyInUse;
     }
@@ -75,11 +64,11 @@ public class Equipment {
         this.currentlyInUse = currentlyInUse;
     }
 
-    public int getOutOfService() {
+    public boolean getOutOfService() {
         return outOfService;
     }
 
-    public void setOutOfService(int outOfService) {
+    public void setOutOfService(boolean outOfService) {
         this.outOfService = outOfService;
     }
 
@@ -89,10 +78,5 @@ public class Equipment {
 
     public void setLastChecked(LocalDate lastChecked) {
         this.lastChecked = lastChecked;
-    }
-
-    //Hvis vi skal bruge det i selve bookingen til at tjekke availability
-    public int getAvailableQuantity() {
-        return totalQuantity - outOfService;
     }
 }
