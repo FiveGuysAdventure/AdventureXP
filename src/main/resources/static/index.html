@@ -8,44 +8,30 @@
 </head>
 <body>
 
-<input type="radio" name="side" id="v-opret" checked>
-<input type="radio" name="side" id="v-reservationer">
-<input type="radio" name="side" id="v-inventar">
-<input type="radio" name="side" id="v-medarbejdere">
-
 <nav aria-label="Hovedmenu">
-    <input class="brand" type="text" placeholder="Virksomhedens navn" aria-label="Virksomhedens navn">
-    <label for="v-opret">Opret booking</label>
-    <label for="v-reservationer">Se reservationer</label>
-    <label for="v-inventar">Inventar</label>
-    <label for="v-medarbejdere">Medarbejdere</label>
+    <a href="/" data-link>Adventure XP</a>
+    <a href="/" data-link>Forside</a>
+    <a href="/booking" data-link>Booking</a>
+    <a href="/reservationer" data-link>Reservationer</a>
+    <a href="/inventar" data-link>Inventar</a>
+    <a href="/medarbejdere" data-link>Medarbejdere</a>
 </nav>
 
 <main>
-    <div class="image-slot">Tomt billede</div>
+    <img src="billede.jpg" alt="">
+    <h2>Velkommen til</h2>
+    <p>Tekstbeksrivelse</p>
 
-    <div class="info">
-        <h2 contenteditable="true" data-placeholder="Skriv en overskrift her"></h2>
-        <p contenteditable="true" data-placeholder="Skriv din tekst her"></p>
-    </div>
+    <section id="#app"></section>
 
-    <section id="opret">
-        <h1>Opret booking</h1>
-        <p>Formularen til en ny booking.</p>
-    </section>
-    <section id="reservationer">
-        <h1>Se reservationer</h1>
-        <p>Oversigten over reservationer.</p>
-    </section>
-    <section id="inventar">
-        <h1>Inventar</h1>
-        <p>Oversigten over inventar.</p>
-    </section>
-    <section id="medarbejdere">
-        <h1>Medarbejdere</h1>
-        <p>OVersigten af medarbejdere</p>
-    </section>
+    <footer>
+        <a href="/login">Employee login</a>
+    </footer>
 </main>
 
+<script src="js/script.js"></script>
 </body>
 </html>
+
+
+

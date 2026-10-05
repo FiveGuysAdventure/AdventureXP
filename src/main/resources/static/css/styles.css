@@ -16,21 +16,19 @@
         --accent: #6b95ff;
     }
 }
+
 * { box-sizing: border-box; }
 html, body { min-height: 100%; margin: 0; }
 body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     background: var(--bg);
     color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* Radioknapperne styrer hvilken side der vises - de er skjulte */
-body > input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
+/* Menu */
 nav {
     background: var(--surface);
     border-bottom: 1px solid var(--line);
@@ -40,89 +38,91 @@ nav {
     padding: 0 1rem;
     overflow-x: auto;
 }
-.brand {
-    font: inherit;
-    font-weight: 700;
-    color: var(--text);
-    background: none;
-    border: 1px dashed var(--line);
-    border-radius: 6px;
-    padding: 0.4rem 0.6rem;
-    margin-right: 1.5rem;
-    width: 12rem;
-    flex: none;
-}
-.brand::placeholder { color: var(--muted); font-weight: 400; }
-.brand:focus-visible { outline: 2px solid var(--accent); border-color: transparent; }
-.brand:not(:placeholder-shown) { border-color: transparent; }
 
-nav label {
+nav a {
     color: var(--muted);
+    text-decoration: none;
     border-bottom: 3px solid transparent;
     padding: 1rem 0.9rem;
-    cursor: pointer;
     white-space: nowrap;
 }
-nav label:hover { color: var(--text); }
+nav a:hover { color: var(--text); }
+nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
-/* Markér den aktive menuknap */
-#v-opret:checked ~ nav label[for="v-opret"],
-#v-reservationer:checked ~ nav label[for="v-reservationer"],
-#v-inventar:checked ~ nav label[for="v-inventar"],
-#v-medarbejdere:checked ~ nav label[for="v-medarbejdere"] {
+nav a:first-child {
+    color: var(--text);
+    font-weight: 700;
+    margin-right: 1.5rem;
+    border-bottom-color: transparent;
+}
+
+nav a[aria-current="page"],
+nav a.active {
     color: var(--accent);
     border-bottom-color: var(--accent);
     font-weight: 600;
 }
-/* Synlig fokus ved tastaturnavigation */
-#v-opret:focus-visible ~ nav label[for="v-opret"],
-#v-reservationer:focus-visible ~ nav label[for="v-reservationer"],
-#v-inventar:focus-visible ~ nav label[for="v-inventar"],
-#v-medarbejdere:focus-visible ~ nav label[for="v-medarbejdere"] {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
-}
 
+/* Hovedindhold */
 main {
+    flex: 1;
+    width: 100%;
     padding: 2rem 1.5rem;
     max-width: 960px;
     margin: 0 auto;
 }
 
+/* Billede */
 .image-slot {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     aspect-ratio: 16 / 6;
-    object-fit: cover;
     margin-bottom: 1.5rem;
     border: 2px dashed var(--line);
     border-radius: 8px;
     background: var(--surface);
     color: var(--muted);
+    cursor: pointer;
+    overflow: hidden;
 }
+.image-slot:hover { border-color: var(--accent); color: var(--accent); }
+.image-slot img { width: 100%; height: 100%; object-fit: cover; }
+.image-slot input { display: none; }
 
+/* Overskrift og tekst */
 .info { margin-bottom: 2rem; }
 .info h2 { margin: 0 0 0.5rem; font-size: 1.2rem; }
-.info [contenteditable] { color: var(--muted); min-height: 1.5em; margin: 0; }
-.info h2[contenteditable] { color: var(--text); }
+.info p { margin: 0; }
+.info [contenteditable] { min-height: 1.5em; }
+.info p[contenteditable] { color: var(--muted); }
 .info [contenteditable]:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .info [contenteditable]:empty::before { content: attr(data-placeholder); }
 
-/* Kun den valgte side vises */
-main section {
-    display: none;
+/* Sidens indhold */
+#app {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 8px;
     padding: 1.5rem;
 }
-#v-opret:checked ~ main #opret,
-#v-reservationer:checked ~ main #reservationer,
-#v-inventar:checked ~ main #inventar,
-#v-medarbejdere:checked ~ main #medarbejdere {
-    display: block;
+#app h1 { margin: 0 0 0.5rem; font-size: 1.6rem; }
+#app p { color: var(--muted); margin: 0 0 1rem; }
+#app a { color: var(--accent); }
+
+/* Footer: */
+footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--line);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
 }
-main h1 { margin: 0 0 0.5rem; font-size: 1.6rem; }
-main section p { color: var(--muted); margin: 0; }
+
+footer a {
+    color: var(--muted);
+    text-decoration: none;
+}
+footer a:hover { color: var(--accent); text-decoration: underline; }
+footer a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
