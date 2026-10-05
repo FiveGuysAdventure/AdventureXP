@@ -6,6 +6,7 @@ import com.adventurexp.model.Equipment;
 import com.adventurexp.repository.EquipmentRepo;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,8 +34,17 @@ public class EquipmentService {
     public List<Equipment> getNeverCheckedEquipment() {
         return equipmentRepo.findAllByLastCheckedIsNull();
     }
-//
-//    public boolean availabilityCheck(Booking booking, Equipment equipment, ActivityType activityType) {
-//
-//    }
+
+    public List<Equipment> getEquipmentOutOfService() {
+
+        List<Equipment> outOfServiceList = equipmentRepo.outOfService();
+
+        for (Equipment equipmentInService : equipmentRepo.findAll()) {
+
+            if (!equipmentInService.isCurrentlyInUse()) {
+                outOfServiceList.add(equipmentInService);
+            }
+        }
+        return outOfServiceList;
+    }
 }
