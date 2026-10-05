@@ -17,11 +17,9 @@ public class Equipment {
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
 
-    @Column(name = "currently_in_use")
-    private boolean currentlyInUse;
-
-    @Column(name = "out_of_service", nullable = false)
+    @Column(name = "out_of_service")
     private boolean outOfService;
+
 
     @Column(name = "last_checked")
     private LocalDate lastChecked;
@@ -54,20 +52,16 @@ public class Equipment {
         this.equipmentName = equipmentName;
     }
 
-    public boolean isCurrentlyInUse() {
-        return currentlyInUse;
+    public boolean isOutOfService() {
+        return outOfService;
     }
 
-    public void setCurrentlyInUse(boolean currentlyInUse) {
-        this.currentlyInUse = currentlyInUse;
+    public void setOutOfService(boolean currentlyInUse) {
+        this.outOfService = currentlyInUse;
     }
 
     public boolean getOutOfService() {
         return outOfService;
-    }
-
-    public void setOutOfService(boolean outOfService) {
-        this.outOfService = outOfService;
     }
 
     public LocalDate getLastChecked() {

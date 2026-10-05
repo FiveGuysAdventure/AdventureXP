@@ -16,6 +16,6 @@ public interface EquipmentRepo extends JpaRepository<Equipment, Integer> {
     //UDSTYR aldrig tjekket
     List<Equipment> findAllByLastCheckedIsNull();
 
-    List<Equipment> outOfService();
+    List<Equipment> findAllByOutOfServiceTrue();
 
 }
