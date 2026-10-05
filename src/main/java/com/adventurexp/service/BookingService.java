@@ -29,6 +29,7 @@ public class BookingService {
     }
 
     public Booking createBooking(Booking booking) {
+
         if (booking == null) {
             throw new EntityNotFoundException("No booking object was found");
         }
@@ -38,6 +39,7 @@ public class BookingService {
         }
         return bookingRepo.save(booking);
     }
+
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();
