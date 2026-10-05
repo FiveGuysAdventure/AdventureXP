@@ -46,4 +46,17 @@ public class EquipmentService {
         }
         return activityEquipment;
     }
+  
+    public List<Equipment> getEquipmentOutOfService() {
+
+        List<Equipment> outOfServiceList = equipmentRepo.outOfService();
+
+        for (Equipment equipmentInService : equipmentRepo.findAll()) {
+
+            if (!equipmentInService.isCurrentlyInUse()) {
+                outOfServiceList.add(equipmentInService);
+            }
+        }
+        return outOfServiceList;
+    }
 }
