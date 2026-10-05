@@ -31,17 +31,18 @@ public class Booking {
     public Booking(){};
 
     public Booking(LocalDate bookingDate, String contactEmail,
-        String contactNumber, int numOfGuests, double price, LocalDateTime startTime,
-        LocalDateTime endTime, ActivityType activityType, Employee employee) {
+                   String contactNumber, int numOfGuests, double price, LocalDateTime startTime, ActivityType activityType, Employee employee) {
         this.bookingDate = bookingDate;
         this.contactEmail = contactEmail;
         this.contactNumber = contactNumber;
         this.numOfGuests = numOfGuests;
         this.price = price;
         this.startTime = startTime;
-        this.endTime = endTime;
         this.activityType = activityType;
         this.employee = employee;
+
+        //Calculates the end time automatically
+        calculateEndTime();
     }
 
     //Getters
@@ -110,6 +111,7 @@ public class Booking {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
+        calculateEndTime();
     }
 
 
@@ -119,10 +121,18 @@ public class Booking {
 
     public void setActivityType(ActivityType activityType) {
         this.activityType = activityType;
+        calculateEndTime();
     }
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    //Method for calculating the last reservation
+    private void calculateEndTime(){
+        if (startTime != null && activityType != null) {
+            this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
+        }
     }
 
 }

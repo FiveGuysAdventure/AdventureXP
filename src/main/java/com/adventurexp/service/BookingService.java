@@ -1,5 +1,6 @@
 package com.adventurexp.service;
 
+import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
@@ -20,19 +21,25 @@ public class BookingService {
     private ActivityType activityType;
 
     public Booking getBooking(Long id) {
-       Optional<Booking> booking = bookingRepo.findById(id);
-       if (booking.isEmpty()) {
-           throw new EntityNotFoundException("No booking with given id was found: " + id);
-       }
-       return booking.get();
+        Optional<Booking> booking = bookingRepo.findById(id);
+        if (booking.isEmpty()) {
+            throw new EntityNotFoundException("No booking with given id was found: " + id);
+        }
+        return booking.get();
     }
 
     public Booking createBooking(Booking booking) {
+
         if (booking == null) {
             throw new EntityNotFoundException("No booking object was found");
         }
+
+        if (checkBookingOverlapV2(booking)){
+            throw new BookingConflictException ("Time slot is taken");
+        }
         return bookingRepo.save(booking);
     }
+
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();
@@ -43,7 +50,7 @@ public class BookingService {
 
         return bookings;
     }
-  
+
     public void setBookingDate(Booking booking, LocalDate date) {
         booking.setBookingDate(date);
         bookingRepo.save(booking);
@@ -96,14 +103,30 @@ public class BookingService {
     // existing 15-1530
     // endtime = newstart(15) + 30 min
 
-    public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
-        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationMinutes());
+//    public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
+//        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationSeconds());
+//
+//        for (Booking existing : getAllBookings()) {
+//            LocalDateTime existingStart = existing.getStartTime();
+//            LocalDateTime existingEnd = existing.getEndTime();
+//
+//            return newStart.isBefore(existingEnd) && endTime.isAfter(existingStart);
+//        }
+//        return false;
+//    }
+
+    public boolean checkBookingOverlapV2(Booking newBooking) {
+//        LocalDateTime newStart = newBooking.getStartTime();
+//        LocalDateTime endTime = newBooking.getEndTime();
+//
 
         for (Booking existing : getAllBookings()) {
             LocalDateTime existingStart = existing.getStartTime();
             LocalDateTime existingEnd = existing.getEndTime();
 
-            return newStart.isBefore(existingEnd) && endTime.isAfter(existingStart);
+            if(newBooking.getStartTime().isBefore(existingEnd) && newBooking.getEndTime().isAfter(existingStart)){
+                return true;
+            }
         }
         return false;
     }

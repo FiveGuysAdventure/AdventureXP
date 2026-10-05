@@ -57,7 +57,7 @@ public class EquipmentUnitTest {
         equipment.setOutOfService(true);
         outOfServiceList.add(equipment);
 
-        when(equipmentRepo.outOfService()).thenReturn(outOfServiceList);
+        when(equipmentRepo.findByOutOfService()).thenReturn(outOfServiceList);
 
         assertThat(service.getEquipmentOutOfService()).isSameAs(outOfServiceList);
     }

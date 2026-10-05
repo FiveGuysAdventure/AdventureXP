@@ -1,5 +1,6 @@
 package com.adventurexp.service;
 
+import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -166,16 +167,66 @@ public class BookingUnitTest {
                 "60614475",
                 12,
                 1200 ,
-                LocalDateTime.of(LocalDate.now(), LocalTime.now()),
-                LocalDateTime.of(LocalDate.now(), LocalTime.now()),
+                LocalDateTime.of(2026, 10, 2, 14, 0),
                 activityType,
                 employee);
-        service.createBooking(booking);
 
-        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
-        Booking result = service.getBooking(1L);
+        Booking existingBooking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "other@gmail.com",
+                "12345678",
+                5,
+                500,
+                LocalDateTime.of(2026, 10, 2, 10, 0),
+                activityType,
+                employee
+        );
+
+        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
+        when(bookingRepo.save(booking)).thenReturn(booking);
+
+        Booking result = service.createBooking(booking);
+
         assertThat(result).isSameAs(booking);
+        verify(bookingRepo).save(booking);
     }
+
+    @Test
+    void createBooking_ShouldThrowExceptionWhenOverlap(){
+        ActivityType activityType = new ActivityType();
+        activityType.setDurationMinutes(120);
+        Employee employee = new Employee();
+        Booking existingBooking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "other@gmail.com",
+                "12345678",
+                5,
+                500,
+                LocalDateTime.of(2026, 10, 2, 10, 0),
+                activityType,
+                employee
+        );
+
+        Booking booking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "testemail@gmail.com",
+                "60614475",
+                12,
+                1200,
+                LocalDateTime.of(2026, 10, 2, 11, 0),
+                activityType,
+                employee
+        );
+
+        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
+
+        assertThatThrownBy(() -> service.createBooking(booking))
+                .isInstanceOf(BookingConflictException.class)
+                .hasMessage("Time slot is taken");
+
+        verify(bookingRepo, never()).save(booking);
+    }
+
 
     @Test
     void createBookingActivityType_shouldReturnBookingsCouldNotBeLoaded() {

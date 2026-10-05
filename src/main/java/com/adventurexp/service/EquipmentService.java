@@ -37,7 +37,7 @@ public class EquipmentService {
 
     public List<Equipment> getEquipmentOutOfService() {
 
-        List<Equipment> outOfServiceList = equipmentRepo.outOfService();
+        List<Equipment> outOfServiceList = equipmentRepo.findByOutOfService();
 
         for (Equipment equipmentInService : equipmentRepo.findAll()) {
 
