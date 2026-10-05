@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -17,6 +18,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doAnswer;
+
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
@@ -49,5 +61,15 @@ public class EquipmentUnitTest {
         when(equipmentRepo.outOfService()).thenReturn(outOfServiceList);
 
         assertThat(service.getEquipmentOutOfService()).isSameAs(outOfServiceList);
+    }
+
+    //SAD PATH: Medarbejderen åbner udstyrsoversigten - Der printes en fejlbesked og siden crasher ikke.
+    @Test
+    void getEquipmentOverview_throwErrorIfDatabaseFails() {
+        when(equipmentRepo.findAll()).thenThrow(new DataAccessResourceFailureException("Database utilgængelig"));
+
+        assertThatThrownBy(() -> service.getEquipmentOverview())
+                .isInstanceOf(DataAccessResourceFailureException.class);
+
     }
 }
