@@ -64,23 +64,3 @@ CREATE TABLE booking
     FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id),
     FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
 );
-
-CREATE TABLE activity_equipment
-(
-    activity_id         INT NOT NULL,
-    equipment_id        INT NOT NULL,
-    qnt_per_participant INT,
-    PRIMARY KEY (activity_id, equipment_id),
-    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id),
-    FOREIGN KEY (equipment_id) REFERENCES equipment (equipment_id)
-);
-
-CREATE TABLE booking_equipment
-(
-    booking_id   INT NOT NULL,
-    equipment_id INT NOT NULL,
-    qnt_reserved INT,
-    PRIMARY KEY (booking_id, equipment_id),
-    FOREIGN KEY (booking_id) REFERENCES booking (booking_id),
-    FOREIGN KEY (equipment_id) REFERENCES equipment (equipment_id)
-);

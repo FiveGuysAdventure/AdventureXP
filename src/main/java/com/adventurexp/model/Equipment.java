@@ -31,13 +31,9 @@ public class Equipment {
     public Equipment() {
     }
 
-    public Equipment(String equipmentName,
-                     boolean currentlyInUse, boolean outOfService, LocalDate lastChecked) {
+    public Equipment(String equipmentName) {
 
         this.equipmentName = equipmentName;
-        this.currentlyInUse = currentlyInUse;
-        this.outOfService = outOfService;
-        this.lastChecked = lastChecked;
     }
 
     public Integer getEquipmentId() {

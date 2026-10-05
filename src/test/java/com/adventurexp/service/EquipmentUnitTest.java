@@ -74,9 +74,9 @@ public class EquipmentUnitTest {
     //HAPPY PATH: Medarbejderen sorterer ud fra dato - Udstyr vises sorteret enten fra ældste eller nyeste tjek
    @Test
    void getEquipmentSortedByLastedChecked_shouldReturnOldestFirst() {
-        Equipment oldCheck = new Equipment("Gokarts", 12, false);
+        Equipment oldCheck = new Equipment("Gokarts");
         oldCheck.setLastChecked(LocalDate.of(2026, 10, 1));
-        Equipment newCheck = new Equipment("Sumo Suits", 4, false);
+        Equipment newCheck = new Equipment("Sumo Suits");
         newCheck.setLastChecked(LocalDate.of(2026, 9, 12));
         when(equipmentRepo.findAllByOrderByLastCheckedAsc()).thenReturn(List.of(oldCheck, newCheck));
 
@@ -89,8 +89,8 @@ public class EquipmentUnitTest {
     @Test
     void getNeverCheckedEquipment_shouldReturnUncheckedEquipment() {
         List<Equipment> neverChecked = List.of(
-                new Equipment("Gokarts", 12, false),
-                new Equipment("Sumo Suits", 4, false)
+                new Equipment("Gokarts"),
+                new Equipment("Sumo Suits")
         );
         when(equipmentRepo.findAllByLastCheckedIsNull()).thenReturn(neverChecked);
 
