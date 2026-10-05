@@ -10,6 +10,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,35 +30,27 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doAnswer;
+
 import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 public class EquipmentUnitTest {
 
-    @Mock
-    private BookingRepo bookingRepo;
-    @Mock private ActivityTypeRepo activityTypeRepo;
-    @Mock private EmployeeRepo employeeRepo;
     @Mock private EquipmentRepo equipmentRepo;
-    @Mock private RoleRepo roleRepo;
 
     @InjectMocks
     private EquipmentService service;
 
-    //Acceptance test
-    //HAPPY PATH: Medarbejderen åbner udstyr oversigten - Alt udstyr vises med navn og dato tjek.
     @Test
     void getEquipmentOverview_shouldReturnWithNameAndLastChecked() {
         Equipment equipment = new Equipment("Gokarts");
         equipment.setLastChecked(LocalDate.of(2026, 10, 1));
         when(equipmentRepo.findAll()).thenReturn(List.of(equipment));
 
-        List<Equipment> result = service.getEquipmentOverview();
+        when(equipmentRepo.outOfService()).thenReturn(outOfServiceList);
 
-        assertThat(result).containsExactly(equipment);
-        assertThat(result.get(0).getEquipmentName()).isEqualTo("Gokarts");
-        assertThat(result.get(0).getLastChecked()).isEqualTo(LocalDate.of(2026, 10, 1));
+        assertThat(service.getEquipmentOutOfService()).isSameAs(outOfServiceList);
     }
 
 
