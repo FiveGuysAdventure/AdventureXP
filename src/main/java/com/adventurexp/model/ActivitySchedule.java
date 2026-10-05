@@ -15,7 +15,7 @@ public class ActivitySchedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "activity_id", nullable = false)
-    private ActivityType ActivityType;
+    private ActivityType activityType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
@@ -41,7 +41,7 @@ public class ActivitySchedule {
                             LocalDateTime endTime,
                             boolean active) {
 
-        this.ActivityType = activityType;
+        this.activityType = activityType;
         this.employee = employee;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -58,11 +58,11 @@ public class ActivitySchedule {
     }
 
     public ActivityType getActivity() {
-        return ActivityType;
+        return activityType;
     }
 
-    public void setActivity(ActivityType ActivityType) {
-        this.ActivityType = ActivityType;
+    public void setActivityType(ActivityType activityType) {
+        this.activityType = activityType;
     }
 
     public Employee getEmployee() {

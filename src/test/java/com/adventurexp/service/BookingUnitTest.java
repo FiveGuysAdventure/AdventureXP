@@ -30,10 +30,6 @@ import static org.mockito.Mockito.*;
 public class BookingUnitTest {
 
     @Mock private BookingRepo bookingRepo;
-    @Mock private ActivityTypeRepo activityTypeRepo;
-    @Mock private EmployeeRepo employeeRepo;
-    @Mock private EquipmentRepo equipmentRepo;
-    @Mock private RoleRepo roleRepo;
 
     @InjectMocks
     private BookingService service;
