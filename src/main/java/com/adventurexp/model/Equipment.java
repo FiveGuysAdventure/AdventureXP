@@ -17,8 +17,9 @@ public class Equipment {
     @Column(name = "equipment_name", nullable = false, length = 60)
     private String equipmentName;
 
-    @Column(name = "óut_of_service")
+    @Column(name = "out_of_service")
     private boolean outOfService;
+
 
     @Column(name = "last_checked")
     private LocalDate lastChecked;
@@ -62,7 +63,6 @@ public class Equipment {
     public boolean getOutOfService() {
         return outOfService;
     }
-
 
     public LocalDate getLastChecked() {
         return lastChecked;

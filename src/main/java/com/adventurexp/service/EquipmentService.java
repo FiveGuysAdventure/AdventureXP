@@ -36,16 +36,7 @@ public class EquipmentService {
     }
 
     public List<Equipment> getEquipmentOutOfService() {
-
-        List<Equipment> outOfServiceList = equipmentRepo.findByOutOfService();
-
-        for (Equipment equipmentInService : equipmentRepo.findAll()) {
-
-            if (!equipmentInService.isOutOfService()) {
-                outOfServiceList.add(equipmentInService);
-            }
-        }
-        return outOfServiceList;
+        return equipmentRepo.findAllByOutOfServiceTrue();
     }
 
     public boolean availabilityCheckForBooking(ActivityType activity, Booking booking) {
