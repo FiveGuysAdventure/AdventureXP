@@ -6,6 +6,7 @@ import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
 import com.adventurexp.repository.BookingRepo;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,11 +15,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
+
 @Service
 public class BookingService {
 
+    @Autowired
     private BookingRepo bookingRepo;
+
     private ActivityType activityType;
+
+    @Autowired
     private EquipmentService equipmentService;
 
     public Booking getBooking(Long id) {
@@ -54,6 +61,9 @@ public class BookingService {
         }
 
         return bookings;
+    }
+    public List<Booking> getBookingsForAvailability() {
+        return bookingRepo.findAll();
     }
 
     public void setBookingDate(Booking booking, LocalDate date) {
@@ -126,8 +136,10 @@ public class BookingService {
 
         List<Booking> allActivityBookings = new ArrayList<>();
 
-        for (Booking booking : getAllBookings()) {
-            if (booking.getActivityType().equals(newBooking.getActivityType())) {
+        for (Booking booking : getBookingsForAvailability()) {
+            if (booking.getActivityType().getActivityId()
+                    .equals(newBooking.getActivityType().getActivityId())) {
+
                 allActivityBookings.add(booking);
             }
         }
