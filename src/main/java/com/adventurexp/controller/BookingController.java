@@ -59,8 +59,7 @@ public class BookingController {
 
             @RequestParam("numOfGuests") int numOfGuests
     ) {
-        ActivityType activity = activityTypeRepo.findById(input.getActivityType().getActivityId()
-        ).orElseThrow();
+        ActivityType activity = activityTypeRepo.findById(activityId).orElseThrow();
 
         LocalDateTime opening = date.atTime(OPENING);
         LocalDateTime closing = date.atTime(CLOSING);

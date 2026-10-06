@@ -24,6 +24,72 @@
     <p>Tekstbeksrivelse</p>
 
     <section id="app"></section>
+
+
+    <template id="booking-template">
+        <h1>Opret booking</h1>
+
+        <form id="booking-search">
+            <fieldset id="booking-search-fields" disabled>
+                <legend>Find ledige tider</legend>
+
+                <p><label>Aktivitet
+                    <select id="booking-activity" required>
+                        <option value="">Vælg aktivitet</option>
+                    </select>
+                </label></p>
+
+                <p><label>Dato
+                    <input id="booking-date" type="date" required>
+                </label></p>
+
+                <p><label>Antal deltagere
+                    <input id="booking-guests" type="number"
+                           min="1" step="1" required>
+                </label></p>
+
+                <button type="submit">Find ledige tider</button>
+            </fieldset>
+        </form>
+
+        <p id="booking-message" role="status"></p>
+
+        <form id="booking-save-form" hidden>
+            <p><label>Starttid
+                <select id="booking-time" required>
+                    <option value="">Vælg starttid</option>
+                </select>
+            </label></p>
+
+            <fieldset id="booking-details" hidden disabled>
+                <legend>Bookingoplysninger</legend>
+
+                <p>
+                    Sluttid: <output id="booking-end"></output>
+                    — Samlet pris: <output id="booking-price"></output>
+                </p>
+
+                <p><label>Medarbejder
+                    <select id="booking-employee" required>
+                        <option value="">Vælg medarbejder</option>
+                    </select>
+                </label></p>
+
+                <p><label>Kundens e-mail
+                    <input id="booking-email" type="email" required>
+                </label></p>
+
+                <p><label>Kundens telefonnummer
+                    <input id="booking-phone" type="tel" required>
+                </label></p>
+
+                <button type="submit">Gem booking</button>
+            </fieldset>
+        </form>
+
+        <p id="booking-confirmation" role="status"
+           style="white-space: pre-line" hidden></p>
+    </template>
 </main>
 
 <footer>
