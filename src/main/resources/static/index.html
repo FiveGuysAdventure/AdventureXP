@@ -12,10 +12,14 @@
 <nav aria-label="Hovedmenu">
     <a href="/" data-link>Adventure XP</a>
     <a href="/" data-link>Forside</a>
-    <a href="/booking" data-link>Booking</a>
-    <a href="/reservationer" data-link>Reservationer</a>
-    <a href="/inventar" data-link>Inventar</a>
-    <a href="/medarbejdere" data-link>Medarbejdere</a>
+    <a href="/booking-overview" data-link>Booking overview</a>
+
+    <a href="/booking" data-link data-needs-login>Booking</a>
+    <a href="/reservationer" data-link data-needs-login>Reservationer</a>
+    <a href="/inventar" data-link data-needs-login>Inventar</a>
+    <a href="/medarbejdere" data-link data-needs-login>Medarbejdere</a>
+
+    <button type="button" data-logout data-needs-login>Log out</button>
 </nav>
 
 <main>

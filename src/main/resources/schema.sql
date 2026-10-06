@@ -47,6 +47,7 @@ CREATE TABLE employee
     emp_name     VARCHAR(60)  NOT NULL,
     emp_phone_nr VARCHAR(60)  NOT NULL UNIQUE,
     emp_email    VARCHAR(100) NOT NULL UNIQUE,
+    emp_password VARCHAR(60) NOT NULL UNIQUE,
     role_id      INT          NOT NULL,
     FOREIGN KEY (role_id) REFERENCES role (role_id)
 );

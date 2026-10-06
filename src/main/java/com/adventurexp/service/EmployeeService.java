@@ -6,6 +6,7 @@ import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
 import com.adventurexp.repository.BookingRepo;
 import com.adventurexp.repository.EmployeeRepo;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,8 +26,12 @@ public class EmployeeService {
         this.bookingRepo = bookingRepo;
     }
 
-    // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
+    public List<Employee> getListOfEmployees() {
+        return employeeRepo.findAll();
+    }
 
+
+    // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
     public List<Employee> getAvailableEmployees(
             LocalDateTime start,
             LocalDateTime end
