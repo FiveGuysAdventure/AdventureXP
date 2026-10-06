@@ -39,4 +39,16 @@ public class ProductService {
 
         return productRepo.save(product);
     }
+
+    public Product updatePrice(Integer productId, int newPrice) {
+        if (newPrice <= 0) {
+            throw new IllegalArgumentException("Price must be greater than 0");
+        }
+
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id " + productId + " not found"));
+
+        product.setPrice(newPrice);
+        return productRepo.save(product);
+    }
 }
