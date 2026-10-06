@@ -1,23 +1,3 @@
-function homePage() {return 'Homepage';}
-function bookingPage() {return 'Booking';}
-function reservationPage() {return 'Reservations';}
-function equipmentPage() {return 'Inventory';}
-
-function employeePage() {
-    return`
-        <section>
-            <h1>Medarbejdere</h1>
-                
-                <h2>Managers</h2>
-                    <ul>
-                        <li id="manager-list">Loading...</li>
-                    </ul>
-                    
-                <h2>Employees</h2>
-                    <ul id="employee-list">
-                        <li>Loading...</li>
-                    </ul>           
-        </section>`;
 function homePage() {
     return 'Homepage';
 }
@@ -254,7 +234,7 @@ const routes = {
 
 };
 
-
+// Login Form for employees
 const LOGIN_URL = "http://localhost:8080";
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
@@ -262,7 +242,7 @@ function renderApp(html) {
     document.getElementById("app").innerHTML = html;
 }
 
-function handleRoute() {
+function handleRoutes() {
     const page = routes[location.pathname] || routes["/"];
 
     renderApp(page.side());
@@ -324,9 +304,11 @@ function showError() {
     regularEmployeeList.innerHTML = "Failed to load";
 }
 
+// Employee Overview
 fetchAllEmployees()
     .then(renderEmployeeList)
     .catch(showError);
 
+// ROUTE HANDLING
 window.onpopstate = handleRoutes;
 handleRoutes();
