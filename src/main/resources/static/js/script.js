@@ -1,22 +1,8 @@
-function homePage() {
-    return 'Homepage';
-}
-
-function bookingPage() {
-    return 'Booking';
-}
-
-function reservationPage() {
-    return 'Reservationer';
-}
-
-function equipmentPage() {
-    return 'Inventory';
-}
-
-function employeePage() {
-    return 'Medarbejdere';
-}
+function homePage() {return 'Homepage';}
+function bookingPage() {return 'Booking';}
+function reservationPage() {return 'Reservationer';}
+function equipmentPage() {return 'Inventory';}
+function employeePage() {return 'Medarbejdere';}
 
 function employeeLogin() {
     return`
@@ -35,26 +21,12 @@ function employeeLogin() {
     `;
 }
 
-function customerBookingPage() {
-    return 'BOOKING OVERVIEW CUSTOMERS'
-}
-
-const API_EMPLOYEES_URL = "";
-
-async function fetchEmployees() {
-    const data = await fetch(API_EMPLOYEES_URL);
-
-    if (!data.ok) {
-        throw new Error("Request failed (" + data.status + ").")
-    }
-
-    return await data.json();
-}
+function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
 
 const routes = {
     // Homepage and Log-in routing
     "/": {side: homePage, needsLogin: false},
-    "/login": {side: employeeLogin, needsLogin: false},
+    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
     "/booking": {side: bookingPage, needsLogin: true},
@@ -66,14 +38,60 @@ const routes = {
     "/booking-overview": {side: customerBookingPage, needsLogin: false}
 };
 
+
+const LOGIN_URL = "http://localhost:8080/login";
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
 function renderApp(html) {
     document.getElementById("app").innerHTML = html;
 }
 
 function handleRoute() {
-    const path = location.pathname;
-    const page = routes[path] || ["/"];
-    renderApp(page.side());
+    let path = routes[location.pathname] || routes["/"];
+
+    if (path.needsLogin && !isLoggedIn()) {
+        history.replaceState(null, "", "/login");
+        path = routes["/login"];
+    }
+
+    document.getElementById("app").innerHTML = path.side();
+    renderApp(path.side());
+    path.onRender?.();
+}
+
+async function login(employee){
+    const response = await fetch(LOGIN_URL + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee)
+    })
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
+}
+
+function setupLoginForm() {
+    const error = document.getElementById("login-error");
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        error.hidden = true;
+
+        try {
+            const data = await login({
+                username: document.getElementById("username").value().trim(),
+                password: document.getElementById("password").value
+            });
+            sessionStorage.setItem("session", JSON.stringify(data));
+            navigate("/booking")
+        } catch (error) {
+            error.textContent = error.message;
+            error.hidden = false;
+        }
+    });
 }
 
 document.addEventListener("click", (e) => {
