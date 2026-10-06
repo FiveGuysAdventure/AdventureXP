@@ -59,8 +59,8 @@ public class BookingController {
 
             @RequestParam("numOfGuests") int numOfGuests
     ) {
-        ActivityType activity =
-                activityTypeRepo.findById(activityId).orElseThrow();
+        ActivityType activity = activityTypeRepo.findById(input.getActivityType().getActivityId()
+        ).orElseThrow();
 
         LocalDateTime opening = date.atTime(OPENING);
         LocalDateTime closing = date.atTime(CLOSING);
@@ -130,11 +130,23 @@ public class BookingController {
                 ));
     }
 
+    @GetMapping("/activities")
+    public List<Map<String, Object>> getActivities() {
+        return activityTypeRepo.findAll().stream()
+                .map(activity -> Map.<String, Object>of(
+                        "activityId", activity.getActivityId(),
+                        "activityName", activity.getActivityName(),
+                        "durationMinutes", activity.getDurationMinutes(),
+                        "pricePerPerson", activity.getPricePerPerson()
+                ))
+                .toList();
+    }
+
     @PostMapping
     public synchronized ResponseEntity<?> createBooking(
             @RequestBody Booking input
     ) {
-        activityTypeRepo activity = activityTypeRepo.findById(
+        ActivityType activity = activityTypeRepo.findById(
                 input.getActivityType().getActivityId()
         ).orElseThrow();
 
@@ -208,6 +220,8 @@ public class BookingController {
         return ResponseEntity.status(status)
                 .body(Map.of("error", message));
     }
+
+
 
 }
 
