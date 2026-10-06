@@ -226,7 +226,7 @@ const routes = {
         side: bookingPage, needsLogin: true, onRender: setupBookingForm},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
-    "/employees": {side: employeePage, needsLogin: false},
+    "/employees": {side: employeePage, needsLogin: true},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -234,7 +234,6 @@ const routes = {
 
 };
 
-// Login Form for employees
 const LOGIN_URL = "http://localhost:8080";
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
@@ -243,10 +242,57 @@ function renderApp(html) {
 }
 
 function handleRoutes() {
-    const page = routes[location.pathname] || routes["/"];
+    let path = routes[location.pathname] || routes["/"];
 
-    renderApp(page.side());
-    page.onRender?.();
+    if (path.needsLogin && !isLoggedIn()) {
+        history.replaceState(null, "", "/login");
+        path = routes["/login"];
+    }
+
+    document.getElementById("app").innerHTML = path.side();
+    renderApp(path.side());
+    path.onRender?.();
+}
+
+async function login(employee){
+    const response = await fetch(LOGIN_URL + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee)
+    })
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
+}
+
+function navigate(path) {
+    history.pushState(null, "", path); {
+        handleRoutes();
+    }
+}
+
+function setupLoginForm() {
+    const error = document.getElementById("login-error");
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        error.hidden = true;
+
+        try {
+            const data = await login({
+                employeeEmail: document.getElementById("employeeEmail").value.trim(),
+                employeePassword: document.getElementById("employeePassword").value
+            });
+            sessionStorage.setItem("session", JSON.stringify(data));
+            navigate("/booking")
+        } catch (err) {
+            error.textContent = err.message;
+            error.hidden = false;
+        }
+    });
 }
 
 document.addEventListener("click", (e) => {
@@ -304,11 +350,9 @@ function showError() {
     regularEmployeeList.innerHTML = "Failed to load";
 }
 
-// Employee Overview
 fetchAllEmployees()
     .then(renderEmployeeList)
     .catch(showError);
 
-// ROUTE HANDLING
 window.onpopstate = handleRoutes;
 handleRoutes();
