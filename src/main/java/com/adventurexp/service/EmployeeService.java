@@ -1,5 +1,6 @@
 package com.adventurexp.service;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.adventurexp.model.Booking;
@@ -25,8 +26,15 @@ public class EmployeeService {
         this.bookingRepo = bookingRepo;
     }
 
-    // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
+    public List<Employee> getListOfEmployees() {
+        return employeeRepo.findAll();
+    }
 
+    public Optional<Employee> login(String email, String password) {
+        return employeeRepo.findEmployeeByEmployeeEmailAndEmployeePassword(email, password);
+    }
+
+    // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
     public List<Employee> getAvailableEmployees(
             LocalDateTime start,
             LocalDateTime end

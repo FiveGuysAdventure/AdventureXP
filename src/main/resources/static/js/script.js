@@ -201,10 +201,10 @@ function employeeLogin() {
         <form id="login-form">
             <div class="container">
                 <label for="username"><b>Username</b></label>
-                <input type="text" id="username" placeholder="Enter Username" required>
+                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
 
                 <label for="password"><b>Password</b></label>
-                <input type="password" id="password" placeholder="Enter Password" required>
+                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
 
                 <p id="login-error" role="alert" hidden></p>
                 <button type="submit">Login</button>
@@ -213,26 +213,12 @@ function employeeLogin() {
     `;
 }
 
-function customerBookingPage() {
-    return 'BOOKING OVERVIEW CUSTOMERS'
-}
-
-const API_EMPLOYEES_URL = "";
-
-async function fetchEmployees() {
-    const data = await fetch(API_EMPLOYEES_URL);
-
-    if (!data.ok) {
-        throw new Error("Request failed (" + data.status + ").")
-    }
-
-    return await data.json();
-}
+function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
 
 const routes = {
     // Homepage and Log-in routing
     "/": {side: homePage, needsLogin: false},
-    "/login": {side: employeeLogin, needsLogin: false},
+    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
         "/booking": {
@@ -244,6 +230,10 @@ const routes = {
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false}
 };
+
+
+const LOGIN_URL = "http://localhost:8080";
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
 function renderApp(html) {
     document.getElementById("app").innerHTML = html;
@@ -262,9 +252,9 @@ document.addEventListener("click", (e) => {
 
         const href = e.target.getAttribute("href");
         history.pushState(null, "", href);
-        handleRoute();
+        handleRoutes();
     }
 });
 
-window.onpopstate = handleRoute;
-handleRoute();
+window.onpopstate = handleRoutes;
+handleRoutes();
