@@ -15,8 +15,11 @@ import java.util.*;
 @Service
 public class ScheduleService {
 
-    private EmployeeSchedule employeeSchedule;
-    private EmployeeScheduleRepo employeeScheduleRepo;
+    private final EmployeeScheduleRepo employeeScheduleRepo;
+
+    public ScheduleService(EmployeeScheduleRepo employeeScheduleRepo) {
+        this.employeeScheduleRepo = employeeScheduleRepo;
+    }
 
     public List<EmployeeSchedule> getEmployeeSchedules(Employee employee) {
         List<EmployeeSchedule> employeeSchedules = new ArrayList<>();
@@ -29,8 +32,11 @@ public class ScheduleService {
             }
         }
 
+
         return employeeSchedules;
     }
+
+
 
     public SequencedCollection<TimeSlot> getEmployeeTimeSlots(Employee employee) {
         SequencedCollection<TimeSlot> timeslots = new ArrayList<>();

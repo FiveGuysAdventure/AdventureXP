@@ -163,6 +163,9 @@ public class BookingUnitTest {
     @Test
     void createBooking_shouldReturnCreatedBookingWhenFound() {
         ActivityType activityType = new ActivityType();
+        activityType.setActivityId(1L);
+        activityType.setDurationMinutes(120);
+
         Employee employee = new Employee();
 
 
@@ -200,6 +203,7 @@ public class BookingUnitTest {
     @Test
     void createBooking_ShouldThrowExceptionWhenOverlap(){
         ActivityType activityType = new ActivityType();
+        activityType.setActivityId(1L);
         activityType.setDurationMinutes(120);
         Employee employee = new Employee();
         Booking existingBooking = new Booking(
