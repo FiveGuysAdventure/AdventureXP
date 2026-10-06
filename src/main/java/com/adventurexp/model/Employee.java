@@ -42,11 +42,13 @@ public class Employee {
     public Employee(String employeeName,
                     String employeePhoneNumber,
                     String employeeEmail,
+                    String employeePassword,
                     Role roleId) {
 
         this.employeeName = employeeName;
         this.employeePhoneNumber = employeePhoneNumber;
         this.employeeEmail = employeeEmail;
+        this.employeePassword = employeePassword;
         this.roleId = roleId;
     }
 
@@ -56,6 +58,10 @@ public class Employee {
 
     public String getEmployeePassword() {
         return employeePassword;
+    }
+
+    public void setEmployeePassword(String employeePassword) {
+        this.employeePassword = employeePassword;
     }
 
     public void setEmployeeId(Long employeeId) {

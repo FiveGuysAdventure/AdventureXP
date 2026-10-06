@@ -9,10 +9,10 @@ function employeeLogin() {
         <form id="login-form">
             <div class="container">
                 <label for="username"><b>Username</b></label>
-                <input type="text" id="username" placeholder="Enter Username" required>
+                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
 
                 <label for="password"><b>Password</b></label>
-                <input type="password" id="password" placeholder="Enter Password" required>
+                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
 
                 <p id="login-error" role="alert" hidden></p>
                 <button type="submit">Login</button>
@@ -39,14 +39,14 @@ const routes = {
 };
 
 
-const LOGIN_URL = "http://localhost:8080/login";
+const LOGIN_URL = "http://localhost:8080";
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
 function renderApp(html) {
     document.getElementById("app").innerHTML = html;
 }
 
-function handleRoute() {
+function handleRoutes() {
     let path = routes[location.pathname] || routes["/"];
 
     if (path.needsLogin && !isLoggedIn()) {
@@ -73,6 +73,12 @@ async function login(employee){
     return await response.json();
 }
 
+function navigate(path) {
+    history.pushState(null, "", path); {
+        handleRoutes();
+    }
+}
+
 function setupLoginForm() {
     const error = document.getElementById("login-error");
 
@@ -82,13 +88,13 @@ function setupLoginForm() {
 
         try {
             const data = await login({
-                username: document.getElementById("username").value().trim(),
-                password: document.getElementById("password").value
+                employeeEmail: document.getElementById("employeeEmail").value.trim(),
+                employeePassword: document.getElementById("employeePassword").value
             });
             sessionStorage.setItem("session", JSON.stringify(data));
             navigate("/booking")
-        } catch (error) {
-            error.textContent = error.message;
+        } catch (err) {
+            error.textContent = err.message;
             error.hidden = false;
         }
     });
@@ -100,9 +106,9 @@ document.addEventListener("click", (e) => {
 
         const href = e.target.getAttribute("href");
         history.pushState(null, "", href);
-        handleRoute();
+        handleRoutes();
     }
 });
 
-window.onpopstate = handleRoute;
-handleRoute();
+window.onpopstate = handleRoutes;
+handleRoutes();
