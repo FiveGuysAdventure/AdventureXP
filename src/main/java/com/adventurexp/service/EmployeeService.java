@@ -1,12 +1,12 @@
 package com.adventurexp.service;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
 import com.adventurexp.repository.BookingRepo;
 import com.adventurexp.repository.EmployeeRepo;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +30,9 @@ public class EmployeeService {
         return employeeRepo.findAll();
     }
 
+    public Optional<Employee> login(String email, String password) {
+        return employeeRepo.findEmployeeByEmployeeEmailAndEmployeePassword(email, password);
+    }
 
     // Finder alle tilgængelige medarbejdere som ikke allerede er Booket til den tidsperiode.
     public List<Employee> getAvailableEmployees(

@@ -2,13 +2,20 @@ package com.adventurexp.controller;
 
 import com.adventurexp.model.Employee;
 import com.adventurexp.service.EmployeeService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@CrossOrigin("http://localhost:63342")
 public class EmployeeController {
 
+    @Autowired
     private EmployeeService employeeService;
 
     @GetMapping("/employees")
@@ -16,26 +23,15 @@ public class EmployeeController {
         return employeeService.getListOfEmployees();
     }
 
+    @PostMapping("/login")
+    public ResponseEntity<Employee> login(@RequestBody Employee employee) {
+        Optional<Employee> employeeData = employeeService.login(employee.getEmployeeEmail(), employee.getEmployeePassword());
 
-
-
-
-//    @PostMapping("/login")
-//    public ResponseEntity<LoginResponse> login(@RequestBody Employee employee) {
-//        Employee employee = employeeService.employeeLogin(employee.name(), employee.password());
-//
-//        if (employee == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    .body(new LoginResponse("FAILED", null, null));
-//        }
-//
-//        return ResponseEntity.ok(
-//                new LoginResponse("SUCCESS", employee.getEmployeeId(), employee.getEmployeeName())
-//        );
-//    }
-
-
-
-
-
+        if (employeeData.isPresent()) {
+            Employee found = employeeData.get();
+            found.setEmployeePassword(null);
+        return ResponseEntity.ok(found);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
 }

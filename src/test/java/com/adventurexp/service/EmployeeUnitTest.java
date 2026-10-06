@@ -39,12 +39,12 @@ class EmployeeUnitTest {
         Role instructorRole = new Role(RoleName.EMPLOYEE);
 
         Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", instructorRole
+                "Anna", "11111111", "anna@example.com", "password123", instructorRole
         );
         anna.setEmployeeId(101L);
 
         Employee emil = new Employee(
-                "Emil", "22222222", "emil@example.com", instructorRole
+                "Emil", "22222222", "emil@example.com", "password456", instructorRole
         );
         emil.setEmployeeId(102L);
 
@@ -69,12 +69,12 @@ class EmployeeUnitTest {
         Role EmployeeRole = new Role(RoleName.EMPLOYEE);
 
         Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", EmployeeRole
+                "Anna", "11111111", "anna@example.com", "password123", EmployeeRole
         );
         anna.setEmployeeId(101L);
 
         Employee emil = new Employee(
-                "Emil", "22222222", "emil@example.com", EmployeeRole
+                "Emil", "22222222", "emil@example.com", "password456", EmployeeRole
         );
         emil.setEmployeeId(102L);
 
@@ -107,7 +107,7 @@ class EmployeeUnitTest {
         Role EmployeeRole = new Role(RoleName.EMPLOYEE);
 
         Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", EmployeeRole
+                "Anna", "11111111", "anna@example.com", "password123", EmployeeRole
         );
         anna.setEmployeeId(101L);
 
