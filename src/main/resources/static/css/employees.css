@@ -1,0 +1,50 @@
+/* Medarbejdere */
+.employees h1 { margin-bottom: 1.5rem; }
+
+.employees h2 {
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 0.5rem;
+    font-size: 1.1rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.employees ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.75rem;
+}
+
+.employees li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+}
+
+.employees li strong { font-size: 1rem; }
+
+.employees li span {
+    font-size: 0.85rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+}
+
+/* Placeholder: "Loading...", "None" and errors */
+.employees li.placeholder {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--muted);
+    font-style: italic;
+}
+
+@media (max-width: 480px) {
+    .employees ul { grid-template-columns: 1fr; }
+}

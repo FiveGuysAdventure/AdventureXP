@@ -1,3 +1,23 @@
+function homePage() {return 'Homepage';}
+function bookingPage() {return 'Booking';}
+function reservationPage() {return 'Reservations';}
+function equipmentPage() {return 'Inventory';}
+
+function employeePage() {
+    return`
+        <section>
+            <h1>Medarbejdere</h1>
+                
+                <h2>Managers</h2>
+                    <ul>
+                        <li id="manager-list">Loading...</li>
+                    </ul>
+                    
+                <h2>Employees</h2>
+                    <ul id="employee-list">
+                        <li>Loading...</li>
+                    </ul>           
+        </section>`;
 function homePage() {
     return 'Homepage';
 }
@@ -214,6 +234,7 @@ function employeeLogin() {
 }
 
 function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
+function customerShop() {return 'Overview of snacks and beers'}
 
 const routes = {
     // Homepage and Log-in routing
@@ -225,10 +246,12 @@ const routes = {
         side: bookingPage, needsLogin: true, onRender: setupBookingForm},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
-    "/medarbejdere": {side: employeePage, needsLogin: true},
+    "/employees": {side: employeePage, needsLogin: false},
 
     // Customer directed links
-    "/booking-overview": {side: customerBookingPage, needsLogin: false}
+    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/shop": {side: customerShop, needsLogin: false}
+
 };
 
 
@@ -255,6 +278,55 @@ document.addEventListener("click", (e) => {
         handleRoutes();
     }
 });
+
+// Employee overview
+const EMPLOYEES_URL = "http://localhost:8080";
+
+const managerList = document.getElementById("manager-list");
+const regularEmployeeList = document.getElementById("employee-list");
+
+async function fetchAllEmployees() {
+    const response = await fetch(EMPLOYEES_URL);
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
+}
+
+function createEmployeeItem(employee) {
+    const li = document.createElement("li");
+    li.textContent = employee.name;
+    return li;
+}
+
+function renderEmployeeList(employees) {
+    managerList.innerHTML = "";
+    regularEmployeeList.innerHTML = "";
+
+    employees.forEach(employee => {
+        const li = createEmployeeItem(employee);
+
+        if (employee.role === "MANAGER") {
+            managerList.append(li);
+        }
+
+        if (employee.role === "EMPLOYEE") {
+            regularEmployeeList.append(li);
+        }
+    });
+}
+
+function showError() {
+    console.log(Error);
+    managerList.innerHtml = "Failed to load";
+    regularEmployeeList.innerHTML = "Failed to load";
+}
+
+fetchAllEmployees()
+    .then(renderEmployeeList)
+    .catch(showError);
 
 window.onpopstate = handleRoutes;
 handleRoutes();
