@@ -24,6 +24,9 @@ public class Employee {
     @Column(name = "emp_email", nullable = false, unique = true ,length = 100)
     private String employeeEmail;
 
+    @Column(name = "emp_password", nullable = false, unique = true, length = 60)
+    private String employeePassword;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role roleId;
@@ -39,16 +42,26 @@ public class Employee {
     public Employee(String employeeName,
                     String employeePhoneNumber,
                     String employeeEmail,
+                    String employeePassword,
                     Role roleId) {
 
         this.employeeName = employeeName;
         this.employeePhoneNumber = employeePhoneNumber;
         this.employeeEmail = employeeEmail;
+        this.employeePassword = employeePassword;
         this.roleId = roleId;
     }
 
     public Long getEmployeeId() {
         return employeeId;
+    }
+
+    public String getEmployeePassword() {
+        return employeePassword;
+    }
+
+    public void setEmployeePassword(String employeePassword) {
+        this.employeePassword = employeePassword;
     }
 
     public void setEmployeeId(Long employeeId) {
