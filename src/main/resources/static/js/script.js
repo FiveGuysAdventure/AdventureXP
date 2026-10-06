@@ -193,7 +193,20 @@ function equipmentPage() {
 }
 
 function employeePage() {
-    return 'Medarbejdere';
+    return`
+        <section>
+            <h1>Medarbejdere</h1>
+                
+                <h2>Managers</h2>
+                    <ul>
+                        <li id="manager-list">Loading...</li>
+                    </ul>
+                    
+                <h2>Employees</h2>
+                    <ul id="employee-list">
+                        <li>Loading...</li>
+                    </ul>           
+        </section>`;
 }
 
 function employeeLogin() {
