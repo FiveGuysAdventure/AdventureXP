@@ -236,7 +236,7 @@ const routes = {
 
     // Company internal links
         "/booking": {
-        side: bookingPage, needsLogin: true, onRender: setupBookingForm},
+        side: bookingPage, needsLogin: false, onRender: setupBookingForm},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true},
