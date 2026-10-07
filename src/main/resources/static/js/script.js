@@ -3,22 +3,141 @@ function homePage() {
 }
 
 function bookingPage() {
-    return document.getElementById("booking-template").innerHTML;
+    return BookingPage;
+}
+
+function reservationPage() {
+    return 'Reservationer';
+}
+
+function equipmentPage() {
+    return 'Inventory';
+}
+
+function employeePage() {
+    return`
+        <section>
+            <h1>Medarbejdere</h1>
+                
+                <h2>Managers</h2>
+                    <ul>
+                        <li id="manager-list">Loading...</li>
+                    </ul>
+                    
+                <h2>Employees</h2>
+                    <ul id="employee-list">
+                        <li>Loading...</li>
+                    </ul>           
+        </section>`;
+}
+
+function employeeLogin() {
+    return`
+        <form id="login-form">
+            <div class="container">
+                <label for="username"><b>Username</b></label>
+                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
+
+                <p id="login-error" role="alert" hidden></p>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    `;
+}
+
+function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
+function customerShop() {return 'Overview of snacks and beers'}
+
+const routes = {
+    // Homepage and Log-in routing
+    "/": {side: homePage, needsLogin: false},
+    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
+
+    // Company internal links
+    "/booking": {side: bookingPage, needsLogin: false, onRender: setupBookingForm},
+    "/reservationer": {side: reservationPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/employees": {side: employeePage, needsLogin: true},
+
+    // Customer directed links
+    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/shop": {side: customerShop, needsLogin: false}
+};
+
+const LOGIN_URL = "http://localhost:8080";
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
+function renderApp(html) {
+    document.getElementById("app").innerHTML = html;
+}
+
+function handleRoutes() {
+    let path = routes[location.pathname] || routes["/"];
+
+    if (path.needsLogin && !isLoggedIn()) {
+        history.replaceState(null, "", "/login");
+        path = routes["/login"];
+    }
+
+    document.getElementById("app").innerHTML = path.side();
+    renderApp(path.side());
+    path.onRender?.();
+}
+
+async function login(employee){
+    const response = await fetch(LOGIN_URL + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee)
+    })
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
+}
+
+function navigate(path) {
+    history.pushState(null, "", path); {
+        handleRoutes();
+    }
+}
+
+function setupLoginForm() {
+    const error = document.getElementById("login-error");
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        error.hidden = true;
+
+        try {
+            const data = await login({
+                employeeEmail: document.getElementById("employeeEmail").value.trim(),
+                employeePassword: document.getElementById("employeePassword").value
+            });
+            sessionStorage.setItem("session", JSON.stringify(data));
+            navigate("/booking")
+        } catch (err) {
+            error.textContent = err.message;
+            error.hidden = false;
+        }
+    });
 }
 
 async function bookingRequest(path, options = {}) {
     const response = await fetch(
         "/adventureexperience/bookings" + path, options
     );
-    const data = await response.json();
-
+    const data = await response.json()
     if (!response.ok) {
         throw new Error(data.error || data.message || "HTTP " + response.status);
     }
-
     return data;
 }
-
 async function setupBookingForm() {
     const get = name => document.getElementById("booking-" + name);
     const formatTime = value => value.slice(11, 16);
@@ -184,129 +303,6 @@ async function setupBookingForm() {
     }
 }
 
-function reservationPage() {
-    return 'Reservationer';
-}
-
-function equipmentPage() {
-    return 'Inventory';
-}
-
-function employeePage() {
-    return`
-        <section>
-            <h1>Medarbejdere</h1>
-                
-                <h2>Managers</h2>
-                    <ul>
-                        <li id="manager-list">Loading...</li>
-                    </ul>
-                    
-                <h2>Employees</h2>
-                    <ul id="employee-list">
-                        <li>Loading...</li>
-                    </ul>           
-        </section>`;
-}
-
-function employeeLogin() {
-    return`
-        <form id="login-form">
-            <div class="container">
-                <label for="username"><b>Username</b></label>
-                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
-
-                <label for="password"><b>Password</b></label>
-                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
-
-                <p id="login-error" role="alert" hidden></p>
-                <button type="submit">Login</button>
-            </div>
-        </form>
-    `;
-}
-
-function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
-function customerShop() {return 'Overview of snacks and beers'}
-
-const routes = {
-    // Homepage and Log-in routing
-    "/": {side: homePage, needsLogin: false},
-    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
-
-    // Company internal links
-        "/booking": {
-        side: bookingPage, needsLogin: false, onRender: setupBookingForm},
-    "/reservationer": {side: reservationPage, needsLogin: true},
-    "/inventar": {side: equipmentPage, needsLogin: true},
-    "/employees": {side: employeePage, needsLogin: true},
-
-    // Customer directed links
-    "/booking-overview": {side: customerBookingPage, needsLogin: false},
-    "/shop": {side: customerShop, needsLogin: false}
-
-};
-
-const LOGIN_URL = "http://localhost:8080";
-const isLoggedIn = () => sessionStorage.getItem("session") !== null;
-
-function renderApp(html) {
-    document.getElementById("app").innerHTML = html;
-}
-
-function handleRoutes() {
-    let path = routes[location.pathname] || routes["/"];
-
-    if (path.needsLogin && !isLoggedIn()) {
-        history.replaceState(null, "", "/login");
-        path = routes["/login"];
-    }
-
-    document.getElementById("app").innerHTML = path.side();
-    renderApp(path.side());
-    path.onRender?.();
-}
-
-async function login(employee){
-    const response = await fetch(LOGIN_URL + "/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(employee)
-    })
-
-    if (!response.ok) {
-        throw new Error("HTTP " + response.status)
-    }
-
-    return await response.json();
-}
-
-function navigate(path) {
-    history.pushState(null, "", path); {
-        handleRoutes();
-    }
-}
-
-function setupLoginForm() {
-    const error = document.getElementById("login-error");
-
-    document.getElementById("login-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        error.hidden = true;
-
-        try {
-            const data = await login({
-                employeeEmail: document.getElementById("employeeEmail").value.trim(),
-                employeePassword: document.getElementById("employeePassword").value
-            });
-            sessionStorage.setItem("session", JSON.stringify(data));
-            navigate("/booking")
-        } catch (err) {
-            error.textContent = err.message;
-            error.hidden = false;
-        }
-    });
-}
 
 document.addEventListener("click", (e) => {
     if (e.target.matches("[data-link]")) {
@@ -369,3 +365,111 @@ fetchAllEmployees()
 
 window.onpopstate = handleRoutes;
 handleRoutes();
+
+
+const BookingPage = `
+    <section class="booking-page">
+        <h1>Opret booking</h1>
+        <form id="booking-search"
+            class="booking-form">
+            <fieldset id="booking-search-fields" disabled>
+                <legend>Find ledige tider</legend>
+                <p>
+                    <label>
+                        Aktivitet
+                        <select id="booking-activity" required>
+                            <option value="">
+                                Vælg aktivitet
+                            </option>
+                        </select>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Dato
+                        <input
+                            id="booking-date" type="date" required>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Antal deltagere
+                        <input  id="booking-guests" type="number" min="1" step="1" required>
+                    </label>
+                </p>
+                <button type="submit">
+                    Find ledige tider
+                </button>
+            </fieldset>
+        </form>
+        <p
+            id="booking-message"
+            class="booking-message"
+            role="status"
+        ></p>
+        <form
+            id="booking-save-form"
+            class="booking-form"
+            hidden
+        >
+            <p>
+                <label>
+                    Starttid
+                    <select id="booking-time" required>
+                        <option value="">  Vælg starttid </option>
+                    </select>
+                </label>
+            </p>
+
+
+            <fieldset
+                id="booking-details" hidden disabled>
+                <legend> Bookingoplysninger  </legend>
+                <p class="booking-summary">
+                    Sluttid:
+                    <output id="booking-end"></output>
+                    —
+                    Samlet pris:
+                    <output id="booking-price"></output>
+                </p>
+                <p>
+                    <label>
+                        Medarbejder
+                        <select
+                            id="booking-employee"
+                            required
+                        >
+                            <option value="">
+                                Vælg medarbejder
+                            </option>
+                        </select>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Kundens e-mail
+                        <input
+                            id="booking-email"
+                            type="email"
+                            required
+                        >
+                    </label>
+                </p>
+                <p>
+                    <label> Kundens telefonnummer
+                        <input id="booking-phone" type="tel" required >
+                    </label>
+                </p>
+                <button type="submit">
+                    Gem booking
+                </button>
+            </fieldset>
+        </form>
+        <p
+            id="booking-confirmation"
+            class="booking-confirmation"
+            role="status"
+            hidden
+        ></p>
+    </section>
+`;
