@@ -84,7 +84,7 @@ function employeeLogin() {
     return `
         <form id="login-form">
             <div class="container">
-                <label for="username"><b>Username</b></label>
+                <label for="email"><b>Email</b></label>
                 <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
 
                 <label for="password"><b>Password</b></label>
@@ -134,11 +134,11 @@ const routes = {
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
+    "/booking": {side: bookingPage, needsLogin: true, onRender: renderBooking},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
-    "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
-    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
+    "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
+    "/employeeShop": {side: employeeShop, needsLogin: true, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -161,16 +161,14 @@ function handleRoutes() {
 // LOGIN FORM
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
-function renderApp(html) {
-    document.getElementById("app").innerHTML = html;
-}
+const BASE_API = "http://localhost:8080"
 
 async function login(employee){
-    const response = await fetch("/login", {
+    const response = await fetch(BASE_API + "/api/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
-    })
+    });
 
     if (!response.ok) {
         throw new Error("HTTP " + response.status)
@@ -199,7 +197,7 @@ function setupLoginForm() {
                 employeePassword: document.getElementById("employeePassword").value
             });
             sessionStorage.setItem("session", JSON.stringify(data));
-            navigate("/booking")
+            navigate("/")
         } catch (err) {
             error.textContent = err.message;
             error.hidden = false;
@@ -219,10 +217,10 @@ document.addEventListener("click", (e) => {
 
 
 // EMPLOYEE OVERVIEW
-const EMPLOYEES_URL = "/api/employees";
+//const EMPLOYEES_URL = "/api/employees";
 
 async function fetchAllEmployees() {
-    const response = await fetch(EMPLOYEES_URL);
+    const response = await fetch(BASE_API + "/api/employees");
 
     if (!response.ok) {
         throw new Error("HTTP " + response.status)

@@ -81,7 +81,7 @@ public class BookingService {
         }
 
         if (checkBookingOverlapV2(booking)){
-            throw new BookingConflictException ("Time time slot is taken");
+            throw new BookingConflictException ("Time slot is taken");
         }
 
         if (!equipmentService.availabilityCheckForBooking(booking.getActivityType(), booking)) {
