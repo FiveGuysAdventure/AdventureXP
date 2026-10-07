@@ -120,6 +120,11 @@ function employeeShop() {
             <ul id="product-list">
                <li>Loading products...</li>
             </ul>
+            
+            <h2>Add new product</h2>
+            <input type="text" id="new-name" placeholder="Name">
+            <input type="number" id="new-price" placeholder="Price">
+            <button onclick="createProduct()">Add</button>
         </section>`;
 }
 
@@ -307,6 +312,7 @@ async function loadProducts() {
     }
 }
 
+//feature til employeeShop delen
 async function sellProduct(product) {
     const message = document.getElementById("shop-message");
 
@@ -318,6 +324,29 @@ async function sellProduct(product) {
         message.textContent = product.productName + " sold";
     } else {
         message.textContent = "Sale could not proceed"
+    }
+}
+
+//feature til employeeShop delen
+async function createProduct() {
+    const message = document.getElementById("shop-message");
+
+    const product = {
+        productName: document.getElementById("new-name").value,
+        price: Number(document.getElementById("new-price").value)
+    };
+
+    const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(product)
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " added";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be added";
     }
 }
 
