@@ -3,7 +3,7 @@ function homePage() {
 }
 
 function bookingPage() {
-    return document.getElementById("booking-template").innerHTML;
+    return'';
 }
 
 function reservationPage() {
@@ -63,7 +63,7 @@ const routes = {
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-    //"/booking": {side: bookingPage, needsLogin: true, onRender: setupBookingForm},
+    "/booking": {side: bookingPage, needsLogin: false},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
@@ -146,6 +146,14 @@ document.addEventListener("click", (e) => {
         handleRoutes();
     }
 });
+
+// CREATE Booking
+const BOOKING_FORM_URL = "/api/booking";
+
+function loadBookingForm() {
+
+}
+
 
 // EMPLOYEE OVERVIEW
 const EMPLOYEES_URL = "/api/employees";
