@@ -55,7 +55,19 @@ function employeeLogin() {
 }
 
 function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
-function customerShop() {return 'Overview of snacks and beers'}
+
+function customerShop() {
+    return`
+        <section>
+            <h1>Menu</h1>
+            <ul id="product-list">
+                <li>Henter produkter...</li>
+            </ul>
+        </section>`;
+}
+
+
+function employeeShop(){}
 
 const routes = {
     // Homepage and Log-in routing
@@ -70,7 +82,7 @@ const routes = {
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
-    "/shop": {side: customerShop, needsLogin: false}
+    "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 
 };
 
@@ -200,6 +212,25 @@ function loadEmployees() {
     fetchAllEmployees()
         .then(renderEmployeeList)
         .catch(showError);
+}
+
+//SHOP
+async function loadProducts() {
+    const productList = document.getElementById("product-list");
+
+    try {
+        const response = await fetch("/api/products");
+        const products = await response.json();
+
+        productList.innerHTML = "";
+        products.forEach(product => {
+            const li = document.createElement("li");
+            li.textContent = product.productName + " - " + product.price + " kr.";
+            productList.append(li);
+        });
+    } catch (err) {
+        productList.innerHTML = "Failed to load products";
+    }
 }
 
 window.onpopstate = handleRoutes;
