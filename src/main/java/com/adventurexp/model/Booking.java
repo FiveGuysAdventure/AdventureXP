@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "booking")
@@ -136,5 +137,5 @@ public class Booking {
             this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
         }
     }
-
+    
 }
