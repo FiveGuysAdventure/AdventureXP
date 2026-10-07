@@ -50,7 +50,7 @@ function bookingPage() {
 }
 
 function reservationPage() {
-    return`
+    return `
         <section>
             <h1>Reservations</h1>
            
@@ -64,7 +64,7 @@ function equipmentPage() {
 }
 
 function employeePage() {
-    return`
+    return `
         <section>
             <h1>Medarbejdere</h1>
                 
@@ -81,7 +81,7 @@ function employeePage() {
 }
 
 function employeeLogin() {
-    return`
+    return `
         <form id="login-form">
             <div class="container">
                 <label for="username"><b>Username</b></label>
@@ -97,20 +97,31 @@ function employeeLogin() {
     `;
 }
 
-function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
+function customerBookingPage() {
+    return 'BOOKING OVERVIEW CUSTOMERS'
+}
 
 function customerShop() {
-    return`
+    return `
         <section>
             <h1>Menu</h1>
             <ul id="product-list">
-                <li>Henter produkter...</li>
+                <li>Loading products...</li>
             </ul>
         </section>`;
 }
 
 
-function employeeShop(){}
+function employeeShop() {
+    return `
+        <section>
+            <h1>Menu</h1>
+            <p id="shop-message"></p>
+            <ul id="product-list">
+               <li>Loading products...</li>
+            </ul>
+        </section>`;
+}
 
 const routes = {
     // Homepage and Log-in routing
@@ -122,10 +133,11 @@ const routes = {
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
+    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
-    "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
+    "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts},
 
 };
 
@@ -151,10 +163,10 @@ function renderApp(html) {
     document.getElementById("app").innerHTML = html;
 }
 
-async function login(employee){
+async function login(employee) {
     const response = await fetch(LOGIN_URL + "/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
     })
 
@@ -166,7 +178,8 @@ async function login(employee){
 }
 
 function navigate(path) {
-    history.pushState(null, "", path); {
+    history.pushState(null, "", path);
+    {
         handleRoutes();
     }
 }
@@ -240,7 +253,7 @@ function renderEmployeeList(employees) {
 
         const roleType = employee.roleId?.roleName?.toUpperCase();
 
-        if (roleType=== "MANAGER") {
+        if (roleType === "MANAGER") {
             managerList.append(li);
         }
 
@@ -276,11 +289,35 @@ async function loadProducts() {
         productList.innerHTML = "";
         products.forEach(product => {
             const li = document.createElement("li");
-            li.textContent = product.productName + " - " + product.price + " kr.";
+            li.textContent = product.productName + " - " + product.price + " kr. ";
+
+            //Tilføjelse til employeeShop delen af siden
+            if (location.pathname === "/employeeShop") {
+                const button = document.createElement("button");
+                button.textContent = "Sælg";
+                button.addEventListener("click", () => sellProduct(product));
+                li.append(button);
+            }
+
+
             productList.append(li);
         });
     } catch (err) {
         productList.innerHTML = "Failed to load products";
+    }
+}
+
+async function sellProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    const response = await fetch("/api/sales?productId=" + product.productId + "&quantity=1", {
+        method: "POST"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " sold";
+    } else {
+        message.textContent = "Sale could not proceed"
     }
 }
 

@@ -32,7 +32,7 @@ public class SaleUnitTest {
 
     //HAPPY PATH: Medarbejderen sælger et eller flere produkter - salget gemmes
     @Test
-    void sellProduct_shouldSaveSaleWithQuantityAndPrice() {
+    void sellProduct_shouldSaveSale() {
         Product product1 = new Product("Fanta", 35);
         when(productRepo.findById(1)).thenReturn(Optional.of(product1));
 
