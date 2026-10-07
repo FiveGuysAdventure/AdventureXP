@@ -1,5 +1,6 @@
 package com.adventurexp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class ActivityType {
     @JoinColumn(name = "tag_id")
     private ActivityTag tagId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "activityType")
     private List<Booking> bookings = new ArrayList<>();
 
