@@ -3,7 +3,50 @@ function homePage() {
 }
 
 function bookingPage() {
-    return'';
+    return `<h1>Book en aktivitet</h1>
+
+    <form id="bookingForm" novalidate>
+
+        <label for="activityTypeId">Aktivitet
+            <select id="activityTypeId" name="activityTypeId" required>
+                <option value="">-- Vælg aktivitet --</option>
+            </select>
+            <span class="error" data-error="activityTypeId"></span>
+        </label>
+
+        <label for="startTime">Starttidspunkt
+            <input type="datetime-local" id="startTime" name="startTime" required>
+                <span class="error" data-error="startTime"></span>
+        </label>
+
+        <label for="numOfGuests">Antal deltagere
+            <input type="number" id="numOfGuests" name="numOfGuests" min="1" value="1" required>
+                <span class="error" data-error="numOfGuests"></span>
+        </label>
+
+        <label for="employeeId">Medarbejder (valgfri)
+            <select id="employeeId" name="employeeId">
+                <option value="">-- Ingen præference --</option>
+            </select>
+            <span class="error" data-error="employeeId"></span>
+        </label>
+
+        <label for="contactEmail">E-mail
+            <input type="email" id="contactEmail" name="contactEmail" required>
+                <span class="error" data-error="contactEmail"></span>
+        </label>
+
+        <label for="contactNumber">Telefonnummer
+            <input type="tel" id="contactNumber" name="contactNumber" required>
+                <span class="error" data-error="contactNumber"></span>
+        </label>
+
+        <p>Pris: <strong id="price">–</strong></p>
+
+        <button type="submit">Book</button>
+    </form>
+
+    <div id="result"></div>`;
 }
 
 function reservationPage() {

@@ -1,0 +1,150 @@
+#bookingForm {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 480px;
+}
+
+#bookingForm label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+}
+
+#bookingForm input,
+#bookingForm select {
+    display: block;
+    width: 100%;
+    margin-top: 0.35rem;
+    padding: 0.65rem 0.75rem;
+    font: inherit;
+    font-weight: 400;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+#bookingForm input::placeholder {
+    color: var(--muted);
+}
+
+#bookingForm input:hover,
+#bookingForm select:hover {
+    border-color: var(--muted);
+}
+
+#bookingForm input:focus-visible,
+#bookingForm select:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+#bookingForm input:disabled,
+#bookingForm select:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Gør ikon til dato/tid synligt i mørkt tema */
+#bookingForm input[type="datetime-local"] {
+    color-scheme: light dark;
+}
+
+/* Fejlbeskeder */
+#bookingForm .error {
+    display: block;
+    min-height: 1.1em;
+    margin-top: 0.25rem;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: #d93025;
+}
+
+@media (prefers-color-scheme: dark) {
+    #bookingForm .error { color: #ff8a80; }
+}
+
+/* Felt med fejl (tilføj klassen .invalid på input via JS, hvis du vil) */
+#bookingForm .invalid {
+    border-color: #d93025;
+}
+
+/* Prisoverslag */
+.price-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--muted);
+}
+
+.price-box strong {
+    color: var(--text);
+    font-size: 1.15rem;
+}
+
+/* Knap */
+#bookingForm button[type="submit"] {
+    justify-self: start;
+    padding: 0.7rem 1.6rem;
+    font: inherit;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.05s;
+}
+
+#bookingForm button[type="submit"]:hover { filter: brightness(1.1); }
+#bookingForm button[type="submit"]:active { transform: translateY(1px); }
+
+#bookingForm button[type="submit"]:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+#bookingForm button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* Resultatbesked */
+#result {
+    display: none;
+    margin-top: 1.25rem;
+    padding: 0.9rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+}
+
+#result.success {
+    border-color: #2e7d32;
+    background: color-mix(in srgb, #2e7d32 12%, var(--surface));
+}
+
+#result.failure {
+    border-color: #d93025;
+    background: color-mix(in srgb, #d93025 12%, var(--surface));
+}
+
+/* To felter side om side på bredere skærme */
+@media (min-width: 560px) {
+    #bookingForm { max-width: 560px; grid-template-columns: 1fr 1fr; }
+
+    #bookingForm .full,
+    #bookingForm .price-box,
+    #bookingForm button[type="submit"],
+    #bookingForm label:has(#activityTypeId),
+    #bookingForm label:has(#startTime) {
+        grid-column: 1 / -1;
+    }
+}
