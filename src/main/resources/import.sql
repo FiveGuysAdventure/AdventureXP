@@ -38,3 +38,10 @@ INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sum
 INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 2', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
 INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 3', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
 INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 4', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
+
+-- Shop products
+INSERT INTO product (product_name, price) VALUES ('T-shirt', 150);
+INSERT INTO product (product_name, price) VALUES ('Cola', 20);
+INSERT INTO product (product_name, price) VALUES ('Fanta', 20);
+INSERT INTO product (product_name, price) VALUES ('Haribo', 15);
+INSERT INTO product (product_name, price) VALUES ('Chips', 25);
