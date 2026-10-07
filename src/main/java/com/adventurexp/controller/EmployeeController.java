@@ -12,13 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("http://localhost:63342")
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("/employees")
+    @GetMapping("api/employees")
     public List<Employee> getAllEmployees() {
         return employeeService.getListOfEmployees();
     }

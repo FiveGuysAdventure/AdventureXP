@@ -6,186 +6,14 @@ function bookingPage() {
     return document.getElementById("booking-template").innerHTML;
 }
 
-async function bookingRequest(path, options = {}) {
-    const response = await fetch(
-        "/adventureexperience/bookings" + path, options
-    );
-    const data = await response.json();
-
-    if (!response.ok) {
-        throw new Error(data.error || data.message || "HTTP " + response.status);
-    }
-
-    return data;
-}
-
-async function setupBookingForm() {
-    const get = name => document.getElementById("booking-" + name);
-    const formatTime = value => value.slice(11, 16);
-    const searchForm = get("search");
-    const bookingForm = get("save-form");
-    const details = get("details");
-    const message = get("message");
-
-    let criteria, price, slots = [], activities = [];
-
-    // Reused for activities, times and employees.
-    function fillSelect(name, items, text, value) {
-        const select = get(name);
-        select.replaceChildren(new Option("Vælg...", ""));
-
-        for (const item of items) {
-            select.add(new Option(text(item), value(item)));
-        }
-    }
-
-    function clearChoices() {
-        slots = [];
-        bookingForm.hidden = true;
-        details.hidden = true;
-        details.disabled = true;
-        get("confirmation").hidden = true;
-        message.textContent = "";
-    }
-
-    function setBusy(busy) {
-        get("search-fields").disabled = busy;
-        get("time").disabled = busy;
-        details.disabled = busy || details.hidden;
-    }
-
-    // Changing the search invalidates the previous choices.
-    searchForm.addEventListener("input", clearChoices);
-
-    // Find available times.
-    searchForm.addEventListener("submit", async event => {
-        event.preventDefault();
-        clearChoices();
-        setBusy(true);
-
-        criteria = {
-            activityId: Number(get("activity").value),
-            date: get("date").value,
-            numOfGuests: Number(get("guests").value)
-        };
-
-        try {
-            const data = await bookingRequest(
-                "/available-slots?" + new URLSearchParams(criteria)
-            );
-
-            slots = data.slots;
-            price = data.price;
-
-            if (!slots.length) {
-                message.textContent = data.capacityAvailable
-                    ? "Ingen ledige tider."
-                    : "Ikke nok udstyr til deltagerantallet.";
-                return;
-            }
-
-            fillSelect("time", slots,
-                slot => formatTime(slot.startTime),
-                slot => slot.startTime);
-
-            bookingForm.hidden = false;
-        } catch (error) {
-            message.textContent = error.message;
-        } finally {
-            setBusy(false);
-        }
-    });
-
-    // Show employees and details for the selected time.
-    get("time").addEventListener("change", () => {
-        const slot = slots.find(s => s.startTime === get("time").value);
-
-        details.hidden = !slot;
-        details.disabled = !slot;
-        if (!slot) return;
-
-        fillSelect("employee", slot.availableEmployees,
-            employee => employee.name,
-            employee => employee.employeeId);
-
-        get("end").textContent = formatTime(slot.endTime);
-        get("price").textContent = price + " kr.";
-    });
-
-    // Save the booking.
-    bookingForm.addEventListener("submit", async event => {
-        event.preventDefault();
-
-        const activity = activities.find(
-            a => a.activityId === criteria.activityId
-        );
-
-        const activityName = activity.activityName;
-
-        const input = {
-            activityType: activity,
-            employee: {
-                employeeId: Number(get("employee").value)
-            },
-            bookingDate: criteria.date,
-            startTime: get("time").value,
-            numOfGuests: criteria.numOfGuests,
-            price: price,
-            contactEmail: get("email").value.trim(),
-            contactNumber: get("phone").value.trim()
-        };
-
-        setBusy(true);
-
-        try {
-            const saved = await bookingRequest("", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(input)
-            });
-
-            clearChoices();
-            get("email").value = "";
-            get("phone").value = "";
-
-            get("confirmation").textContent = [
-                "Booking #" + saved.bookingId + " er oprettet.",
-                activityName + " – " + input.numOfGuests + " deltagere",
-                saved.startTime.slice(0, 10) + " kl. "
-                + formatTime(saved.startTime)
-                + " – " + formatTime(saved.endTime),
-                "Medarbejder: " + saved.employeeName,
-                "Samlet pris: " + saved.price + " kr."
-            ].join("\n");
-
-            get("confirmation").hidden = false;
-        } catch (error) {
-            clearChoices();
-            message.textContent = error.message + " Søg ledige tider igen.";
-        } finally {
-            setBusy(false);
-        }
-    });
-
-    // Load activities when the page opens.
-    try {
-        activities = await bookingRequest("/activities");
-
-        fillSelect("activity", activities,
-            activity => activity.activityName,
-            activity => activity.activityId);
-
-        get("search-fields").disabled = !activities.length;
-        message.textContent = activities.length
-            ? ""
-            : "Ingen aktiviteter oprettet.";
-    } catch (error) {
-        message.textContent = error.message;
-    }
-}
-
 function reservationPage() {
-    return 'Reservationer';
+    return`
+        <section>
+            <h1>Reservations</h1>
+           
+            
+        
+        </section>`;
 }
 
 function equipmentPage() {
@@ -198,13 +26,13 @@ function employeePage() {
             <h1>Medarbejdere</h1>
                 
                 <h2>Managers</h2>
-                    <ul>
-                        <li id="manager-list">Loading...</li>
+                    <ul id="manager-list">
+                        <li>Emp</li>
                     </ul>
                     
                 <h2>Employees</h2>
                     <ul id="employee-list">
-                        <li>Loading...</li>
+                        <li>Emp</li>
                     </ul>           
         </section>`;
 }
@@ -235,11 +63,10 @@ const routes = {
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-        "/booking": {
-        side: bookingPage, needsLogin: true, onRender: setupBookingForm},
+    //"/booking": {side: bookingPage, needsLogin: true, onRender: setupBookingForm},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
-    "/employees": {side: employeePage, needsLogin: true},
+    "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -247,13 +74,7 @@ const routes = {
 
 };
 
-const LOGIN_URL = "http://localhost:8080";
-const isLoggedIn = () => sessionStorage.getItem("session") !== null;
-
-function renderApp(html) {
-    document.getElementById("app").innerHTML = html;
-}
-
+// ROUTE HANDLING
 function handleRoutes() {
     let path = routes[location.pathname] || routes["/"];
 
@@ -265,6 +86,14 @@ function handleRoutes() {
     document.getElementById("app").innerHTML = path.side();
     renderApp(path.side());
     path.onRender?.();
+}
+
+// LOGIN FORM
+const LOGIN_URL = "http://localhost:8080";
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
+function renderApp(html) {
+    document.getElementById("app").innerHTML = html;
 }
 
 async function login(employee){
@@ -318,11 +147,8 @@ document.addEventListener("click", (e) => {
     }
 });
 
-// Employee overview
-const EMPLOYEES_URL = "http://localhost:8080";
-
-const managerList = document.getElementById("manager-list");
-const regularEmployeeList = document.getElementById("employee-list");
+// EMPLOYEE OVERVIEW
+const EMPLOYEES_URL = "/api/employees";
 
 async function fetchAllEmployees() {
     const response = await fetch(EMPLOYEES_URL);
@@ -336,36 +162,45 @@ async function fetchAllEmployees() {
 
 function createEmployeeItem(employee) {
     const li = document.createElement("li");
-    li.textContent = employee.name;
+    li.textContent = employee.employeeName;
     return li;
 }
 
 function renderEmployeeList(employees) {
+    const managerList = document.getElementById("manager-list");
+    const regularEmployeeList = document.getElementById("employee-list");
     managerList.innerHTML = "";
     regularEmployeeList.innerHTML = "";
 
     employees.forEach(employee => {
         const li = createEmployeeItem(employee);
 
-        if (employee.role === "MANAGER") {
+        const roleType = employee.roleId?.roleName?.toUpperCase();
+
+        if (roleType=== "MANAGER") {
             managerList.append(li);
         }
 
-        if (employee.role === "EMPLOYEE") {
+        if (roleType === "EMPLOYEE") {
             regularEmployeeList.append(li);
         }
     });
 }
 
 function showError() {
-    console.log(Error);
-    managerList.innerHtml = "Failed to load";
-    regularEmployeeList.innerHTML = "Failed to load";
+    console.error(Error);
+
+    const managerList = document.getElementById("manager-list");
+    const regularEmployeeList = document.getElementById("employee-list");
+    if (managerList) managerList.innerHTML = "Failed to load managers";
+    if (regularEmployeeList) regularEmployeeList.innerHTML = "Failed to load employee";
 }
 
-fetchAllEmployees()
-    .then(renderEmployeeList)
-    .catch(showError);
+function loadEmployees() {
+    fetchAllEmployees()
+        .then(renderEmployeeList)
+        .catch(showError);
+}
 
 window.onpopstate = handleRoutes;
 handleRoutes();
