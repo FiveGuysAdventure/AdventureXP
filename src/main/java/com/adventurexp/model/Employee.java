@@ -24,7 +24,8 @@ public class Employee {
     @Column(name = "emp_email", nullable = false, unique = true ,length = 100)
     private String employeeEmail;
 
-    @Column(name = "emp_password", nullable = false, unique = true, length = 60)
+    @Column(name = "emp_password", nullable = false, length = 60)
+    @JsonIgnore
     private String employeePassword;
 
     @ManyToOne
