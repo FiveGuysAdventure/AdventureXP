@@ -41,7 +41,7 @@ function bookingPage() {
                 <span class="error" data-error="contactNumber"></span>
         </label>
 
-        <p>Pris: <strong id="price">–</strong></p>
+       <!-- <p>Pris: <strong id="price">–</strong></p> -->
 
         <button type="submit">Book</button>
     </form>
@@ -118,7 +118,7 @@ const routes = {
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-    "/booking": {side: bookingPage, needsLogin: false},
+    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
@@ -126,7 +126,6 @@ const routes = {
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
-
 };
 
 // ROUTE HANDLING
@@ -139,12 +138,10 @@ function handleRoutes() {
     }
 
     document.getElementById("app").innerHTML = path.side();
-    renderApp(path.side());
     path.onRender?.();
 }
 
 // LOGIN FORM
-const LOGIN_URL = "http://localhost:8080";
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
 function renderApp(html) {
@@ -152,7 +149,7 @@ function renderApp(html) {
 }
 
 async function login(employee){
-    const response = await fetch(LOGIN_URL + "/login", {
+    const response = await fetch("/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(employee)
@@ -201,13 +198,6 @@ document.addEventListener("click", (e) => {
         handleRoutes();
     }
 });
-
-// CREATE Booking
-const BOOKING_FORM_URL = "/api/booking";
-
-function loadBookingForm() {
-
-}
 
 
 // EMPLOYEE OVERVIEW
@@ -263,6 +253,78 @@ function loadEmployees() {
     fetchAllEmployees()
         .then(renderEmployeeList)
         .catch(showError);
+}
+
+// CREATE Booking
+async function loadBookingForm() {
+    const response = await fetch("/api/booking");
+
+    if (!response.ok) {
+        throw new Error("Http " + response.status);
+    }
+
+    const data = await response.json();
+
+    const activitySelect = document.getElementById("activityTypeId");
+    data.activityTypeList.forEach((activityType) => {
+        activitySelect.add(new Option(activityType.activityName, activityType.activityId));
+    });
+
+    const employeeSelect = document.getElementById("employeeId");
+    data.employeeList.forEach((employeeType) => {
+        employeeSelect.add(new Option(employeeType.employeeName, employeeType.employeeId));
+    });
+}
+
+async function createBooking(booking) {
+    const result = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking)
+    });
+
+    if (!result.ok) {
+        throw new Error("Http: " + result.status);
+    }
+
+    return await result.json();
+}
+
+async function handleBookingSubmit(e) {
+    e.preventDefault();
+    const bookingForm = e.target;
+
+    const booking = {
+        contactEmail: bookingForm.contactEmail.value,
+        contactNumber: bookingForm.contactNumber.value,
+        numOfGuests: Number(bookingForm.numOfGuests.value),
+        startTime: bookingForm.startTime.value,
+        activityTypeId: bookingForm.activityTypeId.value ? Number(bookingForm.activityTypeId.value) : null,
+        employeeId: bookingForm.employeeId.value ? Number(bookingForm.employeeId.value) : null
+    };
+
+    const result = document.getElementById("result");
+
+    try {
+        const saved = await createBooking(booking);
+        result.className = "success";
+        result.textContent = "Booking oprettet (nr. " + saved.bookingId + ", pris " + saved.price + " kr.)";
+        result.style.display = "block";
+        bookingForm.reset();
+    } catch (err) {
+        result.className = "failure";
+        result.textContent = "Kunne ikke oprette booking: " + err.message;
+        result.style.display = "block";
+        console.error(err);
+    }
+}
+
+function renderBooking() {
+    const bookingForm = document.getElementById("bookingForm");
+    loadBookingForm();
+
+    bookingForm.removeEventListener("submit", handleBookingSubmit);
+    bookingForm.addEventListener("submit", handleBookingSubmit);
 }
 
 //SHOP

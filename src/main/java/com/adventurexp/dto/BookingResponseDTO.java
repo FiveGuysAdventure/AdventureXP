@@ -1,14 +1,11 @@
 package com.adventurexp.dto;
 
-import com.adventurexp.model.ActivityType;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class BookingRequestDTO {
+public class BookingResponseDTO {
 
     @NotBlank(message = "Email is required")
     private String contactEmail;
@@ -26,12 +23,11 @@ public class BookingRequestDTO {
 
     private LocalDateTime endTime;
 
-    @NotBlank(message = "Choose activity")
     private Long activityTypeId;
 
     private Long employeeId;
 
-    public BookingRequestDTO() {}
+    public BookingResponseDTO() {}
 
     public String getContactEmail() {return contactEmail;}
     public void setContactEmail(String contactEmail) {this.contactEmail = contactEmail;}

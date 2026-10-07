@@ -48,12 +48,10 @@
     cursor: not-allowed;
 }
 
-/* Gør ikon til dato/tid synligt i mørkt tema */
 #bookingForm input[type="datetime-local"] {
     color-scheme: light dark;
 }
 
-/* Fejlbeskeder */
 #bookingForm .error {
     display: block;
     min-height: 1.1em;
@@ -67,12 +65,10 @@
     #bookingForm .error { color: #ff8a80; }
 }
 
-/* Felt med fejl (tilføj klassen .invalid på input via JS, hvis du vil) */
 #bookingForm .invalid {
     border-color: #d93025;
 }
 
-/* Prisoverslag */
 .price-box {
     display: flex;
     justify-content: space-between;
@@ -89,7 +85,6 @@
     font-size: 1.15rem;
 }
 
-/* Knap */
 #bookingForm button[type="submit"] {
     justify-self: start;
     padding: 0.7rem 1.6rem;
@@ -116,7 +111,6 @@
     cursor: wait;
 }
 
-/* Resultatbesked */
 #result {
     display: none;
     margin-top: 1.25rem;
@@ -136,7 +130,6 @@
     background: color-mix(in srgb, #d93025 12%, var(--surface));
 }
 
-/* To felter side om side på bredere skærme */
 @media (min-width: 560px) {
     #bookingForm { max-width: 560px; grid-template-columns: 1fr 1fr; }
 

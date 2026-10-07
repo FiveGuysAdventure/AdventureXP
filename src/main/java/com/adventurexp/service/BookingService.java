@@ -1,6 +1,6 @@
 package com.adventurexp.service;
 
-import com.adventurexp.dto.BookingRequestDTO;
+import com.adventurexp.dto.BookingResponseDTO;
 import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class BookingService {
         return booking.get();
     }
 
-    public Booking createBookingForm(BookingRequestDTO requestDTO) {
+    public Booking createBookingForm(BookingResponseDTO requestDTO) {
        ActivityType activityType = activityTypeRepo.findById(requestDTO.getActivityTypeId())
                .orElseThrow(()-> new BookingConflictException("No activity found: " + requestDTO.getActivityTypeId()));
 
@@ -69,15 +68,16 @@ public class BookingService {
 
     public Booking createBooking(Booking booking) {
 
-        LocalTime OPENING = LocalTime.of(8, 0);
-        LocalTime CLOSING = LocalTime.of(20, 0);
-
         if (booking == null) {
             throw new EntityNotFoundException("No booking was found");
         }
 
-        if (booking.getStartTime().isBefore(ChronoLocalDateTime.from(OPENING)) || booking.getEndTime().isAfter(ChronoLocalDateTime.from(CLOSING))) {
-            throw new BookingConflictException("Booking is outside opening hours");
+        LocalTime OPENING = LocalTime.of(8, 0);
+        LocalTime CLOSING = LocalTime.of(20, 0);
+        LocalDate bookingDate = booking.getBookingDate();
+
+        if (booking.getStartTime().isBefore(OPENING.atDate(bookingDate)) || booking.getEndTime().isAfter(CLOSING.atDate(bookingDate))) {
+            throw new BookingConflictException("Booking is outside opening hours 8:00-20:00");
         }
 
         if (checkBookingOverlapV2(booking)){

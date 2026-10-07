@@ -2,6 +2,7 @@ package com.adventurexp.service;
 
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.repository.ActivityTypeRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Service
 public class ActivityTypeService {
 
-
+@Autowired
 private ActivityTypeRepo activityTypeRepo;
 
     public List<ActivityType> getAvailableActivities() {
