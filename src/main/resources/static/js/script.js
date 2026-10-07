@@ -284,6 +284,7 @@ function loadEmployees() {
 }
 
 //SHOP
+//bliver brugt både i customerShop & employeeShop
 async function loadProducts() {
     const productList = document.getElementById("product-list");
 
@@ -302,6 +303,11 @@ async function loadProducts() {
                 button.textContent = "Sælg";
                 button.addEventListener("click", () => sellProduct(product));
                 li.append(button);
+
+                const priceButton = document.createElement("button");
+                priceButton.textContent = "Change price";
+                priceButton.addEventListener("click", () => updatePrice(product));
+                li.append(priceButton);
             }
 
 
@@ -347,6 +353,28 @@ async function createProduct() {
         loadProducts();
     } else {
         message.textContent = "Product could not be added";
+    }
+}
+
+//feature til employeeShop delen
+async function updatePrice(product) {
+    const message = document.getElementById("shop-message");
+
+    const newPrice = prompt("New price for " + product.productName + ":");
+
+    if (newPrice === null) {
+        return;
+    }
+
+    const response = await fetch("/api/products/" + product.productId + "/price?price=" + newPrice, {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " new price " + newPrice + " kr.";
+        loadProducts();
+    } else {
+        message.textContent = "Price could not be changed";
     }
 }
 
