@@ -29,7 +29,7 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/api/products/{id}/price")
+    @PutMapping("/api/products/{id}/price")
     public ResponseEntity<Product> updatePrice(@PathVariable Integer id, @RequestParam int price) {
         try {
             return ResponseEntity.ok(productService.updatePrice(id, price));

@@ -50,7 +50,7 @@ function bookingPage() {
 }
 
 function reservationPage() {
-    return`
+    return `
         <section>
             <h1>Reservations</h1>
            
@@ -64,7 +64,7 @@ function equipmentPage() {
 }
 
 function employeePage() {
-    return`
+    return `
         <section>
             <h1>Medarbejdere</h1>
                 
@@ -81,7 +81,7 @@ function employeePage() {
 }
 
 function employeeLogin() {
-    return`
+    return `
         <form id="login-form">
             <div class="container">
                 <label for="username"><b>Username</b></label>
@@ -97,20 +97,36 @@ function employeeLogin() {
     `;
 }
 
-function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
+function customerBookingPage() {
+    return 'BOOKING OVERVIEW CUSTOMERS'
+}
 
 function customerShop() {
-    return`
+    return `
         <section>
             <h1>Menu</h1>
             <ul id="product-list">
-                <li>Henter produkter...</li>
+                <li>Loading products...</li>
             </ul>
         </section>`;
 }
 
 
-function employeeShop(){}
+function employeeShop() {
+    return `
+        <section>
+            <h1>Menu</h1>
+            <p id="shop-message"></p>
+            <ul id="product-list">
+               <li>Loading products...</li>
+            </ul>
+            
+            <h2>Add new product</h2>
+            <input type="text" id="new-name" placeholder="Name">
+            <input type="number" id="new-price" placeholder="Price">
+            <button onclick="createProduct()">Add</button>
+        </section>`;
+}
 
 const routes = {
     // Homepage and Log-in routing
@@ -122,6 +138,7 @@ const routes = {
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: false, onRender: loadEmployees},
+    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -151,7 +168,7 @@ function renderApp(html) {
 async function login(employee){
     const response = await fetch("/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
     })
 
@@ -163,7 +180,8 @@ async function login(employee){
 }
 
 function navigate(path) {
-    history.pushState(null, "", path); {
+    history.pushState(null, "", path);
+    {
         handleRoutes();
     }
 }
@@ -230,7 +248,7 @@ function renderEmployeeList(employees) {
 
         const roleType = employee.roleId?.roleName?.toUpperCase();
 
-        if (roleType=== "MANAGER") {
+        if (roleType === "MANAGER") {
             managerList.append(li);
         }
 
@@ -328,6 +346,7 @@ function renderBooking() {
 }
 
 //SHOP
+//bliver brugt både i customerShop & employeeShop
 async function loadProducts() {
     const productList = document.getElementById("product-list");
 
@@ -338,11 +357,86 @@ async function loadProducts() {
         productList.innerHTML = "";
         products.forEach(product => {
             const li = document.createElement("li");
-            li.textContent = product.productName + " - " + product.price + " kr.";
+            li.textContent = product.productName + " - " + product.price + " kr. ";
+
+            //Tilføjelse til employeeShop delen af siden
+            if (location.pathname === "/employeeShop") {
+                const button = document.createElement("button");
+                button.textContent = "Sælg";
+                button.addEventListener("click", () => sellProduct(product));
+                li.append(button);
+
+                const priceButton = document.createElement("button");
+                priceButton.textContent = "Change price";
+                priceButton.addEventListener("click", () => updatePrice(product));
+                li.append(priceButton);
+            }
+
+
             productList.append(li);
         });
     } catch (err) {
         productList.innerHTML = "Failed to load products";
+    }
+}
+
+//feature til employeeShop delen
+async function sellProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    const response = await fetch("/api/sales?productId=" + product.productId + "&quantity=1", {
+        method: "POST"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " sold";
+    } else {
+        message.textContent = "Sale could not proceed"
+    }
+}
+
+//feature til employeeShop delen
+async function createProduct() {
+    const message = document.getElementById("shop-message");
+
+    const product = {
+        productName: document.getElementById("new-name").value,
+        price: Number(document.getElementById("new-price").value)
+    };
+
+    const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(product)
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " added";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be added";
+    }
+}
+
+//feature til employeeShop delen
+async function updatePrice(product) {
+    const message = document.getElementById("shop-message");
+
+    const newPrice = prompt("New price for " + product.productName + ":");
+
+    if (newPrice === null) {
+        return;
+    }
+
+    const response = await fetch("/api/products/" + product.productId + "/price?price=" + newPrice, {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " new price " + newPrice + " kr.";
+        loadProducts();
+    } else {
+        message.textContent = "Price could not be changed";
     }
 }
 
