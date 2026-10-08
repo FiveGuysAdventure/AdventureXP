@@ -1,6 +1,7 @@
 package com.adventurexp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -24,7 +25,8 @@ public class Employee {
     @Column(name = "emp_email", nullable = false, unique = true ,length = 100)
     private String employeeEmail;
 
-    @Column(name = "emp_password", nullable = false, unique = true, length = 60)
+    @Column(name = "emp_password", nullable = false, length = 60)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String employeePassword;
 
     @ManyToOne

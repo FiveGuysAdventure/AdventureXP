@@ -51,4 +51,16 @@ public class ProductService {
         product.setPrice(newPrice);
         return productRepo.save(product);
     }
+
+    public List<Product> getActiveProducts() {
+        return productRepo.findAllByActiveTrue();
+    }
+
+    public Product deactivateProduct(Integer productId) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id " + productId + " not found"));
+
+        product.setActive(false);
+        return productRepo.save(product);
+    }
 }

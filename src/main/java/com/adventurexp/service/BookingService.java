@@ -4,13 +4,16 @@ import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
 import com.adventurexp.model.Employee;
+import com.adventurexp.repository.ActivityTypeRepo;
 import com.adventurexp.repository.BookingRepo;
+import com.adventurexp.repository.EmployeeRepo;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +30,12 @@ public class BookingService {
 
     @Autowired
     private EquipmentService equipmentService;
+
+    @Autowired
+    private ActivityTypeRepo activityTypeRepo;
+
+    @Autowired
+    private EmployeeRepo employeeRepo;
 
     public Booking getBooking(Long id) {
         Optional<Booking> booking = bookingRepo.findById(id);

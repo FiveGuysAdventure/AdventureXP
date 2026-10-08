@@ -25,11 +25,18 @@ INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Min
 INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Minigolf putter 3', (SELECT activity_id FROM activity_type WHERE activity_name = 'Minigolf'), FALSE);
 INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Minigolf putter 4', (SELECT activity_id FROM activity_type WHERE activity_name = 'Minigolf'), FALSE);
 
--- Bowling equipment
-INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Bowling ball 1', (SELECT activity_id FROM activity_type WHERE activity_name = 'Bowling'), FALSE);
-INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Bowling ball 2', (SELECT activity_id FROM activity_type WHERE activity_name = 'Bowling'), FALSE);
-INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Bowling ball 3', (SELECT activity_id FROM activity_type WHERE activity_name = 'Bowling'), FALSE);
-INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Bowling ball 4', (SELECT activity_id FROM activity_type WHERE activity_name = 'Bowling'), FALSE);
+-- Sumo wrestling equipment
+INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 1', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
+INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 2', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
+INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 3', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
+INSERT INTO equipment (equipment_name, activity_id, out_of_service) VALUES ('Sumo suit 4', (SELECT activity_id FROM activity_type WHERE activity_name = 'Sumo wrestling'), FALSE);
+
+-- Shop products
+INSERT INTO product (product_name, price, active) VALUES ('T-shirt', 150, TRUE);
+INSERT INTO product (product_name, price, active) VALUES ('Cola', 20, TRUE);
+INSERT INTO product (product_name, price, active) VALUES ('Fanta', 20, TRUE);
+INSERT INTO product (product_name, price, active) VALUES ('Haribo', 15, TRUE);
+INSERT INTO product (product_name, price, active) VALUES ('Chips', 25, TRUE);
 
 INSERT INTO booking (booking_date, contact_email, contact_number, num_of_guests, price, start_time, end_time, activity_id, employee_id) VALUES ('2026-10-08', 'test1@example.com', '12345678', 2, 200, '2026-10-08 10:00:00', '2026-10-08 11:30:00', (SELECT activity_id FROM activity_type WHERE activity_name = 'Gokart'), (SELECT employee_id FROM employee WHERE emp_name = 'Anna'));
 INSERT INTO booking (booking_date, contact_email, contact_number, num_of_guests, price, start_time, end_time, activity_id, employee_id) VALUES ('2026-10-08', 'test2@example.com', '87654321', 3, 225, '2026-10-08 10:00:00', '2026-10-08 12:45:00', (SELECT activity_id FROM activity_type WHERE activity_name = 'Minigolf'), (SELECT employee_id FROM employee WHERE emp_name = 'Freja'));
