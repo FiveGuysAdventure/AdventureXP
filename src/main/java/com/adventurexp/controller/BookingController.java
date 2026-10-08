@@ -59,7 +59,7 @@ public class BookingController {
         return ResponseEntity.created(location).body(savedBookingData);
     }
 
-    @GetMapping
+    @GetMapping("/api/booking-overview")
     public ResponseEntity<List<Map<String, Object>>> getBookingsForCalendar() {
         List<Map<String, Object>> bookings =
                 bookingService.getBookingsForAvailability()
