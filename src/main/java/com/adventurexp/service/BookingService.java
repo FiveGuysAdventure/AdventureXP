@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,6 +57,7 @@ public class BookingService {
         bookingData.setPrice(requestDTO.getPrice());
         bookingData.setStartTime(requestDTO.getStartTime());
         bookingData.setBookingDate(requestDTO.getStartTime().toLocalDate());
+        bookingData.setEndTime(requestDTO.getEndTime());
         bookingData.setActivityType(activityType);
         bookingData.setEmployee(employee);
 
@@ -83,9 +85,21 @@ public class BookingService {
         if (!equipmentService.availabilityCheckForBooking(booking.getActivityType(), booking)) {
             throw new BookingConflictException ("Group size is too big.");
         }
+
+        booking.setPrice(calculateBookingPrice(booking));
+
         return bookingRepo.save(booking);
     }
 
+    public double calculateBookingPrice(Booking booking) {
+        ActivityType activity = booking.getActivityType();
+
+        long bookingDuration = Duration.between(booking.getStartTime(), booking.getEndTime()).toMinutes();
+        int interval = activity.getDurationMinutes();
+
+        long intervals = bookingDuration / interval;
+        return activity.getPricePerPerson() * booking.getNumOfGuests() * intervals;
+    }
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();

@@ -24,7 +24,6 @@ public class ActivityType {
     @Column(name = "price_per_person")
     private int pricePerPerson;
 
-
     @ManyToOne
     @JoinColumn(name = "tag_id")
     private ActivityTag tagId;
