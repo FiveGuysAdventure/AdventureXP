@@ -204,6 +204,197 @@ async function login(employee){
     return await response.json();
 }
 
+function bookingPage() {
+    return `<h1>Book en aktivitet</h1>
+
+    <form id="bookingForm" novalidate>
+
+        <label for="activityTypeId">Aktivitet
+            <select id="activityTypeId" name="activityTypeId" required>
+                <option value="">-- Vælg aktivitet --</option>
+            </select>
+            <span class="error" data-error="activityTypeId"></span>
+        </label>
+        <!-- DETTE KAN BRUGES TIL AT INDSTILLE ÅBEN OG LUK FRA (8-20) med 30 min intervaller 
+        <select class="timeSelect" data-from="8" data-to="20" data-interval="30"
+        data-start-now="false" data-format="h:i a">
+        </select>
+       -->
+        <label for="startTime">Start Time
+                <input type="datetime-local" id="startTime" name="startTime" required>
+                    <span class="error" data-error="startTime"></span>
+        </label>
+        
+          <label for="endtTime">End Time
+                <input type="datetime-local" id="endTime" name="endTime" required>
+                    <span class="error" data-error="endTime"></span>
+        </label>
+    
+        <label for="numOfGuests">Number of participants
+            <input type="number" id="numOfGuests" name="numOfGuests" min="1" value="1" required>
+                <span class="error" data-error="numOfGuests"></span>
+        </label> 
+
+        <label for="employeeId">Medarbejder (valgfri)
+            <select id="employeeId" name="employeeId">
+                <option value="">-- Ingen præference --</option>
+            </select>
+            <span class="error" data-error="employeeId"></span>
+        </label>
+
+        <label for="contactEmail">E-mail
+            <input type="email" id="contactEmail" name="contactEmail" required>
+                <span class="error" data-error="contactEmail"></span>
+        </label>
+
+        <label for="contactNumber">Telefonnummer
+            <input type="tel" id="contactNumber" name="contactNumber" required>
+                <span class="error" data-error="contactNumber"></span>
+        </label>
+
+        <p>Pris: <strong id="price">–</strong></p>
+
+        <button type="submit">Book</button>
+    </form>
+
+    <div id="result"></div>`;
+}
+
+function reservationPage() {
+    return `
+        <section>
+            <h1>Reservations</h1>
+           
+            
+        
+        </section>`;
+}
+
+function equipmentPage() {
+    return 'Inventory';
+}
+
+function employeePage() {
+    return `
+        <section>
+            <h1>Medarbejdere</h1>
+                
+                <h2>Managers</h2>
+                    <ul id="manager-list">
+                        <li>Emp</li>
+                    </ul>
+                    
+                <h2>Employees</h2>
+                    <ul id="employee-list">
+                        <li>Emp</li>
+                    </ul>           
+        </section>`;
+}
+
+function employeeLogin() {
+    return `
+        <form id="login-form">
+            <div class="container">
+                <label for="email"><b>Email</b></label>
+                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
+
+                <p id="login-error" role="alert" hidden></p>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    `;
+}
+
+function customerBookingPage() {
+    return 'BOOKING OVERVIEW CUSTOMERS'
+}
+
+function customerShop() {
+    return `
+        <section>
+            <h1>Menu</h1>
+            <ul id="product-list">
+                <li>Loading products...</li>
+            </ul>
+        </section>`;
+}
+
+
+function employeeShop() {
+    return `
+        <section>
+            <h1>Menu</h1>
+            <p id="shop-message"></p>
+            <ul id="product-list">
+               <li>Loading products...</li>
+            </ul>
+            
+            <h2>Add new product</h2>
+            <input type="text" id="new-name" placeholder="Name">
+            <input type="number" id="new-price" placeholder="Price">
+            <button onclick="createProduct()">Add</button>
+        </section>`;
+}
+
+// BASE API
+const BASE_API = "http://localhost:8080"
+
+const routes = {
+    // Homepage and Log-in routing
+    "/": {side: homePage, needsLogin: false},
+    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
+
+    // Company internal links
+    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
+    "/reservationer": {side: reservationPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
+    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
+
+    // Customer directed links
+    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
+};
+
+// ROUTE HANDLING
+function handleRoutes() {
+    let path = routes[location.pathname] || routes["/"];
+
+    if (path.needsLogin && !isLoggedIn()) {
+        history.replaceState(null, "", "/login");
+        path = routes["/login"];
+    }
+
+    document.getElementById("app").innerHTML = path.side();
+    path.onRender?.();
+}
+
+// LOGIN FORM
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
+
+async function login(employee){
+    const response = await fetch(BASE_API + "/api/login", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(employee)
+    });
+
+    calendar.setEvents(events);
+
+    document.getElementById("booking-count").textContent =
+        bookings.length + " bookinger";
+}
+
+function navigate(path) {
+    history.pushState(null, "", path);
+    {
+        handleRoutes();
+    }
+}
 
 function setupLoginForm() {
     const error = document.getElementById("login-error");
@@ -218,233 +409,13 @@ function setupLoginForm() {
                 employeePassword: document.getElementById("employeePassword").value
             });
             sessionStorage.setItem("session", JSON.stringify(data));
-            navigate("/booking")
+            navigate("/")
         } catch (err) {
             error.textContent = err.message;
             error.hidden = false;
         }
     });
 }
-
-//Booking
-
-async function bookingRequest(path, options = {}) {
-    const response = await fetch(
-        "/adventureexperience/bookings" + path, options
-    );
-    const data = await response.json()
-    if (!response.ok) {
-        throw new Error(data.error || data.message || "HTTP " + response.status);
-    }
-    return data;
-}
-async function setupBookingForm() {
-    const get = name => document.getElementById("booking-" + name);
-    const formatTime = value => value.slice(11, 16);
-    const searchForm = get("search");
-    const bookingForm = get("save-form");
-    const details = get("details");
-    const message = get("message");
-
-    let criteria, price, slots = [], activities = [];
-
-    // Reused for activities, times and employees.
-    function fillSelect(name, items, text, value) {
-        const select = get(name);
-        select.replaceChildren(new Option("Vælg...", ""));
-
-        for (const item of items) {
-            select.add(new Option(text(item), value(item)));
-        }
-    }
-
-    function clearChoices() {
-        slots = [];
-        bookingForm.hidden = true;
-        details.hidden = true;
-        details.disabled = true;
-        get("confirmation").hidden = true;
-        message.textContent = "";
-    }
-
-    function setBusy(busy) {
-        get("search-fields").disabled = busy;
-        get("time").disabled = busy;
-        details.disabled = busy || details.hidden;
-    }
-
-    // Changing the search invalidates the previous choices.
-    searchForm.addEventListener("input", clearChoices);
-
-    // Find available times.
-    searchForm.addEventListener("submit", async event => {
-        event.preventDefault();
-        clearChoices();
-        setBusy(true);
-
-        criteria = {
-            activityId: Number(get("activity").value),
-            date: get("date").value,
-            numOfGuests: Number(get("guests").value)
-        };
-
-        try {
-            const data = await bookingRequest(
-                "/available-slots?" + new URLSearchParams(criteria)
-            );
-
-            slots = data.slots;
-            price = data.price;
-
-            if (!slots.length) {
-                message.textContent = data.capacityAvailable
-                    ? "Ingen ledige tider."
-                    : "Ikke nok udstyr til deltagerantallet.";
-                return;
-            }
-
-            fillSelect("time", slots,
-                slot => formatTime(slot.startTime),
-                slot => slot.startTime);
-
-            bookingForm.hidden = false;
-        } catch (error) {
-            message.textContent = error.message;
-        } finally {
-            setBusy(false);
-        }
-    });
-
-    // Show employees and details for the selected time.
-    get("time").addEventListener("change", () => {
-        const slot = slots.find(s => s.startTime === get("time").value);
-
-        details.hidden = !slot;
-        details.disabled = !slot;
-        if (!slot) return;
-
-        fillSelect("employee", slot.availableEmployees,
-            employee => employee.name,
-            employee => employee.employeeId);
-
-        get("end").textContent = formatTime(slot.endTime);
-        get("price").textContent = price + " kr.";
-    });
-
-    // Save the booking.
-    bookingForm.addEventListener("submit", async event => {
-        event.preventDefault();
-
-        const activity = activities.find(
-            a => a.activityId === criteria.activityId
-        );
-
-        const activityName = activity.activityName;
-
-        const input = {
-            activityType: activity,
-            employee: {
-                employeeId: Number(get("employee").value)
-            },
-            bookingDate: criteria.date,
-            startTime: get("time").value,
-            numOfGuests: criteria.numOfGuests,
-            price: price,
-            contactEmail: get("email").value.trim(),
-            contactNumber: get("phone").value.trim()
-        };
-
-        setBusy(true);
-
-        try {
-            const saved = await bookingRequest("", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(input)
-            });
-
-            clearChoices();
-            get("email").value = "";
-            get("phone").value = "";
-
-            get("confirmation").textContent = [
-                "Booking #" + saved.bookingId + " er oprettet.",
-                activityName + " – " + input.numOfGuests + " deltagere",
-                saved.startTime.slice(0, 10) + " kl. "
-                + formatTime(saved.startTime)
-                + " – " + formatTime(saved.endTime),
-                "Medarbejder: " + saved.employeeName,
-                "Samlet pris: " + saved.price + " kr."
-            ].join("\n");
-
-            get("confirmation").hidden = false;
-        } catch (error) {
-            clearChoices();
-            message.textContent = error.message + " Søg ledige tider igen.";
-        } finally {
-            setBusy(false);
-        }
-    });
-
-    // Load activities when the page opens.
-    try {
-        activities = await bookingRequest("/activities");
-
-        fillSelect("activity", activities,
-            activity => activity.activityName,
-            activity => activity.activityId);
-
-        get("search-fields").disabled = !activities.length;
-        message.textContent = activities.length
-            ? ""
-            : "Ingen aktiviteter oprettet.";
-    } catch (error) {
-        message.textContent = error.message;
-    }
-}
-
-async function loadBookingCalendar() {
-    const response = await fetch(
-        "/adventureexperience/bookings",
-        { cache: "no-store" }
-    );
-
-    const bookings = await response.json();
-
-    const events = bookings.map(booking => ({
-        id: String(booking.bookingId),
-        from: new Date(booking.startTime),
-        to: new Date(booking.endTime),
-        title: booking.activityName + " · " + booking.employeeName,
-        description:
-            "Dato: " + booking.bookingDate +
-            "\nTid: " + booking.startTime.substring(11, 16) +
-            " – " + booking.endTime.substring(11, 16),
-        group: booking.employeeName,
-        isAllDay: false,
-        repeatEvery: 0,
-        showAlerts: false
-    }));
-
-    const calendar = new calendarJs("booking-calendar", {
-        manualEditingEnabled: false,
-        dragAndDropForEventsEnabled: false,
-        autoRefreshTimerDelay: 0,
-        allowHtmlInDisplay: false
-    });
-
-    calendar.setEvents(events);
-
-    document.getElementById("booking-count").textContent =
-        bookings.length + " bookinger";
-}
-
-// Reload if Back/Forward restores an old browser snapshot.
-window.addEventListener("pageshow", event => {
-    if (event.persisted) {
-        location.reload();
-    }
-});
 
 document.addEventListener("click", (e) => {
     if (e.target.matches("[data-link]")) {
@@ -456,14 +427,10 @@ document.addEventListener("click", (e) => {
     }
 });
 
-// Employee overview
-const EMPLOYEES_URL = "http://localhost:8080";
 
-const managerList = document.getElementById("manager-list");
-const regularEmployeeList = document.getElementById("employee-list");
-
+// EMPLOYEE OVERVIEW
 async function fetchAllEmployees() {
-    const response = await fetch(EMPLOYEES_URL);
+    const response = await fetch(BASE_API + "/api/employees");
 
     if (!response.ok) {
         throw new Error("HTTP " + response.status)
@@ -474,36 +441,238 @@ async function fetchAllEmployees() {
 
 function createEmployeeItem(employee) {
     const li = document.createElement("li");
-    li.textContent = employee.name;
+    li.textContent = employee.employeeName;
     return li;
 }
 
 function renderEmployeeList(employees) {
+    const managerList = document.getElementById("manager-list");
+    const regularEmployeeList = document.getElementById("employee-list");
     managerList.innerHTML = "";
     regularEmployeeList.innerHTML = "";
 
     employees.forEach(employee => {
         const li = createEmployeeItem(employee);
 
-        if (employee.role === "MANAGER") {
+        const roleType = employee.roleId?.roleName?.toUpperCase();
+
+        if (roleType === "MANAGER") {
             managerList.append(li);
         }
 
-        if (employee.role === "EMPLOYEE") {
+        if (roleType === "EMPLOYEE") {
             regularEmployeeList.append(li);
         }
     });
 }
 
 function showError() {
-    console.log(Error);
-    managerList.innerHtml = "Failed to load";
-    regularEmployeeList.innerHTML = "Failed to load";
+    console.error(Error);
+
+    const managerList = document.getElementById("manager-list");
+    const regularEmployeeList = document.getElementById("employee-list");
+    if (managerList) managerList.innerHTML = "Failed to load managers";
+    if (regularEmployeeList) regularEmployeeList.innerHTML = "Failed to load employee";
 }
 
-fetchAllEmployees()
-    .then(renderEmployeeList)
-    .catch(showError);
+function loadEmployees() {
+    fetchAllEmployees()
+        .then(renderEmployeeList)
+        .catch(showError);
+}
+
+// CREATE Booking
+async function loadBookingForm() {
+    const response = await fetch("/api/booking");
+
+    if (!response.ok) {
+        throw new Error("Http " + response.status);
+    }
+
+    const data = await response.json();
+
+    const activitySelect = document.getElementById("activityTypeId");
+    data.activityTypeList.forEach((activityType) => {
+        activitySelect.add(new Option(activityType.activityName, activityType.activityId));
+    });
+
+    const employeeSelect = document.getElementById("employeeId");
+    data.employeeList.forEach((employeeType) => {
+        employeeSelect.add(new Option(employeeType.employeeName, employeeType.employeeId));
+    });
+}
+
+async function createBooking(booking) {
+    const result = await fetch("/api/booking", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking)
+    });
+
+    if (!result.ok) {
+        throw new Error("Http: " + result.status);
+    }
+
+    return await result.json();
+}
+
+async function handleBookingSubmit(e) {
+    e.preventDefault();
+    const bookingForm = e.target;
+
+    const booking = {
+        contactEmail: bookingForm.contactEmail.value,
+        contactNumber: bookingForm.contactNumber.value,
+        numOfGuests: Number(bookingForm.numOfGuests.value),
+        startTime: bookingForm.startTime.value,
+        activityTypeId: bookingForm.activityTypeId.value ? Number(bookingForm.activityTypeId.value) : null,
+        endTime: bookingForm.endTime.value,
+        employeeId: bookingForm.employeeId.value ? Number(bookingForm.employeeId.value) : null
+    };
+
+    const result = document.getElementById("result");
+
+    try {
+        const saved = await createBooking(booking);
+        result.className = "success";
+        result.textContent = "Booking oprettet (nr. " + saved.bookingId + ", pris " + saved.price + " kr.)";
+        result.style.display = "block";
+        bookingForm.reset();
+    } catch (err) {
+        result.className = "failure";
+        result.textContent = "Kunne ikke oprette booking: " + err.message;
+        result.style.display = "block";
+        console.error(err);
+    }
+}
+
+function renderBooking() {
+    const bookingForm = document.getElementById("bookingForm");
+    loadBookingForm();
+
+    bookingForm.removeEventListener("submit", handleBookingSubmit);
+    bookingForm.addEventListener("submit", handleBookingSubmit);
+}
+
+//SHOP
+//bliver brugt både i customerShop & employeeShop
+async function loadProducts() {
+    const productList = document.getElementById("product-list");
+
+    try {
+        const response = await fetch("/api/products");
+        const products = await response.json();
+
+        productList.innerHTML = "";
+        products.forEach(product => {
+            const li = document.createElement("li");
+            li.textContent = product.productName + " - " + product.price + " kr. ";
+
+            //Tilføjelse til employeeShop delen af siden
+            if (location.pathname === "/employeeShop") {
+                const button = document.createElement("button");
+                button.textContent = "Sælg";
+                button.addEventListener("click", () => sellProduct(product));
+                li.append(button);
+
+                const priceButton = document.createElement("button");
+                priceButton.textContent = "Change price";
+                priceButton.addEventListener("click", () => updatePrice(product));
+                li.append(priceButton);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.addEventListener("click", () => deleteProduct(product));
+                li.append(deleteButton);
+            }
+
+
+            productList.append(li);
+        });
+    } catch (err) {
+        productList.innerHTML = "Failed to load products";
+    }
+}
+
+//feature til employeeShop delen
+async function sellProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    const response = await fetch("/api/sales?productId=" + product.productId + "&quantity=1", {
+        method: "POST"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " sold";
+    } else {
+        message.textContent = "Sale could not proceed"
+    }
+}
+
+//feature til employeeShop delen
+async function createProduct() {
+    const message = document.getElementById("shop-message");
+
+    const product = {
+        productName: document.getElementById("new-name").value,
+        price: Number(document.getElementById("new-price").value)
+    };
+
+    const response = await fetch("/api/products", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(product)
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " added";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be added";
+    }
+}
+
+//feature til employeeShop delen
+async function updatePrice(product) {
+    const message = document.getElementById("shop-message");
+
+    const newPrice = prompt("New price for " + product.productName + ":");
+
+    if (newPrice === null) {
+        return;
+    }
+
+    const response = await fetch("/api/products/" + product.productId + "/price?price=" + newPrice, {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " new price " + newPrice + " kr.";
+        loadProducts();
+    } else {
+        message.textContent = "Price could not be changed";
+    }
+}
+
+//feature til employeeShop delen
+async function deleteProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    if (!confirm("Delete " + product.productName + "?")) {
+        return;
+    }
+
+    const response = await fetch("api/products/" + product.productId, {
+        method: "DELETE"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " deleted";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be deleted";
+    }
+}
 
 window.onpopstate = handleRoutes;
 handleRoutes();

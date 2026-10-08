@@ -1,5 +1,6 @@
 package com.adventurexp.service;
 
+import com.adventurexp.dto.BookingResponseDTO;
 import com.adventurexp.exceptions.BookingConflictException;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.model.Booking;
@@ -11,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,15 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
-
 @Service
 public class BookingService {
 
     @Autowired
     private BookingRepo bookingRepo;
-
-    private ActivityType activityType;
 
     @Autowired
     private EquipmentService equipmentService;
@@ -45,10 +43,39 @@ public class BookingService {
         return booking.get();
     }
 
+    public Booking createBookingForm(BookingResponseDTO requestDTO) {
+       ActivityType activityType = activityTypeRepo.findById(requestDTO.getActivityTypeId())
+               .orElseThrow(()-> new BookingConflictException("No activity found: " + requestDTO.getActivityTypeId()));
+
+       Employee employee = employeeRepo.findById(requestDTO.getEmployeeId())
+               .orElseThrow(() -> new BookingConflictException("No employee found: " + requestDTO.getEmployeeId()));
+
+        Booking bookingData = new Booking();
+        bookingData.setContactEmail(requestDTO.getContactEmail());
+        bookingData.setContactNumber(requestDTO.getContactNumber());
+        bookingData.setNumOfGuests(requestDTO.getNumOfGuests());
+        bookingData.setPrice(requestDTO.getPrice());
+        bookingData.setStartTime(requestDTO.getStartTime());
+        bookingData.setBookingDate(requestDTO.getStartTime().toLocalDate());
+        bookingData.setEndTime(requestDTO.getEndTime());
+        bookingData.setActivityType(activityType);
+        bookingData.setEmployee(employee);
+
+        return createBooking(bookingData);
+    }
+
     public Booking createBooking(Booking booking) {
 
         if (booking == null) {
-            throw new EntityNotFoundException("No booking object was found");
+            throw new EntityNotFoundException("No booking was found");
+        }
+
+        LocalTime OPENING = LocalTime.of(8, 0);
+        LocalTime CLOSING = LocalTime.of(20, 0);
+        LocalDate bookingDate = booking.getBookingDate();
+
+        if (booking.getStartTime().isBefore(OPENING.atDate(bookingDate)) || booking.getEndTime().isAfter(CLOSING.atDate(bookingDate))) {
+            throw new BookingConflictException("Booking is outside opening hours 8:00-20:00");
         }
 
         if (checkBookingOverlapV2(booking)){
@@ -58,9 +85,21 @@ public class BookingService {
         if (!equipmentService.availabilityCheckForBooking(booking.getActivityType(), booking)) {
             throw new BookingConflictException ("Group size is too big.");
         }
+
+        booking.setPrice(calculateBookingPrice(booking));
+
         return bookingRepo.save(booking);
     }
 
+    public double calculateBookingPrice(Booking booking) {
+        ActivityType activity = booking.getActivityType();
+
+        long bookingDuration = Duration.between(booking.getStartTime(), booking.getEndTime()).toMinutes();
+        int interval = activity.getDurationMinutes();
+
+        long intervals = bookingDuration / interval;
+        return activity.getPricePerPerson() * booking.getNumOfGuests() * intervals;
+    }
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();
@@ -120,28 +159,7 @@ public class BookingService {
         bookingRepo.save(booking);
     }
 
-    // Tjek for booking overlap
-    // Start time + Duration = end time
-
-    // booking kl 15 newstart
-    // existing 15-1530
-    // endtime = newstart(15) + 30 min
-
-//    public boolean checkBookingOverlap(LocalDateTime newStart, ActivityType activityType) {
-//        LocalDateTime endTime = newStart.plusMinutes(activityType.getDurationSeconds());
-//
-//        for (Booking existing : getAllBookings()) {
-//            LocalDateTime existingStart = existing.getStartTime();
-//            LocalDateTime existingEnd = existing.getEndTime();
-//
-//            return newStart.isBefore(existingEnd) && endTime.isAfter(existingStart);
-//        }
-//        return false;
-//    }
-
     public boolean checkBookingOverlapV2(Booking newBooking) {
-//        LocalDateTime newStart = newBooking.getStartTime();
-//        LocalDateTime endTime = newBooking.getEndTime();
 
         List<Booking> allActivityBookings = new ArrayList<>();
 
@@ -163,5 +181,4 @@ public class BookingService {
         }
         return false;
     }
-
 }
