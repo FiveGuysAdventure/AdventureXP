@@ -24,7 +24,4 @@ implements Comparable<TimeSlot>
         return TimeSlot.COMPARATOR.compare(this, that);
     }
 
-
-
-
 }
