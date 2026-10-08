@@ -129,6 +129,14 @@ public class BookingController {
                 ));
     }
 
+    @GetMapping("/adventureexperience/bookings")
+    public ResponseEntity<List<Booking>> getBookings() {
+        return ResponseEntity.ok(
+                bookingService.getBookingsForAvailability()
+        );
+    }
+
+
     @GetMapping("/activities")
     public List<Map<String, Object>> getActivities() {
         return activityTypeRepo.findAll().stream()
@@ -220,7 +228,27 @@ public class BookingController {
                 .body(Map.of("error", message));
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<Map<String, Object>>> getBookingsForCalendar() {
+        List<Map<String, Object>> bookings =
+                bookingService.getBookingsForAvailability()
+                        .stream()
+                        .map(booking -> Map.<String, Object>of(
+                                "bookingId", booking.getBookingId(),
+                                "bookingDate",
+                                booking.getStartTime().toLocalDate().toString(),
+                                "startTime", booking.getStartTime().toString(),
+                                "endTime", booking.getEndTime().toString(),
+                                "activityName",
+                                booking.getActivityType().getActivityName(),
+                                "employeeName",
+                                booking.getEmployee() == null
+                                        ? "Ikke tildelt"
+                                        : booking.getEmployee().getEmployeeName()
+                        ))
+                        .toList();
+        return ResponseEntity.ok(bookings);
+    }
 
 }
 
