@@ -7,8 +7,10 @@ import jakarta.persistence.*;
 public class ActivityTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "tag_id")
     private Long tagId;
 
+    @Column(name = "tag_name")
     private String tagName;
 
     public ActivityTag(String tagName) {
