@@ -1,5 +1,5 @@
 function homePage() {
-    return 'Homepage';
+    return `Homepage`;
 }
 
 function bookingPage() {
@@ -181,11 +181,10 @@ async function login(employee){
         body: JSON.stringify(employee)
     });
 
-    if (!response.ok) {
-        throw new Error("HTTP " + response.status)
-    }
+    calendar.setEvents(events);
 
-    return await response.json();
+    document.getElementById("booking-count").textContent =
+        bookings.length + " bookinger";
 }
 
 function navigate(path) {
