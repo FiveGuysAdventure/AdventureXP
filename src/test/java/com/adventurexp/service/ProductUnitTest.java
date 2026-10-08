@@ -47,6 +47,16 @@ public class ProductUnitTest {
         assertThat(productService.getActiveProducts()).isSameAs(activeProducts);
     }
 
+    //Finder alle inaktive produkter som er midlertidigt fjernet fra siden
+    @Test
+    void getInactiveProducts_shouldReturnInactiveProducts() {
+        List<Product> inactiveProducts = List.of(new Product("Cola", 20),
+                new Product("Haribo", 15));
+        when(productRepo.findAllByActiveFalse()).thenReturn(inactiveProducts);
+
+        assertThat(productService.getInactiveProducts()).isSameAs(inactiveProducts);
+    }
+
     //HAPPY PATH: Medarbejderen opretter et nyt produkt - det gemmes og returneres
     @Test
     void createProduct_shouldSaveAndReturnProduct() {
@@ -152,6 +162,32 @@ public class ProductUnitTest {
         when(productRepo.findById(99)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.deactivateProduct(99))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Product with id 99 not found");
+
+        verify(productRepo, never()).save(any());
+    }
+
+    //HAPPY PATH: Medarbejderen genaktiverer et slettet produkt - produktet sættes som atkivt og gemmes
+    @Test
+    void activateProduct_shouldActivateProduct() {
+        Product product = new Product("Popcorn", 30);
+        product.setActive(false);
+        when(productRepo.findById(1)).thenReturn(Optional.of(product));
+        when(productRepo.save(product)).thenReturn(product);
+
+        Product result =  productService.activateProduct(1);
+
+        assertThat(result.isActive()).isTrue();
+        verify(productRepo).save(product);
+    }
+
+    //SAD PATH: Medarbejderen genaktiverer et produkt der ikke eksisterer - der vises en fejl og intet gemmes
+    @Test
+    void activateProduct_throwErrorIfProductNotFound() {
+        when(productRepo.findById(99)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> productService.activateProduct(99))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Product with id 99 not found");
 

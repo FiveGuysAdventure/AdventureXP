@@ -10,4 +10,8 @@ public interface ProductRepo extends JpaRepository<Product, Integer> {
     boolean existsByProductNameIgnoreCase(String productName);
 
     List<Product> findAllByActiveTrue();
+
+    List<Product> findAllByActiveFalse();
+
+
 }
