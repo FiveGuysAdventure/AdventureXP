@@ -12,7 +12,7 @@ CREATE TABLE activity_type
 (
     activity_id      INT AUTO_INCREMENT PRIMARY KEY,
     activity_name    VARCHAR(60) NOT NULL,
-    duration_min     INT         NOT NULL,
+    duration_minutes     INT         NOT NULL,
     price_per_person INT
 );
 
