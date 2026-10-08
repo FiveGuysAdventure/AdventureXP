@@ -150,7 +150,7 @@ const routes = {
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
-    "/employeeShop": {side: employeeShop, needsLogin: true, onRender: loadProducts},
+    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -377,6 +377,11 @@ async function loadProducts() {
                 priceButton.textContent = "Change price";
                 priceButton.addEventListener("click", () => updatePrice(product));
                 li.append(priceButton);
+
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.addEventListener("click", () => deleteProduct(product));
+                li.append(deleteButton);
             }
 
 
@@ -444,6 +449,26 @@ async function updatePrice(product) {
         loadProducts();
     } else {
         message.textContent = "Price could not be changed";
+    }
+}
+
+//feature til employeeShop delen
+async function deleteProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    if (!confirm("Delete " + product.productName + "?")) {
+        return;
+    }
+
+    const response = await fetch("api/products/" + product.productId, {
+        method: "DELETE"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " deleted";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be deleted";
     }
 }
 
