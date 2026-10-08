@@ -2,6 +2,7 @@ package com.adventurexp.model;
 
 import jakarta.persistence.*;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
