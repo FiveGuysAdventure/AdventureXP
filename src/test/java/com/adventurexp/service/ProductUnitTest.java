@@ -27,12 +27,24 @@ public class ProductUnitTest {
     @InjectMocks
     private ProductService productService;
 
+    //Finder alle produkter
     @Test
     void getAllProducts_shouldReturnAllProducts() {
-        List<Product> products = List.of(new Product("Cola", 20), new Product("Haribo", 15));
+        List<Product> products = List.of(new Product("Cola", 20),
+                new Product("Haribo", 15));
         when(productRepo.findAll()).thenReturn(products);
 
         assertThat(productService.getAllProducts()).isSameAs(products);
+    }
+
+    //Finder alle aktive produkter som er til salg
+    @Test
+    void getActiveProducts_shouldReturnActiveProducts() {
+        List<Product> activeProducts = List.of(new Product("Cola", 20),
+                new Product("Haribo", 15));
+        when(productRepo.findAllByActiveTrue()).thenReturn(activeProducts);
+
+        assertThat(productService.getActiveProducts()).isSameAs(activeProducts);
     }
 
     //HAPPY PATH: Medarbejderen opretter et nyt produkt - det gemmes og returneres
@@ -115,6 +127,31 @@ public class ProductUnitTest {
         when(productRepo.findById(99)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> productService.updatePrice(99, 10))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Product with id 99 not found");
+
+        verify(productRepo, never()).save(any());
+    }
+
+    //HAPPY PATH: Medarbejderen sletter et produkt - produktet sættes om inaktivt og gemmes
+    @Test
+    void deactivateProduct_ShouldSetActiveToFalse() {
+        Product product = new Product("Popcorn", 30);
+        when(productRepo.findById(1)).thenReturn(Optional.of(product));
+        when(productRepo.save(product)).thenReturn(product);
+
+        Product result = productService.deactivateProduct(1);
+
+        assertThat(result.isActive()).isFalse();
+        verify(productRepo).save(product);
+    }
+
+    //SAD PATH: Medarbejderen sletter et produkt der ikke eksisterer - der vises en fejl og intet gemmes
+    @Test
+    void deactivateProduct_throwErrorIfProductNotFound() {
+        when(productRepo.findById(99)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> productService.deactivateProduct(99))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Product with id 99 not found");
 

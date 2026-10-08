@@ -19,6 +19,9 @@ public class Product {
     @Column(name = "price", nullable = false)
     private int price;
 
+    @Column(name = "active", nullable = false)
+    private boolean active = true;
+
     public Product() {
 
     }
@@ -50,5 +53,13 @@ public class Product {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
