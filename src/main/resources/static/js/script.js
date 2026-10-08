@@ -111,12 +111,13 @@ function customerBookingPage() {
 }
 
 function bookingSchedulePage() {
-    '`\n' +
-    '    <section class="booking-overview-page">\n' +
-    '        <h1>Bookingoversigt</h1>\n' +
-    '        <p id="booking-count">Henter bookinger...</p>\n' +
-    '        <div id="booking-calendar"></div>\n' +
-    '    </section>\n';
+    return `
+        <section class="booking-overview-page">
+            <h1>Bookingoversigt</h1>
+            <p id="booking-count">Henter bookinger...</p>
+            <div id="booking-calendar"></div>
+        </section>
+    `;
 }
 
 function customerShop() {
@@ -162,7 +163,7 @@ const routes = {
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
-    "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalender},
+    "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalendar},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 };
 
@@ -189,8 +190,6 @@ async function login(employee){
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
     });
-
-   // calendar.setEvents(events);
 
     document.getElementById("booking-count").textContent =
         bookings.length + " bookinger";
@@ -399,6 +398,41 @@ async function loadProducts() {
     } catch (err) {
         productList.innerHTML = "Failed to load products";
     }
+}
+async function loadBookingCalendar() {
+    const container = document.getElementById("booking-calendar");
+    const count = document.getElementById("booking-count");
+    const response = await fetch("/api/booking-overview", {
+        cache: "no-store"
+    });
+
+    const bookings = await response.json();
+
+    if (!container.isConnected) return;
+
+    const calendar = new calendarJs(container, {
+        manualEditingEnabled: false,
+        dragAndDropForEventsEnabled: false,
+        autoRefreshTimerDelay: 0,
+        allowHtmlInDisplay: false
+    });
+
+    calendar.setEvents(bookings.map(booking => ({
+        id: String(booking.bookingId),
+        from: new Date(booking.startTime),
+        to: new Date(booking.endTime),
+        title: booking.activityName + " · " + booking.employeeName,
+        description:
+            "Dato: " + booking.bookingDate +
+            "\nTid: " + booking.startTime.substring(11, 16) +
+            " – " + booking.endTime.substring(11, 16),
+        group: booking.employeeName,
+        isAllDay: false,
+        repeatEvery: 0,
+        showAlerts: false
+    })));
+
+    count.textContent = bookings.length + " bookinger";
 }
 
 //feature til employeeShop delen
