@@ -133,6 +133,14 @@ const BookingPage = `
         ></p>
     </section>
 `;
+
+const BookingOverviewPage = `
+    <section class="booking-overview-page">
+        <h1>Bookingoversigt</h1>
+        <p id="booking-count">Henter bookinger...</p>
+        <div id="booking-calendar"></div>
+    </section>
+`;
  // Page Functions
 
 function homePage() {return 'Homepage';}
@@ -141,7 +149,7 @@ function reservationPage() {return 'Reservationer';}
 function equipmentPage() {return 'Inventory';}
 function employeePage() {return EmployeePage;}
 function employeeLogin() {return EmployeeLoginPage;}
-function customerBookingPage() {return 'BOOKING OVERVIEW CUSTOMERS'}
+function bookingOverviewPage() {return BookingOverviewPage; }
 function customerShop() {return 'Overview of snacks and beers'}
 
 // Routes and Router
@@ -155,12 +163,15 @@ const routes = {
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true},
     // Customer directed links
-    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/booking-overview": {side:bookingOverviewPage, needsLogin: false, onRender: loadBookingCalendar},
     "/shop": {side: customerShop, needsLogin: false}
 };
 
 const LOGIN_URL = "http://localhost:8080";
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
+
+// HandleRoutes opdateres til at kunne køre både " app" og "calendarPage"
 
 function handleRoutes() {
     let path = routes[location.pathname] || routes["/"];
@@ -168,7 +179,7 @@ function handleRoutes() {
         history.replaceState(null, "", "/login");
         path = routes["/login"];
     }
-    document.getElementById("app").innerHTML = path.side();
+  document.getElementById("app").innerHTML = path.side();
     path.onRender?.();
 }
 
@@ -391,6 +402,49 @@ async function setupBookingForm() {
         message.textContent = error.message;
     }
 }
+
+async function loadBookingCalendar() {
+    const response = await fetch(
+        "/adventureexperience/bookings",
+        { cache: "no-store" }
+    );
+
+    const bookings = await response.json();
+
+    const events = bookings.map(booking => ({
+        id: String(booking.bookingId),
+        from: new Date(booking.startTime),
+        to: new Date(booking.endTime),
+        title: booking.activityName + " · " + booking.employeeName,
+        description:
+            "Dato: " + booking.bookingDate +
+            "\nTid: " + booking.startTime.substring(11, 16) +
+            " – " + booking.endTime.substring(11, 16),
+        group: booking.employeeName,
+        isAllDay: false,
+        repeatEvery: 0,
+        showAlerts: false
+    }));
+
+    const calendar = new calendarJs("booking-calendar", {
+        manualEditingEnabled: false,
+        dragAndDropForEventsEnabled: false,
+        autoRefreshTimerDelay: 0,
+        allowHtmlInDisplay: false
+    });
+
+    calendar.setEvents(events);
+
+    document.getElementById("booking-count").textContent =
+        bookings.length + " bookinger";
+}
+
+// Reload if Back/Forward restores an old browser snapshot.
+window.addEventListener("pageshow", event => {
+    if (event.persisted) {
+        location.reload();
+    }
+});
 
 document.addEventListener("click", (e) => {
     if (e.target.matches("[data-link]")) {
