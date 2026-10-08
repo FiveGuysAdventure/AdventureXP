@@ -19,6 +19,14 @@ public class ProductService {
         return productRepo.findAll();
     }
 
+    public List<Product> getActiveProducts() {
+        return productRepo.findAllByActiveTrue();
+    }
+
+    public List<Product> getInactiveProducts() {
+        return productRepo.findAllByActiveFalse();
+    }
+
     public Product createProduct(Product product) {
         if (product == null) {
             throw new IllegalArgumentException("No product found");
@@ -52,15 +60,19 @@ public class ProductService {
         return productRepo.save(product);
     }
 
-    public List<Product> getActiveProducts() {
-        return productRepo.findAllByActiveTrue();
-    }
-
     public Product deactivateProduct(Integer productId) {
         Product product = productRepo.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product with id " + productId + " not found"));
 
         product.setActive(false);
+        return productRepo.save(product);
+    }
+
+    public Product activateProduct(Integer productId) {
+        Product product = productRepo.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product with id " + productId + " not found"));
+
+        product.setActive(true);
         return productRepo.save(product);
     }
 }
