@@ -7,8 +7,8 @@ const EmployeePage = `
                     </ul>
                 <h2>Employees</h2>
                     <ul id="employee-list">
-                        <li>Loading...</li>
-                    </ul>           
+                       <li>Loading...</li>
+                  </ul>           
         </section>
 `;
 
