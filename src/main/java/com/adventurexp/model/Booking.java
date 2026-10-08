@@ -1,11 +1,11 @@
 package com.adventurexp.model;
 
+import com.adventurexp.service.ActivityTypeService;
 import jakarta.persistence.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Table(name = "booking")
@@ -35,18 +35,19 @@ public class Booking {
 
 
     public Booking(LocalDate bookingDate, String contactEmail,
-                   String contactNumber, int numOfGuests, double price, LocalDateTime startTime, ActivityType activityType, Employee employee) {
+                   String contactNumber, int numOfGuests, double price, LocalDateTime startTime, LocalDateTime endTime, ActivityType activityType, Employee employee) {
         this.bookingDate = bookingDate;
         this.contactEmail = contactEmail;
         this.contactNumber = contactNumber;
         this.numOfGuests = numOfGuests;
         this.price = price;
         this.startTime = startTime;
+        this.endTime = endTime;
         this.activityType = activityType;
         this.employee = employee;
 
         //Calculates the end time automatically
-        calculateEndTime();
+//        calculateEndTime();
     }
 
     //Getters
@@ -115,7 +116,7 @@ public class Booking {
 
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
-        calculateEndTime();
+//        calculateEndTime();
     }
 
 
@@ -125,18 +126,31 @@ public class Booking {
 
     public void setActivityType(ActivityType activityType) {
         this.activityType = activityType;
-        calculateEndTime();
+//        calculateEndTime();
     }
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
     }
 
-    //Method for calculating the last reservation
-    private void calculateEndTime() {
-        if (startTime != null && activityType != null) {
-            this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
+    public Long getDurationMinutes() {
+        if (startTime == null || endTime == null) {
+            return 0L;
         }
+        return Duration.between(startTime, endTime).toMinutes();
     }
-    
+
+    public Long getNumberOfIntervals() {
+        int activityInterval = activityType.getDurationMinutes();
+        return getDurationMinutes() / activityInterval;
+    }
+
+
+
+
+    //Method for calculating the last reservation
+//    private void calculateEndTime() {
+//        if (startTime != null && activityType != null) {
+//            this.endTime = startTime.plusMinutes(activityType.getDurationMinutes());
+//        }
 }

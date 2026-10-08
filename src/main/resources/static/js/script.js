@@ -325,6 +325,7 @@ async function handleBookingSubmit(e) {
         numOfGuests: Number(bookingForm.numOfGuests.value),
         startTime: bookingForm.startTime.value,
         activityTypeId: bookingForm.activityTypeId.value ? Number(bookingForm.activityTypeId.value) : null,
+        endTime: bookingForm.endTime.value,
         employeeId: bookingForm.employeeId.value ? Number(bookingForm.employeeId.value) : null
     };
 

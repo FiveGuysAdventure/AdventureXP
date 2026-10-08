@@ -47,7 +47,6 @@ public class BookingController {
     @PostMapping("/api/booking")
     public ResponseEntity<Booking> bookingCompletion(@Valid @RequestBody BookingResponseDTO bookingRequestDTO) {
         Booking savedBookingData = bookingService.createBookingForm(bookingRequestDTO);
-        activityTypeService.calculateTimeIntervals();
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
