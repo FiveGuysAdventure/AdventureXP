@@ -34,10 +34,6 @@ public class BookingService {
     @Autowired
     private EmployeeRepo employeeRepo;
 
-    private static final LocalTime OPENING = LocalTime.of(8, 0);
-    private static final LocalTime CLOSING = LocalTime.of(20, 0);
-    private static final int START_INTERVAL = 30;
-
     public Booking getBooking(Long id) {
         Optional<Booking> booking = bookingRepo.findById(id);
         if (booking.isEmpty()) {

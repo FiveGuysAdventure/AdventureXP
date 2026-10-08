@@ -3,9 +3,9 @@ INSERT INTO role (role_id, role_name) VALUES (1, 'MANAGER');
 INSERT INTO role (role_id, role_name) VALUES (2, 'EMPLOYEE');
 
 -- Activities
-INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Gokart', 60, 100);
-INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Minigolf', 45, 75);
-INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Sumo wrestling', 60, 120);
+INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Gokart', 30, 450);
+INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Minigolf', 60, 175);
+INSERT INTO activity_type (activity_name, duration_minutes, price_per_person) VALUES ('Sumo wrestling', 60, 150);
 
 -- Two managers
 INSERT INTO employee (emp_name, emp_phone_nr, emp_email, emp_password, role_id) VALUES ('Camilla', '99999999', 'camilla@example.com', 'camilla123', (SELECT role_id FROM role WHERE role_name = 'MANAGER'));

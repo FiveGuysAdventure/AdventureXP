@@ -13,16 +13,25 @@ function bookingPage() {
             </select>
             <span class="error" data-error="activityTypeId"></span>
         </label>
-
-        <label for="startTime">Starttidspunkt
-            <input type="datetime-local" id="startTime" name="startTime" required>
-                <span class="error" data-error="startTime"></span>
+        <!-- DETTE KAN BRUGES TIL AT INDSTILLE ÅBEN OG LUK FRA (8-20) med 30 min intervaller 
+        <select class="timeSelect" data-from="8" data-to="20" data-interval="30"
+        data-start-now="false" data-format="h:i a">
+        </select>
+       -->
+        <label for="startTime">Start Time
+                <input type="datetime-local" id="startTime" name="startTime" required>
+                    <span class="error" data-error="startTime"></span>
         </label>
-
-        <label for="numOfGuests">Antal deltagere
+        
+          <label for="endtTime">End Time
+                <input type="datetime-local" id="endTime" name="endTime" required>
+                    <span class="error" data-error="endTime"></span>
+        </label>
+    
+        <label for="numOfGuests">Number of participants
             <input type="number" id="numOfGuests" name="numOfGuests" min="1" value="1" required>
                 <span class="error" data-error="numOfGuests"></span>
-        </label>
+        </label> 
 
         <label for="employeeId">Medarbejder (valgfri)
             <select id="employeeId" name="employeeId">
@@ -41,7 +50,7 @@ function bookingPage() {
                 <span class="error" data-error="contactNumber"></span>
         </label>
 
-       <!-- <p>Pris: <strong id="price">–</strong></p> -->
+        <p>Pris: <strong id="price">–</strong></p>
 
         <button type="submit">Book</button>
     </form>
@@ -128,13 +137,16 @@ function employeeShop() {
         </section>`;
 }
 
+// BASE API
+const BASE_API = "http://localhost:8080"
+
 const routes = {
     // Homepage and Log-in routing
     "/": {side: homePage, needsLogin: false},
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-    "/booking": {side: bookingPage, needsLogin: true, onRender: renderBooking},
+    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/reservationer": {side: reservationPage, needsLogin: true},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
@@ -161,7 +173,6 @@ function handleRoutes() {
 // LOGIN FORM
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
-const BASE_API = "http://localhost:8080"
 
 async function login(employee){
     const response = await fetch(BASE_API + "/api/login", {
@@ -217,8 +228,6 @@ document.addEventListener("click", (e) => {
 
 
 // EMPLOYEE OVERVIEW
-//const EMPLOYEES_URL = "/api/employees";
-
 async function fetchAllEmployees() {
     const response = await fetch(BASE_API + "/api/employees");
 
@@ -440,3 +449,4 @@ async function updatePrice(product) {
 
 window.onpopstate = handleRoutes;
 handleRoutes();
+
