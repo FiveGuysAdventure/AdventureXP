@@ -107,7 +107,16 @@ function employeeLogin() {
 }
 
 function customerBookingPage() {
-    return 'BOOKING OVERVIEW CUSTOMERS'
+    return 'Welcome to the Adventure'
+}
+
+function bookingSchedulePage() {
+    '`\n' +
+    '    <section class="booking-overview-page">\n' +
+    '        <h1>Bookingoversigt</h1>\n' +
+    '        <p id="booking-count">Henter bookinger...</p>\n' +
+    '        <div id="booking-calendar"></div>\n' +
+    '    </section>\n';
 }
 
 function customerShop() {
@@ -153,7 +162,7 @@ const routes = {
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
-    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalender},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 };
 
@@ -181,7 +190,7 @@ async function login(employee){
         body: JSON.stringify(employee)
     });
 
-    calendar.setEvents(events);
+   // calendar.setEvents(events);
 
     document.getElementById("booking-count").textContent =
         bookings.length + " bookinger";
