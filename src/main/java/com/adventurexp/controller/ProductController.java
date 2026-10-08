@@ -16,8 +16,13 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/api/products")
-    public List<Product> getAllProducts() {
+    public List<Product> getActiveProducts() {
         return productService.getActiveProducts();
+    }
+
+    @GetMapping("/api/products/inactive")
+    public List<Product> getInactiveProducts() {
+        return productService.getInactiveProducts();
     }
 
     @PostMapping("/api/products")
@@ -42,6 +47,15 @@ public class ProductController {
     public ResponseEntity<Product> deactivateProduct(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(productService.deactivateProduct(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PutMapping("/api/products/{id}/activate")
+    public ResponseEntity<Product> activateProduct(@PathVariable Integer id) {
+        try {
+            return ResponseEntity.ok(productService.activateProduct(id));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
