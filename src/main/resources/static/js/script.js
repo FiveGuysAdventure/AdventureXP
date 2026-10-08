@@ -1,5 +1,207 @@
-function homePage() {
-    return 'Homepage';
+const EmployeePage = `
+        <section class="employee-page">
+            <h1>Medarbejdere</h1>
+                <h2>Managers</h2>
+                    <ul>
+                        <li id="manager-list">Loading...</li>
+                    </ul>
+                <h2>Employees</h2>
+                    <ul id="employee-list">
+                       <li>Loading...</li>
+                  </ul>           
+        </section>
+`;
+
+const EmployeeLoginPage =`
+        <form id="login-form">
+            <div class="container">
+                <label for="username"><b>Username</b></label>
+                <input type="text" id="employeeEmail" placeholder="Enter Employee Email" required>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" id="employeePassword" placeholder="Enter Employee Password" required>
+
+                <p id="login-error" role="alert" hidden></p>
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    `;
+
+const BookingPage = `
+    <section class="booking-page">
+        <h1>Opret booking</h1>
+        <form id="booking-search"
+            class="booking-form">
+            <fieldset id="booking-search-fields" disabled>
+                <legend>Find ledige tider</legend>
+                <p>
+                    <label>
+                        Aktivitet
+                        <select id="booking-activity" required>
+                            <option value="">
+                                Vælg aktivitet
+                            </option>
+                        </select>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Dato
+                        <input
+                            id="booking-date" type="date" required>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Antal deltagere
+                        <input  id="booking-guests" type="number" min="1" step="1" required>
+                    </label>
+                </p>
+                <button type="submit">
+                    Find ledige tider
+                </button>
+            </fieldset>
+        </form>
+        <p
+            id="booking-message"
+            class="booking-message"
+            role="status"
+        ></p>
+        <form
+            id="booking-save-form"
+            class="booking-form"
+            hidden
+        >
+            <p>
+                <label>
+                    Starttid
+                    <select id="booking-time" required>
+                        <option value="">  Vælg starttid </option>
+                    </select>
+                </label>
+            </p>
+
+
+            <fieldset
+                id="booking-details" hidden disabled>
+                <legend> Bookingoplysninger  </legend>
+                <p class="booking-summary">
+                    Sluttid:
+                    <output id="booking-end"></output>
+                    —
+                    Samlet pris:
+                    <output id="booking-price"></output>
+                </p>
+                <p>
+                    <label>
+                        Medarbejder
+                        <select
+                            id="booking-employee"
+                            required
+                        >
+                            <option value="">
+                                Vælg medarbejder
+                            </option>
+                        </select>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        Kundens e-mail
+                        <input
+                            id="booking-email"
+                            type="email"
+                            required
+                        >
+                    </label>
+                </p>
+                <p>
+                    <label> Kundens telefonnummer
+                        <input id="booking-phone" type="tel" required >
+                    </label>
+                </p>
+                <button type="submit">
+                    Gem booking
+                </button>
+            </fieldset>
+        </form>
+        <p
+            id="booking-confirmation"
+            class="booking-confirmation"
+            role="status"
+            hidden
+        ></p>
+    </section>
+`;
+
+const BookingOverviewPage = `
+    <section class="booking-overview-page">
+        <h1>Bookingoversigt</h1>
+        <p id="booking-count">Henter bookinger...</p>
+        <div id="booking-calendar"></div>
+    </section>
+`;
+ // Page Functions
+
+function homePage() {return 'Homepage';}
+function bookingPage() {return BookingPage;}
+function reservationPage() {return 'Reservationer';}
+function equipmentPage() {return 'Inventory';}
+function employeePage() {return EmployeePage;}
+function employeeLogin() {return EmployeeLoginPage;}
+function bookingOverviewPage() {return BookingOverviewPage; }
+function customerShop() {return 'Overview of snacks and beers'}
+
+// Routes and Router
+const routes = {
+    // Homepage and Log-in routing
+    "/": {side: homePage, needsLogin: false},
+    "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
+    // Company internal links
+    "/booking": {side: bookingPage, needsLogin: true, onRender: setupBookingForm},
+    "/reservationer": {side: reservationPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/employees": {side: employeePage, needsLogin: true},
+    // Customer directed links
+    "/booking-overview": {side:bookingOverviewPage, needsLogin: false, onRender: loadBookingCalendar},
+    "/shop": {side: customerShop, needsLogin: false}
+};
+
+const LOGIN_URL = "http://localhost:8080";
+const isLoggedIn = () => sessionStorage.getItem("session") !== null;
+
+
+// HandleRoutes opdateres til at kunne køre både " app" og "calendarPage"
+
+function handleRoutes() {
+    let path = routes[location.pathname] || routes["/"];
+    if (path.needsLogin && !isLoggedIn()) {
+        history.replaceState(null, "", "/login");
+        path = routes["/login"];
+    }
+  document.getElementById("app").innerHTML = path.side();
+    path.onRender?.();
+}
+
+function navigate(path) {
+    history.pushState(null, "", path);
+        handleRoutes();
+}
+
+//Login
+
+async function login(employee){
+    const response = await fetch(LOGIN_URL + "/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(employee)
+    })
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
 }
 
 function bookingPage() {
@@ -181,11 +383,10 @@ async function login(employee){
         body: JSON.stringify(employee)
     });
 
-    if (!response.ok) {
-        throw new Error("HTTP " + response.status)
-    }
+    calendar.setEvents(events);
 
-    return await response.json();
+    document.getElementById("booking-count").textContent =
+        bookings.length + " bookinger";
 }
 
 function navigate(path) {
