@@ -24,6 +24,18 @@ function updateHeader(path) {
     header.hidden = config.layout === "none";
 }
 
+function updateNav() {
+    const loggedIn = isLoggedIn();
+
+    document.querySelectorAll("[data-needs-login]").forEach(el => {
+        el.hidden = !loggedIn;
+    });
+
+    // Optional: hide the "Employee login" footer link once logged in
+    const loginLink = document.querySelector('footer a[href="/login"]');
+    if (loginLink) loginLink.hidden = loggedIn;
+}
+
 function bookingPage() {
     return `<h1>Book en aktivitet</h1>
 
@@ -200,15 +212,14 @@ const routes = {
     "/login": {side: employeeLogin, needsLogin: false, onRender: setupLoginForm},
 
     // Company internal links
-    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
-    "/reservationer": {side: reservationPage, needsLogin: true},
+    "/booking-overview": {side: bookingSchedulePage, needsLogin: true, onRender: loadBookingCalendar},
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
-    "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
-    "/products": {side: productAdmin, needsLogin: false, onRender: loadProducts},
+    "/employeeShop": {side: employeeShop, needsLogin: true, onRender: loadProducts},
+    "/products": {side: productAdmin, needsLogin: true, onRender: loadProducts},
 
     // Customer directed links
-    "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalendar},
+    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 };
 
@@ -224,6 +235,7 @@ function handleRoutes() {
     }
 
     updateHeader(currentPath);
+    updateNav();
     document.getElementById("app").innerHTML = route.side();
     route.onRender?.();
 }
@@ -281,6 +293,17 @@ document.addEventListener("click", (e) => {
         const href = e.target.getAttribute("href");
         history.pushState(null, "", href);
         handleRoutes();
+    }
+});
+
+function logout() {
+    sessionStorage.removeItem("session");
+    navigate("/login");
+}
+
+document.addEventListener("click", (e) => {
+    if (e.target.matches("[data-logout]")) {
+        logout();
     }
 });
 
