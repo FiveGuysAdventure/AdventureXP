@@ -40,7 +40,8 @@ public class BookingController {
     public ResponseEntity<BookingFormData> showBookingForm() {
         BookingFormData data = new BookingFormData(
                 activityTypeService.getAvailableActivities(),
-                employeeService.getListOfEmployees()
+                employeeService.getListOfEmployees(),
+                bookingService.getStartimeIntervalList()
         );
 
         return ResponseEntity.ok(data);
