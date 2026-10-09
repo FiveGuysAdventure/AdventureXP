@@ -39,6 +39,29 @@ function homePage() {
   </section>
     `;
 }
+
+const pageHeaders = {
+    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
+    "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
+    "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
+    "/booking": {layout: "compact", title: "Booking", subtitle: ""},
+    "/inventar": {layout: "compact", title: "Inventar", subtitle: ""},
+    "/employees": {layout: "compact", title: "Medarbejdere", subtitle: ""},
+    "/employeeShop": {layout: "compact", title: "Shop", subtitle: ""},
+    "/products": {layout: "compact", title: "Products", subtitle: ""},
+    "/login": {layout: "none"}
+};
+
+function updateHeader(path) {
+    const config = pageHeaders[path] ?? {layout: "default", title: "", subtitle: ""};
+    const header = document.getElementById("page-header");
+
+    document.body.dataset.layout = config.layout;
+    document.getElementById("page-title").textContent = config.title ?? "";
+    document.getElementById("page-subtitle").textContent = config.subtitle ?? "";
+    header.hidden = config.layout === "none";
+}
+
 function bookingPage() {
     return `<h1>Book en aktivitet</h1>
 
@@ -54,13 +77,21 @@ function bookingPage() {
         <select class="timeSelect" data-from="8" data-to="20" data-interval="30"
         data-start-now="false" data-format="h:i a">
         </select>
-       -->
+       
+       
         <label for="startTime">Start Time
                 <input type="datetime-local" id="startTime" name="startTime" required>
                     <span class="error" data-error="startTime"></span>
         </label>
+        -->
+          <label for="startTime">Start Time
+            <select id="startTime" name="startTime">
+                <option value="">-- choose time --</option>            
+            </select>
+            <!--<span class="error" data-error="start-time-error"></span>-->
+          </label>
         
-          <label for="endtTime">End Time
+         <label for="endtTime">End Time
                 <input type="datetime-local" id="endTime" name="endTime" required>
                     <span class="error" data-error="endTime"></span>
         </label>
@@ -176,16 +207,31 @@ function employeeShop() {
             <ul id="product-list">
                <li>Loading products...</li>
             </ul>
-            
+        </section>`;
+}
+
+function productAdmin() {
+    return `
+        <section>
+            <h1>Admin Products</h1>
+            <p id="shop-message"></p>
+            <ul id="product-list">
+               <li>Loading products...</li>
+            </ul>
+
             <h2>Add new product</h2>
             <input type="text" id="new-name" placeholder="Name">
             <input type="number" id="new-price" placeholder="Price">
             <button onclick="createProduct()">Add</button>
+
+            <h2>Inactive products</h2>
+            <ul id="inactive-list"></ul>
         </section>`;
 }
 
 // BASE API
-const BASE_API = "http://localhost:8080"
+const BASE_API = "https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
+//const BASE_API = "http://localhost:8080"
 
 const routes = {
     // Homepage and Log-in routing
@@ -195,9 +241,10 @@ const routes = {
     // Company internal links
     "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/reservationer": {side: reservationPage, needsLogin: true},
-    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: false},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
+    "/products": {side: productAdmin, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalendar},
@@ -206,30 +253,36 @@ const routes = {
 
 // ROUTE HANDLING
 function handleRoutes() {
-    let path = routes[location.pathname] || routes["/"];
+    let currentPath = routes[location.pathname] ? location.pathname : "/";
+    let route = routes[currentPath];
 
-    if (path.needsLogin && !isLoggedIn()) {
+    if (route.needsLogin && !isLoggedIn()) {
         history.replaceState(null, "", "/login");
-        path = routes["/login"];
+        currentPath = "/login";
+        route = routes["/login"];
     }
 
-    document.getElementById("app").innerHTML = path.side();
-    path.onRender?.();
+    updateHeader(currentPath);
+    document.getElementById("app").innerHTML = route.side();
+    route.onRender?.();
 }
 
 // LOGIN FORM
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
 
-async function login(employee){
+async function login(employee) {
     const response = await fetch(BASE_API + "/api/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
     });
 
-    document.getElementById("booking-count").textContent =
-        bookings.length + " bookinger";
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
 }
 
 function navigate(path) {
@@ -334,6 +387,9 @@ async function loadBookingForm() {
 
     const data = await response.json();
 
+    const startTimeSelect = document.getElementById("startTime");
+    data.timeList
+
     const activitySelect = document.getElementById("activityTypeId");
     data.activityTypeList.forEach((activityType) => {
         activitySelect.add(new Option(activityType.activityName, activityType.activityId));
@@ -345,10 +401,11 @@ async function loadBookingForm() {
     });
 }
 
+
 async function createBooking(booking) {
     const result = await fetch("/api/booking", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(booking)
     });
 
@@ -397,48 +454,9 @@ function renderBooking() {
     bookingForm.addEventListener("submit", handleBookingSubmit);
 }
 
-//SHOP
-//bliver brugt både i customerShop & employeeShop
-async function loadProducts() {
-    const productList = document.getElementById("product-list");
-
-    try {
-        const response = await fetch("/api/products");
-        const products = await response.json();
-
-        productList.innerHTML = "";
-        products.forEach(product => {
-            const li = document.createElement("li");
-            li.textContent = product.productName + " - " + product.price + " kr. ";
-
-            //Tilføjelse til employeeShop delen af siden
-            if (location.pathname === "/employeeShop") {
-                const button = document.createElement("button");
-                button.textContent = "Sælg";
-                button.addEventListener("click", () => sellProduct(product));
-                li.append(button);
-
-                const priceButton = document.createElement("button");
-                priceButton.textContent = "Change price";
-                priceButton.addEventListener("click", () => updatePrice(product));
-                li.append(priceButton);
-
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.addEventListener("click", () => deleteProduct(product));
-                li.append(deleteButton);
-            }
-
-
-            productList.append(li);
-        });
-    } catch (err) {
-        productList.innerHTML = "Failed to load products";
-    }
-}
 async function loadBookingCalendar() {
     const container = document.getElementById("booking-calendar");
-    const response = await fetch("/api/booking-overview", );
+    const response = await fetch("/api/booking-overview",);
 
     const bookings = await response.json();
 
@@ -463,6 +481,51 @@ async function loadBookingCalendar() {
         repeatEvery: 0,
         showAlerts: false
     })));
+}
+
+//SHOP
+//Henter aktive produkter både i customerShop, employeeShop & productAdmin
+async function loadProducts() {
+    const productList = document.getElementById("product-list");
+
+    try {
+        const response = await fetch("/api/products");
+        const products = await response.json();
+
+        productList.innerHTML = "";
+        products.forEach(product => {
+            const li = document.createElement("li");
+            li.textContent = product.productName + " - " + product.price + " kr. ";
+
+            //Kun salg side
+            if (location.pathname === "/employeeShop") {
+                const button = document.createElement("button");
+                button.textContent = "Sælg";
+                button.addEventListener("click", () => sellProduct(product));
+                li.append(button);
+            }
+
+            //Admin side til redigering af produkter
+            if (location.pathname === "/products") {
+                const priceButton = document.createElement("button");
+                priceButton.textContent = "Change price";
+                priceButton.addEventListener("click", () => updatePrice(product));
+                li.append(priceButton);
+
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.addEventListener("click", () => removeProduct(product));
+                li.append(removeButton);
+            }
+
+            productList.append(li);
+        });
+    } catch (err) {
+        productList.innerHTML = "Failed to load products";
+    }
+    if (location.pathname === "/products") {
+        loadInactiveProducts();
+    }
 }
 
 //feature til employeeShop delen
@@ -526,22 +589,58 @@ async function updatePrice(product) {
 }
 
 //feature til employeeShop delen
-async function deleteProduct(product) {
+async function removeProduct(product) {
     const message = document.getElementById("shop-message");
 
-    if (!confirm("Delete " + product.productName + "?")) {
+    if (!confirm("Remove " + product.productName + "?")) {
         return;
     }
 
-    const response = await fetch("api/products/" + product.productId, {
-        method: "DELETE"
+    const response = await fetch("/api/products/" + product.productId + "/deactivate", {
+        method: "PUT"
     });
 
     if (response.ok) {
-        message.textContent = product.productName + " deleted";
+        message.textContent = product.productName + " removed";
         loadProducts();
     } else {
-        message.textContent = "Product could not be deleted";
+        message.textContent = "Product could not be removed";
+    }
+}
+
+//feature til Admin side af produkter
+async function loadInactiveProducts() {
+    const inactiveList = document.getElementById("inactive-list");
+
+    const response = await fetch("/api/products/inactive");
+    const products = await response.json();
+
+    inactiveList.innerHTML = "";
+    products.forEach(product => {
+        const li = document.createElement("li");
+        li.textContent = product.productName + " - " + product.price + " kr. ";
+
+        const activateButton = document.createElement("button");
+        activateButton.textContent = "Activate";
+        activateButton.addEventListener("click", () => activateProduct(product));
+        li.append(activateButton);
+        inactiveList.append(li);
+    });
+}
+
+//feature til Admin side af produkter: sætter inaktivt produkt tilbage i shoppen
+async function activateProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    const response = await fetch("/api/products/" + product.productId + "/activate", {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " added to Shop";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be added";
     }
 }
 

@@ -19,6 +19,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Service
 public class BookingService {
@@ -99,6 +100,24 @@ public class BookingService {
 
         long intervals = bookingDuration / interval;
         return activity.getPricePerPerson() * booking.getNumOfGuests() * intervals;
+    }
+
+    public List<LocalTime> getStartTimeIntervalList(Booking booking) {
+        List<LocalTime> startTimeIntervalList = new ArrayList<>();
+
+        ActivityType activity = booking.getActivityType();
+        Duration activityTimeInterval = Duration.ofMinutes(activity.getDurationMinutes());
+
+        LocalTime OPENING = LocalTime.of(8,0);
+        LocalTime CLOSING = LocalTime.of(20,0);
+
+        for (LocalTime startTime = OPENING;
+        !startTime.plus(activityTimeInterval).isAfter(CLOSING);
+        startTime = startTime.plus(activityTimeInterval)) {
+        startTimeIntervalList.add(startTime);
+        }
+
+        return startTimeIntervalList;
     }
 
     public List<Booking> getAllBookings() {
