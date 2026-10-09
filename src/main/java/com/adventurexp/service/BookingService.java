@@ -36,6 +36,9 @@ public class BookingService {
     @Autowired
     private EmployeeRepo employeeRepo;
 
+    @Autowired
+    private ActivityTypeService activityTypeService;
+
     public Booking getBooking(Long id) {
         Optional<Booking> booking = bookingRepo.findById(id);
         if (booking.isEmpty()) {
@@ -58,7 +61,7 @@ public class BookingService {
         bookingData.setPrice(requestDTO.getPrice());
         bookingData.setStartTime(requestDTO.getStartTime());
         bookingData.setBookingDate(requestDTO.getStartTime().toLocalDate());
-        bookingData.setEndTime(requestDTO.getEndTime());
+        bookingData.setEndTime(requestDTO.getStartTime().plusMinutes(activityType.getDurationMinutes()));
         bookingData.setActivityType(activityType);
         bookingData.setEmployee(employee);
 
@@ -102,19 +105,17 @@ public class BookingService {
         return activity.getPricePerPerson() * booking.getNumOfGuests() * intervals;
     }
 
-    public List<LocalTime> getStartTimeIntervalList(Booking booking) {
+    public List<LocalTime> getStartTimeIntervalList(Long activityId) {
         List<LocalTime> startTimeIntervalList = new ArrayList<>();
 
-        ActivityType activity = booking.getActivityType();
+        ActivityType activity = activityTypeService.getActivityById(activityId);
         Duration activityTimeInterval = Duration.ofMinutes(activity.getDurationMinutes());
 
         LocalTime OPENING = LocalTime.of(8,0);
         LocalTime CLOSING = LocalTime.of(20,0);
 
-        for (LocalTime startTime = OPENING;
-        !startTime.plus(activityTimeInterval).isAfter(CLOSING);
-        startTime = startTime.plus(activityTimeInterval)) {
-        startTimeIntervalList.add(startTime);
+        for (LocalTime startTime = OPENING; !startTime.plus(activityTimeInterval).isAfter(CLOSING); startTime = startTime.plus(activityTimeInterval)) {
+            startTimeIntervalList.add(startTime);
         }
 
         return startTimeIntervalList;

@@ -85,27 +85,22 @@ function bookingPage() {
             </select>
             <span class="error" data-error="activityTypeId"></span>
         </label>
+        
         <!-- DETTE KAN BRUGES TIL AT INDSTILLE ÅBEN OG LUK FRA (8-20) med 30 min intervaller 
         <select class="timeSelect" data-from="8" data-to="20" data-interval="30"
         data-start-now="false" data-format="h:i a">
         </select>
-       
-       
-        <label for="startTime">Start Time
-                <input type="datetime-local" id="startTime" name="startTime" required>
-                    <span class="error" data-error="startTime"></span>
-        </label>
         -->
-          <label for="startTime">Start Time
-            <select id="startTime" name="startTime">
-                <option value="">-- choose time --</option>            
-            </select>
-            <!--<span class="error" data-error="start-time-error"></span>-->
-          </label>
+        <label for="bookingDate">Dato
+            <input type="date" id="bookingDate" name="bookingDate" required>
+            <span class="error" data-error="bookingDate"></span>
+        </label>
         
-         <label for="endtTime">End Time
-                <input type="datetime-local" id="endTime" name="endTime" required>
-                    <span class="error" data-error="endTime"></span>
+        <label for="startTime">Starttidspunkt
+            <select id="startTime" name="startTime" required>
+                <option value="">-- Vælg tid --</option>
+            </select>
+            <span class="error" data-error="startTime"></span>
         </label>
     
         <label for="numOfGuests">Number of participants
@@ -410,8 +405,6 @@ async function loadBookingForm() {
 
     const data = await response.json();
 
-    const startTimeSelect = document.getElementById("startTime");
-    data.timeList
 
     const activitySelect = document.getElementById("activityTypeId");
     data.activityTypeList.forEach((activityType) => {
@@ -423,7 +416,6 @@ async function loadBookingForm() {
         employeeSelect.add(new Option(employeeType.employeeName, employeeType.employeeId));
     });
 }
-
 
 async function createBooking(booking) {
     const result = await fetch("/api/booking", {
@@ -439,6 +431,30 @@ async function createBooking(booking) {
     return await result.json();
 }
 
+async function loadStartTimes(activityId) {
+    const startTimeSelect = document.getElementById("startTime");
+    startTimeSelect.length = 1;
+
+    if (!activityId) return;
+
+    try {
+        const response = await fetch("/api/booking/time-intervals?activityId=" + activityId)
+
+        if (!response.ok) {
+            throw new Error("Http " + response.status);
+        }
+
+        const timeIntervals = await response.json();
+
+        timeIntervals.forEach((time) => {
+            const hhmm = time.substring(0, 5);
+            startTimeSelect.add(new Option(hhmm, hhmm));
+        });
+    } catch (err) {
+        console.error(err);
+        }
+}
+
 async function handleBookingSubmit(e) {
     e.preventDefault();
     const bookingForm = e.target;
@@ -447,9 +463,8 @@ async function handleBookingSubmit(e) {
         contactEmail: bookingForm.contactEmail.value,
         contactNumber: bookingForm.contactNumber.value,
         numOfGuests: Number(bookingForm.numOfGuests.value),
-        startTime: bookingForm.startTime.value,
+        startTime: `${bookingForm.bookingDate.value}T${bookingForm.startTime.value}`,
         activityTypeId: bookingForm.activityTypeId.value ? Number(bookingForm.activityTypeId.value) : null,
-        endTime: bookingForm.endTime.value,
         employeeId: bookingForm.employeeId.value ? Number(bookingForm.employeeId.value) : null
     };
 
@@ -461,6 +476,7 @@ async function handleBookingSubmit(e) {
         result.textContent = "Booking oprettet (nr. " + saved.bookingId + ", pris " + saved.price + " kr.)";
         result.style.display = "block";
         bookingForm.reset();
+        loadStartTimes("");
     } catch (err) {
         result.className = "failure";
         result.textContent = "Kunne ikke oprette booking: " + err.message;
@@ -472,6 +488,10 @@ async function handleBookingSubmit(e) {
 function renderBooking() {
     const bookingForm = document.getElementById("bookingForm");
     loadBookingForm();
+
+    document.getElementById("activityTypeId").addEventListener("change", (e) => {
+        loadStartTimes(e.target.value);
+    })
 
     bookingForm.removeEventListener("submit", handleBookingSubmit);
     bookingForm.addEventListener("submit", handleBookingSubmit);
