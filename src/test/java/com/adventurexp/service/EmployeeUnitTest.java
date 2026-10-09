@@ -38,26 +38,19 @@ class EmployeeUnitTest {
 
         Role instructorRole = new Role(RoleName.EMPLOYEE);
 
-        Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", "password123", instructorRole
-        );
+        Employee anna = new Employee("Anna", "11111111", "anna@example.com", "password123", instructorRole);
         anna.setEmployeeId(101L);
 
-        Employee emil = new Employee(
-                "Emil", "22222222", "emil@example.com", "password456", instructorRole
-        );
+        Employee emil = new Employee("Emil", "22222222", "emil@example.com", "password456", instructorRole);
         emil.setEmployeeId(102L);
 
-        LocalDateTime start =
-                LocalDateTime.of(2026, 10, 5, 10, 0);
-        LocalDateTime end =
-                LocalDateTime.of(2026, 10, 5, 11, 0);
+        LocalDateTime start = LocalDateTime.of(2026, 10, 5, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 10, 5, 11, 0);
 
         when(employeeRepo.findAll()).thenReturn(List.of(anna, emil));
         when(bookingRepo.findAll()).thenReturn(List.of());
 
-        List<Employee> availableEmployees =
-                service.getAvailableEmployees(start, end);
+        List<Employee> availableEmployees = service.getAvailableEmployees(start, end);
 
         assertThat(availableEmployees).containsExactlyInAnyOrder(anna, emil);
     }
@@ -68,22 +61,16 @@ class EmployeeUnitTest {
 
         Role EmployeeRole = new Role(RoleName.EMPLOYEE);
 
-        Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", "password123", EmployeeRole
-        );
+        Employee anna = new Employee("Anna", "11111111", "anna@example.com", "password123", EmployeeRole);
         anna.setEmployeeId(101L);
 
-        Employee emil = new Employee(
-                "Emil", "22222222", "emil@example.com", "password456", EmployeeRole
+        Employee emil = new Employee("Emil", "22222222", "emil@example.com", "password456", EmployeeRole
         );
         emil.setEmployeeId(102L);
 
 
-        LocalDateTime start =
-                LocalDateTime.of (2026, 10, 5, 10,0);
-
-        LocalDateTime end =
-                LocalDateTime.of (2026, 10, 5, 10,30);
+        LocalDateTime start = LocalDateTime.of (2026, 10, 5, 10,0);
+        LocalDateTime end = LocalDateTime.of (2026, 10, 5, 10,30);
 
         Booking annasBooking = new Booking();
         annasBooking.setEmployee(anna);
@@ -103,20 +90,13 @@ class EmployeeUnitTest {
 
     @Test
     void getAvailableEmployees_returnsAnna_whenBookingEndsAtNewStart() {
-        // Arrange
         Role EmployeeRole = new Role(RoleName.EMPLOYEE);
 
-        Employee anna = new Employee(
-                "Anna", "11111111", "anna@example.com", "password123", EmployeeRole
-        );
+        Employee anna = new Employee("Anna", "11111111", "anna@example.com", "password123", EmployeeRole);
         anna.setEmployeeId(101L);
 
-        LocalDateTime start =
-                LocalDateTime.of(2026, 10, 5, 10, 0);
-        LocalDateTime end =
-                LocalDateTime.of(2026, 10, 5, 11, 0);
-
-
+        LocalDateTime start = LocalDateTime.of(2026, 10, 5, 10, 0);
+        LocalDateTime end = LocalDateTime.of(2026, 10, 5, 11, 0);
 
         Booking previousBooking = new Booking();
         previousBooking.setEmployee(anna);
@@ -126,8 +106,7 @@ class EmployeeUnitTest {
         when(employeeRepo.findAll()).thenReturn(List.of(anna));
         when(bookingRepo.findAll()).thenReturn(List.of(previousBooking));
 
-        List<Employee> available =
-                service.getAvailableEmployees(start, end);
+        List<Employee> available = service.getAvailableEmployees(start, end);
 
         assertThat(available).containsExactly(anna);
     }
