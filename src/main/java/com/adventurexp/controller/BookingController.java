@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.awt.print.Book;
@@ -48,6 +49,12 @@ public class BookingController {
     @GetMapping("/api/booking/time-intervals")
     public ResponseEntity<List<LocalTime>> getTimeIntervalsForBookings(@RequestParam Long activityId) {
         return ResponseEntity.ok(bookingService.getStartTimeIntervalList(activityId));
+    }
+
+    @GetMapping("/api/booking/end-time-intervals")
+    public ResponseEntity<List<LocalTime>> getEndTimeIntervals(@RequestParam Long activityId, @RequestParam String startTime) {
+        LocalTime start = LocalTime.parse(startTime);
+        return ResponseEntity.ok(bookingService.getEndTimeIntervalList(activityId, start));
     }
 
     @PostMapping("/api/booking")
