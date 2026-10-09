@@ -170,7 +170,8 @@ function productAdmin() {
 }
 
 // BASE API
-const BASE_API = "http://localhost:8080"
+const BASE_API = "https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
+//const BASE_API = "http://localhost:8080"
 
 const routes = {
     // Homepage and Log-in routing
