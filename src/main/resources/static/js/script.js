@@ -40,40 +40,6 @@ function homePage() {
     `;
 }
 
-const pageHeaders = {
-    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
-    "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
-    "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
-    "/booking": {layout: "compact", title: "Booking", subtitle: ""},
-    "/inventar": {layout: "compact", title: "Inventar", subtitle: ""},
-    "/employees": {layout: "compact", title: "Medarbejdere", subtitle: ""},
-    "/employeeShop": {layout: "compact", title: "Shop", subtitle: ""},
-    "/products": {layout: "compact", title: "Products", subtitle: ""},
-    "/login": {layout: "none"}
-};
-
-function updateHeader(path) {
-    const config = pageHeaders[path] ?? {layout: "default", title: "", subtitle: ""};
-    const header = document.getElementById("page-header");
-
-    document.body.dataset.layout = config.layout;
-    document.getElementById("page-title").textContent = config.title ?? "";
-    document.getElementById("page-subtitle").textContent = config.subtitle ?? "";
-    header.hidden = config.layout === "none";
-}
-
-function updateNav() {
-    const loggedIn = isLoggedIn();
-
-    document.querySelectorAll("[data-needs-login]").forEach(el => {
-        el.hidden = !loggedIn;
-    });
-
-    // Optional: hide the "Employee login" footer link once logged in
-    const loginLink = document.querySelector('footer a[href="/login"]');
-    if (loginLink) loginLink.hidden = loggedIn;
-}
-
 function bookingPage() {
     return `<h1>Book en aktivitet</h1>
 
@@ -91,16 +57,23 @@ function bookingPage() {
         data-start-now="false" data-format="h:i a">
         </select>
         -->
-        <label for="bookingDate">Dato
+        <label for="bookingDate">Date
             <input type="date" id="bookingDate" name="bookingDate" required>
             <span class="error" data-error="bookingDate"></span>
         </label>
         
-        <label for="startTime">Starttidspunkt
+        <label for="startTime">Start time
             <select id="startTime" name="startTime" required>
                 <option value="">-- Vælg tid --</option>
             </select>
             <span class="error" data-error="startTime"></span>
+        </label>
+        
+        <label for="endTime">End time
+            <select id="endTime" name="endTime" required disabled>
+                <option value="">-- Vælg starttid først --</option>
+            </select>
+            <span class="error" data-error="endTime"></span>
         </label>
     
         <label for="numOfGuests">Number of participants
@@ -108,7 +81,7 @@ function bookingPage() {
                 <span class="error" data-error="numOfGuests"></span>
         </label> 
 
-        <label for="employeeId">Medarbejder (valgfri)
+        <label for="employeeId">Employee
             <select id="employeeId" name="employeeId">
                 <option value="">-- Ingen præference --</option>
             </select>
@@ -120,7 +93,7 @@ function bookingPage() {
                 <span class="error" data-error="contactEmail"></span>
         </label>
 
-        <label for="contactNumber">Telefonnummer
+        <label for="contactNumber">Phone-number
             <input type="tel" id="contactNumber" name="contactNumber" required>
                 <span class="error" data-error="contactNumber"></span>
         </label>
@@ -248,6 +221,39 @@ function productAdmin() {
         </section>`;
 }
 
+const pageHeaders = {
+    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
+    "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
+    "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
+    "/booking": {layout: "compact", title: "Booking", subtitle: ""},
+    "/inventar": {layout: "compact", title: "Inventar", subtitle: ""},
+    "/employees": {layout: "compact", title: "Medarbejdere", subtitle: ""},
+    "/employeeShop": {layout: "compact", title: "Shop", subtitle: ""},
+    "/products": {layout: "compact", title: "Products", subtitle: ""},
+    "/login": {layout: "none"}
+};
+
+function updateHeader(path) {
+    const config = pageHeaders[path] ?? {layout: "default", title: "", subtitle: ""};
+    const header = document.getElementById("page-header");
+
+    document.body.dataset.layout = config.layout;
+    document.getElementById("page-title").textContent = config.title ?? "";
+    document.getElementById("page-subtitle").textContent = config.subtitle ?? "";
+    header.hidden = config.layout === "none";
+}
+
+function updateNav() {
+    const loggedIn = isLoggedIn();
+
+    document.querySelectorAll("[data-needs-login]").forEach(el => {
+        el.hidden = !loggedIn;
+    });
+
+    // Optional: hide the "Employee login" footer link once logged in
+    const loginLink = document.querySelector('footer a[href="/login"]');
+    if (loginLink) loginLink.hidden = loggedIn;
+}
 // BASE API
 const BASE_API = "https://adventurexp5https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
 //const BASE_API = "http://localhost:8080"
@@ -430,7 +436,7 @@ async function loadBookingForm() {
 }
 
 async function createBooking(booking) {
-    const result = await fetch("/api/booking", {
+    const result = await fetch(BASE_API + "/api/booking", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(booking)
@@ -471,11 +477,16 @@ async function handleBookingSubmit(e) {
     e.preventDefault();
     const bookingForm = e.target;
 
+    const dateVal = bookingForm.bookingDate.value;
+    const startVal = bookingForm.startTime.value;
+    const endVal = bookingForm.endTime.value;
+
     const booking = {
         contactEmail: bookingForm.contactEmail.value,
         contactNumber: bookingForm.contactNumber.value,
         numOfGuests: Number(bookingForm.numOfGuests.value),
-        startTime: `${bookingForm.bookingDate.value}T${bookingForm.startTime.value}`,
+        startTime: `${dateVal}T${startVal}`,
+        endTime: `${dateVal}T${endVal}`,
         activityTypeId: bookingForm.activityTypeId.value ? Number(bookingForm.activityTypeId.value) : null,
         employeeId: bookingForm.employeeId.value ? Number(bookingForm.employeeId.value) : null
     };
@@ -487,8 +498,15 @@ async function handleBookingSubmit(e) {
         result.className = "success";
         result.textContent = "Booking oprettet (nr. " + saved.bookingId + ", pris " + saved.price + " kr.)";
         result.style.display = "block";
+
         bookingForm.reset();
         loadStartTimes("");
+
+        const endTimeSelect = document.getElementById("endTime");
+        if (endTimeSelect) {
+            endTimeSelect.length = 1;
+            endTimeSelect.disabled = true;
+        }
     } catch (err) {
         result.className = "failure";
         result.textContent = "Kunne ikke oprette booking: " + err.message;
@@ -497,13 +515,56 @@ async function handleBookingSubmit(e) {
     }
 }
 
+async function loadEndTimes(activityId, startTime) {
+    const endTimeSelect = document.getElementById("endTime");
+    endTimeSelect.length = 1;
+
+    if (!activityId || !startTime) {
+        endTimeSelect.disabled = true;
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/booking/end-time-intervals?activityId=${activityId}&startTime=${startTime}`)
+
+        if (!response.ok) {
+            throw new Error("Http " + response.status);
+        }
+
+        const timeIntervals = await response.json();
+
+        timeIntervals.forEach((time) => {
+            const hhmm = time.substring(0, 5);
+            endTimeSelect.add(new Option(hhmm, hhmm));
+        });
+
+        endTimeSelect.disabled = false;
+    } catch (err) {
+        console.error("Could not load endtimes: " + err);
+    }
+}
+
 function renderBooking() {
     const bookingForm = document.getElementById("bookingForm");
+    const activitySelect = document.getElementById("activityTypeId");
+    const startTimeSelect = document.getElementById("startTime");
+
     loadBookingForm();
 
-    document.getElementById("activityTypeId").addEventListener("change", (e) => {
+    activitySelect.addEventListener("change", (e) => {
         loadStartTimes(e.target.value);
-    })
+        const endTimeSelect = document.getElementById("endTime");
+        if (endTimeSelect) {
+            endTimeSelect.length = 1;
+            endTimeSelect.disabled = true;
+        }
+    });
+
+    startTimeSelect.addEventListener("change", (e) => {
+        const selectedActivityId = document.getElementById("activityTypeId").value;
+        const selectedStartTime = e.target.value;
+        loadEndTimes(selectedActivityId, selectedStartTime);
+    });
 
     bookingForm.removeEventListener("submit", handleBookingSubmit);
     bookingForm.addEventListener("submit", handleBookingSubmit);
