@@ -107,7 +107,17 @@ function employeeLogin() {
 }
 
 function customerBookingPage() {
-    return 'BOOKING OVERVIEW CUSTOMERS'
+    return 'Welcome to the Adventure'
+}
+
+function bookingSchedulePage() {
+    return `
+        <section class="booking-overview-page">
+            <h1>Bookingoversigt</h1>
+            <p id="booking-count">Henter bookinger...</p>
+            <div id="booking-calendar"></div>
+        </section>
+    `;
 }
 
 function customerShop() {
@@ -153,7 +163,7 @@ const routes = {
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
-    "/booking-overview": {side: customerBookingPage, needsLogin: false},
+    "/booking-overview": {side: bookingSchedulePage, needsLogin: false, onRender: loadBookingCalendar},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 };
 
@@ -180,8 +190,6 @@ async function login(employee){
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(employee)
     });
-
-    calendar.setEvents(events);
 
     document.getElementById("booking-count").textContent =
         bookings.length + " bookinger";
@@ -390,6 +398,34 @@ async function loadProducts() {
     } catch (err) {
         productList.innerHTML = "Failed to load products";
     }
+}
+async function loadBookingCalendar() {
+    const container = document.getElementById("booking-calendar");
+    const response = await fetch("/api/booking-overview", );
+
+    const bookings = await response.json();
+
+    const calendar = new calendarJs(container, {
+        manualEditingEnabled: false,
+        dragAndDropForEventsEnabled: false,
+        autoRefreshTimerDelay: 0,
+        allowHtmlInDisplay: false
+    });
+
+    calendar.setEvents(bookings.map(booking => ({
+        id: String(booking.bookingId),
+        from: new Date(booking.startTime),
+        to: new Date(booking.endTime),
+        title: booking.activityName + " · " + booking.employeeName,
+        description:
+            "Dato: " + booking.bookingDate +
+            "\nTid: " + booking.startTime.substring(11, 16) +
+            " – " + booking.endTime.substring(11, 16),
+        group: booking.employeeName,
+        isAllDay: false,
+        repeatEvery: 0,
+        showAlerts: false
+    })));
 }
 
 //feature til employeeShop delen
