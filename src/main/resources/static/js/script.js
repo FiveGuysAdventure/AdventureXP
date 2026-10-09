@@ -214,8 +214,11 @@ async function login(employee) {
         body: JSON.stringify(employee)
     });
 
-    document.getElementById("booking-count").textContent =
-        bookings.length + " bookinger";
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status)
+    }
+
+    return await response.json();
 }
 
 function navigate(path) {
