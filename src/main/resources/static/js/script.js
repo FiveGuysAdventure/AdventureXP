@@ -2,6 +2,28 @@ function homePage() {
     return `Homepage`;
 }
 
+const pageHeaders = {
+    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
+    "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
+    "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
+    "/booking": {layout: "compact", title: "Booking", subtitle: ""},
+    "/inventar": {layout: "compact", title: "Inventar", subtitle: ""},
+    "/employees": {layout: "compact", title: "Medarbejdere", subtitle: ""},
+    "/employeeShop": {layout: "compact", title: "Shop", subtitle: ""},
+    "/products": {layout: "compact", title: "Products", subtitle: ""},
+    "/login": {layout: "none"}
+};
+
+function updateHeader(path) {
+    const config = pageHeaders[path] ?? {layout: "default", title: "", subtitle: ""};
+    const header = document.getElementById("page-header");
+
+    document.body.dataset.layout = config.layout;
+    document.getElementById("page-title").textContent = config.title ?? "";
+    document.getElementById("page-subtitle").textContent = config.subtitle ?? "";
+    header.hidden = config.layout === "none";
+}
+
 function bookingPage() {
     return `<h1>Book en aktivitet</h1>
 
@@ -192,15 +214,18 @@ const routes = {
 
 // ROUTE HANDLING
 function handleRoutes() {
-    let path = routes[location.pathname] || routes["/"];
+    let currentPath = routes[location.pathname] ? location.pathname : "/";
+    let route = routes[currentPath];
 
-    if (path.needsLogin && !isLoggedIn()) {
+    if (route.needsLogin && !isLoggedIn()) {
         history.replaceState(null, "", "/login");
-        path = routes["/login"];
+        currentPath = "/login";
+        route = routes["/login"];
     }
 
-    document.getElementById("app").innerHTML = path.side();
-    path.onRender?.();
+    updateHeader(currentPath);
+    document.getElementById("app").innerHTML = route.side();
+    route.onRender?.();
 }
 
 // LOGIN FORM
