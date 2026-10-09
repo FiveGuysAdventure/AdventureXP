@@ -9,13 +9,12 @@ import com.adventurexp.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.awt.print.Book;
 import java.net.URI;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -37,13 +36,18 @@ public class BookingController {
     }
 
     @GetMapping("/api/booking")
-    public ResponseEntity<BookingFormData> showBookingForm() {
+    public ResponseEntity<BookingFormData> showBookingFormData() {
         BookingFormData data = new BookingFormData(
                 activityTypeService.getAvailableActivities(),
                 employeeService.getListOfEmployees()
         );
 
         return ResponseEntity.ok(data);
+    }
+
+    @GetMapping("/api/booking/time-intervals")
+    public ResponseEntity<List<LocalTime>> getTimeIntervalsForBookings(@RequestParam Long activityId) {
+        return ResponseEntity.ok(bookingService.getStartTimeIntervalList(activityId));
     }
 
     @PostMapping("/api/booking")
