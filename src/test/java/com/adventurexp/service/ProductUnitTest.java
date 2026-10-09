@@ -143,7 +143,7 @@ public class ProductUnitTest {
         verify(productRepo, never()).save(any());
     }
 
-    //HAPPY PATH: Medarbejderen sletter et produkt - produktet sættes om inaktivt og gemmes
+    //HAPPY PATH: Medarbejderen flytter et produkt - produktet sættes om inaktivt og gemmes
     @Test
     void deactivateProduct_ShouldSetActiveToFalse() {
         Product product = new Product("Popcorn", 30);
@@ -156,7 +156,7 @@ public class ProductUnitTest {
         verify(productRepo).save(product);
     }
 
-    //SAD PATH: Medarbejderen sletter et produkt der ikke eksisterer - der vises en fejl og intet gemmes
+    //SAD PATH: Medarbejderen flytter et produkt der ikke eksisterer - der vises en fejl og intet gemmes
     @Test
     void deactivateProduct_throwErrorIfProductNotFound() {
         when(productRepo.findById(99)).thenReturn(Optional.empty());
@@ -168,7 +168,7 @@ public class ProductUnitTest {
         verify(productRepo, never()).save(any());
     }
 
-    //HAPPY PATH: Medarbejderen genaktiverer et slettet produkt - produktet sættes som atkivt og gemmes
+    //HAPPY PATH: Medarbejderen genaktiverer et flyttet produkt - produktet sættes som atkivt og gemmes
     @Test
     void activateProduct_shouldActivateProduct() {
         Product product = new Product("Popcorn", 30);

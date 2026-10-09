@@ -202,7 +202,7 @@ const routes = {
     // Company internal links
     "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/reservationer": {side: reservationPage, needsLogin: true},
-    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: false},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
     "/products": {side: productAdmin, needsLogin: false, onRender: loadProducts},
