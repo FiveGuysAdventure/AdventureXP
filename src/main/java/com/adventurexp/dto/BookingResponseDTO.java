@@ -3,6 +3,7 @@ package com.adventurexp.dto;
 import com.adventurexp.model.ActivityType;
 import com.adventurexp.service.ActivityTypeService;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,10 +22,12 @@ public class BookingResponseDTO {
 
     private double price;
 
+    @NotNull
     private LocalDateTime startTime;
 
     private LocalDate bookingDate;
 
+    @NotNull
     private LocalDateTime endTime;
 
     private Long activityTypeId;

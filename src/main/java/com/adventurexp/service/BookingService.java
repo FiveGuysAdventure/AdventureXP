@@ -61,7 +61,7 @@ public class BookingService {
         bookingData.setPrice(requestDTO.getPrice());
         bookingData.setStartTime(requestDTO.getStartTime());
         bookingData.setBookingDate(requestDTO.getStartTime().toLocalDate());
-        bookingData.setEndTime(requestDTO.getStartTime().plusMinutes(activityType.getDurationMinutes()));
+        bookingData.setEndTime(requestDTO.getEndTime());
         bookingData.setActivityType(activityType);
         bookingData.setEmployee(employee);
 
@@ -120,6 +120,26 @@ public class BookingService {
 
         return startTimeIntervalList;
     }
+
+
+    public List<LocalTime> getEndTimeIntervalList(Long activityId, LocalTime startTime) {
+        List<LocalTime> endTimeIntervalList = new ArrayList<>();
+
+        ActivityType activity = activityTypeService.getActivityById(activityId);
+        int intervalMinutes = activity.getDurationMinutes();
+        LocalTime CLOSING = LocalTime.of(20, 0);
+
+        LocalTime activityEndTime = startTime.plusMinutes(intervalMinutes);
+
+        while (!activityEndTime.isAfter(CLOSING)) {
+            endTimeIntervalList.add(activityEndTime);
+            activityEndTime = activityEndTime.plusMinutes(intervalMinutes);
+        }
+
+        return endTimeIntervalList;
+    }
+
+
 
     public List<Booking> getAllBookings() {
         List<Booking> bookings = bookingRepo.findAll();
