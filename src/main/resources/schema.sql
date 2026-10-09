@@ -1,5 +1,6 @@
 DROP SCHEMA IF EXISTS adventurexp_db;
 CREATE SCHEMA adventurexp_db;
+USE adventurexp_db;
 
 CREATE TABLE activity_tag
 (
@@ -11,7 +12,7 @@ CREATE TABLE activity_type
 (
     activity_id      INT AUTO_INCREMENT PRIMARY KEY,
     activity_name    VARCHAR(60) NOT NULL,
-    duration_min     INT         NOT NULL,
+    duration_minutes     INT         NOT NULL,
     price_per_person INT
 );
 
@@ -20,8 +21,8 @@ CREATE TABLE activity_type_tag
     activity_id INT     NOT NULL,
     tag_id      TINYINT NOT NULL,
     PRIMARY KEY (activity_id, tag_id),
-    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id),
-    FOREIGN KEY (tag_id) REFERENCES activity_tag (tag_id)
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES activity_tag (tag_id) ON DELETE CASCADE
 );
 
 CREATE TABLE equipment
@@ -32,7 +33,7 @@ CREATE TABLE equipment
     out_of_service   BOOLEAN     NOT NULL DEFAULT FALSE,
     last_checked     DATE,
     activity_id      INT NOT NULL,
-    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id)
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id) ON DELETE CASCADE
 );
 
 CREATE TABLE role
@@ -64,7 +65,7 @@ CREATE TABLE booking
     activity_id         INT NOT NULL,
     employee_id         INT,
     FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id),
-    FOREIGN KEY (employee_id) REFERENCES employee (employee_id)
+    FOREIGN KEY (employee_id) REFERENCES employee (employee_id) ON DELETE SET NULL
 );
 
 CREATE TABLE employee_schedule
@@ -74,6 +75,6 @@ CREATE TABLE employee_schedule
     activity_id INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
-    FOREIGN KEY (employee_id) REFERENCES employee (employee_id),
-    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id)
+    FOREIGN KEY (employee_id) REFERENCES employee (employee_id) ON DELETE CASCADE,
+    FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id) ON DELETE CASCADE
 );
