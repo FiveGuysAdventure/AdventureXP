@@ -223,7 +223,7 @@ function productAdmin() {
 }
 
 const pageHeaders = {
-    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
+    "/": {layout: "hero", title: "ADVENTURE XPG", subtitle: "What we offer:"},
     "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
     "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
     "/booking": {layout: "compact", title: "Booking", subtitle: ""},
