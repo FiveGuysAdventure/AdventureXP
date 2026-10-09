@@ -24,7 +24,7 @@
 }
 
 body[data-layout="hero"] {
-    --header-height: 60vh;
+    --header-height: 1vh;
 }
 body[data-layout="hero"] .page-header { color: white; }
 

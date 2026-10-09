@@ -41,7 +41,7 @@ function homePage() {
 }
 
 const pageHeaders = {
-    "/": {layout: "hero", title: "Velkommen til", subtitle: "Tekstbeskrivelse"},
+    "/": {layout: "hero", title: "ADVENTURE XP", subtitle: "Hvad vi tilbyder:"},
     "/booking-overview": {layout: "default", title: "Booking overview", subtitle: ""},
     "/customerShop": {layout: "default", title: "Shop", subtitle: "Se vores produkter"},
     "/booking": {layout: "compact", title: "Booking", subtitle: ""},
@@ -249,8 +249,8 @@ function productAdmin() {
 }
 
 // BASE API
-const BASE_API = "https://adventurexp5https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
-//const BASE_API = "http://localhost:8080"
+//const BASE_API = "https://adventurexp5https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
+const BASE_API = "http://localhost:8080"
 
 const routes = {
     // Homepage and Log-in routing
@@ -259,13 +259,13 @@ const routes = {
 
     // Company internal links
     "/booking-overview": {side: bookingSchedulePage, needsLogin: true, onRender: loadBookingCalendar},
+    "/booking": {side: bookingPage, needsLogin: true, onRender: renderBooking},
     "/inventar": {side: equipmentPage, needsLogin: false, onRender: loadEquipment},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
     "/employeeShop": {side: employeeShop, needsLogin: true, onRender: loadProducts},
     "/products": {side: productAdmin, needsLogin: true, onRender: loadProducts},
 
     // Customer directed links
-    "/booking": {side: bookingPage, needsLogin: false, onRender: renderBooking},
     "/customerShop": {side: customerShop, needsLogin: false, onRender: loadProducts}
 };
 
