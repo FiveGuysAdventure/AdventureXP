@@ -111,16 +111,16 @@ public class BookingUnitTest {
         Booking result = service.getBooking(1L);
         assertThat(result.getNumOfGuests()).isEqualTo(2);
     }
-//
-//    @Test
-//    void createBookingPrice_shouldReturnBookingPriceWhenFound() {
-//        Booking booking = new Booking();
-//        service.setPrice(booking, 999.0);
-//
-//        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
-//        Booking result = service.getBooking(1L);
-//        assertThat(result.getPrice()).isEqualTo(999.0);
-//    }
+
+    @Test
+    void createBookingPrice_shouldReturnBookingPriceWhenFound() {
+        Booking booking = new Booking();
+        service.setPrice(booking, 999.0);
+
+        when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
+        Booking result = service.getBooking(1L);
+        assertThat(result.getPrice()).isEqualTo(999.0);
+    }
 
     @Test
     void createBookingStartTime_shouldReturnBookingStartTimeWhenFound() {
@@ -160,82 +160,86 @@ public class BookingUnitTest {
         assertThatThrownBy(() -> service.getAllBookings()).isInstanceOf(IllegalArgumentException.class);
     }
 
-//    @Test
-//    void createBooking_shouldReturnCreatedBookingWhenFound() {
-//        ActivityType activityType = new ActivityType();
-//        activityType.setActivityId(1L);
-//        activityType.setDurationMinutes(120);
-//
-//        Employee employee = new Employee();
-//
-//
-//        Booking booking = new Booking(
-//                LocalDate.of(2026,10,2),
-//                "testemail@gmail.com",
-//                "60614475",
-//                12,
-//                1200 ,
-//                LocalDateTime.of(2026, 10, 2, 14, 0),
-//                activityType,
-//                employee);
-//
-//        Booking existingBooking = new Booking(
-//                LocalDate.of(2026, 10, 2),
-//                "other@gmail.com",
-//                "12345678",
-//                5,
-//                500,
-//                LocalDateTime.of(2026, 10, 2, 10, 0),
-//                activityType,
-//                employee
-//        );
-//
-//        when(equipmentService.availabilityCheckForBooking(activityType, booking)).thenReturn(true);
-//        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
-//        when(bookingRepo.save(booking)).thenReturn(booking);
-//
-//        Booking result = service.createBooking(booking);
-//
-//        assertThat(result).isSameAs(booking);
-//        verify(bookingRepo).save(booking);
-//    }
+    @Test
+    void createBooking_shouldReturnCreatedBookingWhenFound() {
+        ActivityType activityType = new ActivityType();
+        activityType.setActivityId(1L);
+        activityType.setDurationMinutes(120);
 
-//    @Test
-//    void createBooking_ShouldThrowExceptionWhenOverlap(){
-//        ActivityType activityType = new ActivityType();
-//        activityType.setActivityId(1L);
-//        activityType.setDurationMinutes(120);
-//        Employee employee = new Employee();
-//        Booking existingBooking = new Booking(
-//                LocalDate.of(2026, 10, 2),
-//                "other@gmail.com",
-//                "12345678",
-//                5,
-//                500,
-//                LocalDateTime.of(2026, 10, 2, 10, 0),
-//                activityType,
-//                employee
-//        );
-//
-//        Booking booking = new Booking(
-//                LocalDate.of(2026, 10, 2),
-//                "testemail@gmail.com",
-//                "60614475",
-//                12,
-//                1200,
-//                LocalDateTime.of(2026, 10, 2, 11, 0),
-//                activityType,
-//                employee
-//        );
-//
-//        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
-//
-//        assertThatThrownBy(() -> service.createBooking(booking))
-//                .isInstanceOf(BookingConflictException.class)
-//                .hasMessage("Time slot is taken");
-//
-//        verify(bookingRepo, never()).save(booking);
-//    }
+        Employee employee = new Employee();
+
+
+        Booking booking = new Booking(
+                LocalDate.of(2026,10,2),
+                "testemail@gmail.com",
+                "60614475",
+                3,
+                1200 ,
+                LocalDateTime.of(2026, 10, 2, 14, 0),
+                LocalDateTime.of(2026, 10, 2, 15, 0),
+                activityType,
+                employee);
+
+        Booking existingBooking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "other@gmail.com",
+                "12345678",
+                3,
+                500,
+                LocalDateTime.of(2026, 10, 2, 10, 0),
+                LocalDateTime.of(2026, 10, 2, 11, 0),
+                activityType,
+                employee
+        );
+
+        when(equipmentService.availabilityCheckForBooking(activityType, booking)).thenReturn(true);
+        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
+        when(bookingRepo.save(booking)).thenReturn(booking);
+
+        Booking result = service.createBooking(booking);
+
+        assertThat(result).isSameAs(booking);
+        verify(bookingRepo).save(booking);
+    }
+
+    @Test
+    void createBooking_ShouldThrowExceptionWhenOverlap(){
+        ActivityType activityType = new ActivityType();
+        activityType.setActivityId(1L);
+        activityType.setDurationMinutes(120);
+        Employee employee = new Employee();
+        Booking existingBooking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "other@gmail.com",
+                "12345678",
+                3,
+                500,
+                LocalDateTime.of(2026, 10, 2, 10, 0),
+                LocalDateTime.of(2026, 10, 2, 11, 0),
+                activityType,
+                employee
+        );
+
+        Booking booking = new Booking(
+                LocalDate.of(2026, 10, 2),
+                "testemail@gmail.com",
+                "60614475",
+                3,
+                1200,
+                LocalDateTime.of(2026, 10, 2, 10, 0),
+                LocalDateTime.of(2026, 10, 2, 11, 0),
+                activityType,
+                employee
+        );
+
+        when(bookingRepo.findAll()).thenReturn(List.of(existingBooking));
+
+        assertThatThrownBy(() -> service.createBooking(booking))
+                .isInstanceOf(BookingConflictException.class)
+                .hasMessage("Time slot is taken");
+
+        verify(bookingRepo, never()).save(booking);
+    }
 
 
     @Test

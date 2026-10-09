@@ -17,13 +17,21 @@ function bookingPage() {
         <select class="timeSelect" data-from="8" data-to="20" data-interval="30"
         data-start-now="false" data-format="h:i a">
         </select>
-       -->
+       
+       
         <label for="startTime">Start Time
                 <input type="datetime-local" id="startTime" name="startTime" required>
                     <span class="error" data-error="startTime"></span>
         </label>
+        -->
+          <label for="startTime">Start Time
+            <select id="startTime" name="startTime">
+                <option value="">-- choose time --</option>            
+            </select>
+            <!--<span class="error" data-error="start-time-error"></span>-->
+          </label>
         
-          <label for="endtTime">End Time
+         <label for="endtTime">End Time
                 <input type="datetime-local" id="endTime" name="endTime" required>
                     <span class="error" data-error="endTime"></span>
         </label>
@@ -312,6 +320,9 @@ async function loadBookingForm() {
 
     const data = await response.json();
 
+    const startTimeSelect = document.getElementById("startTime");
+    data.timeList
+
     const activitySelect = document.getElementById("activityTypeId");
     data.activityTypeList.forEach((activityType) => {
         activitySelect.add(new Option(activityType.activityName, activityType.activityId));
@@ -322,6 +333,7 @@ async function loadBookingForm() {
         employeeSelect.add(new Option(employeeType.employeeName, employeeType.employeeId));
     });
 }
+
 
 async function createBooking(booking) {
     const result = await fetch("/api/booking", {
