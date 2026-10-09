@@ -17,6 +17,26 @@
     }
 }
 
+.page-header {
+    padding: 2rem;
+    text-align: center;
+    min-height: var(--header-height, auto);
+}
+
+body[data-layout="hero"] {
+    --header-height: 60vh;
+}
+body[data-layout="hero"] .page-header { color: white; }
+
+body[data-layout="compact"] {
+    --header-height: auto;
+}
+body[data-layout="compact"] .page-header {
+    padding: 0.5rem 1rem;
+    text-align: center;
+}
+body[data-layout="compact"] .page-header p { display: none; }
+
 * { box-sizing: border-box; }
 html, body { min-height: 100%; margin: 0; }
 body {

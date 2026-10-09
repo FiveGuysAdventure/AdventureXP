@@ -6,7 +6,6 @@
     <title>FIRMA NAVN</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/williamtroup/Calendar.js@2.12.6/dist/calendar.js.min.css">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="css/employees.css">
     <link rel="stylesheet" href="css/booking.css">
@@ -20,7 +19,6 @@
     <a href="/customerShop" data-link>Shop</a>
 
     <a href="/booking" data-link data-needs-login>Booking</a>
-    <a href="/reservationer" data-link data-needs-login>Reservationer</a>
     <a href="/inventar" data-link data-needs-login>Inventar</a>
     <a href="/employees" data-link data-needs-login>Medarbejdere</a>
     <a href="/employeeShop" data-link data-needs-login>Shop</a>
@@ -29,11 +27,12 @@
     <button type="button" data-logout data-needs-login>Log out</button>
 </nav>
 
-<main>
-    <!-- <img src="billede.jpg" alt=""> -->
-    <h2>Velkommen til</h2>
-    <p>Tekstbeskrivelse</p>
+<header id="page-header" class="page-header">
+    <h2 id="page-title"></h2>
+    <p id="page-subtitle"></p>
+</header>
 
+<main>
     <section id="app"></section>
 </main>
 
