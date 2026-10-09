@@ -33,7 +33,7 @@ function homePage() {
         <p><strong>Price per person:</strong> Pris </p>
         <p><strong>Max people per run:</strong> 8 </p>
         <p><strong>Duration:</strong> 30 minutes</p>
-        <p><strong>Age restriction:</strong> [Age restriction: 6+</p>
+        <p><strong>Age restriction:</strong> Age restriction: 6+</p>
       </article>
     </div>
   </section>
