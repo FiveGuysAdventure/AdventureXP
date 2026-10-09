@@ -15,10 +15,12 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -109,6 +111,57 @@ public class EquipmentUnitTest {
 
         when(equipmentRepo.findAll()).thenReturn(List.of(equipment));
         assertThat((service.getEquipmentForActivity(activity))).isEqualTo(List.of(equipment));
+    }
+
+    //HAPPY PATH: Medarbejderen sætter udstyr ude af drift - udstyret markeres og gemmes
+    @Test
+    void markOutOfService_shouldSetOutOfServiceToTrue() {
+        Equipment equipment = new Equipment("Gokart 1");
+        when(equipmentRepo.findById(1)).thenReturn(Optional.of(equipment));
+        when(equipmentRepo.save(equipment)).thenReturn(equipment);
+
+        Equipment result = service.markOutOfService(1);
+
+        assertThat(result.isOutOfService()).isTrue();
+        verify(equipmentRepo).save(equipment);
+    }
+
+    //SAD PATH: Medarbejderen sætter udstyr ude af drift der ikke findes - der vises en fejl og intet gemmes
+    @Test
+    void markOutOfService_throwErrorIfEquipmentNotFound() {
+        when(equipmentRepo.findById(99)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.markOutOfService(99))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Equipment with id 99 not found");
+
+        verify(equipmentRepo, never()).save(any());
+    }
+
+    //HAPPY PATH: Medarbejderen sætter udstyr i drift igen - udstyret markeres og gemmes
+    @Test
+    void markInService_shouldSetOutOfServiceToFalse() {
+        Equipment equipment = new Equipment("Gokart 1");
+        equipment.setOutOfService(true);
+        when(equipmentRepo.findById(1)).thenReturn(Optional.of(equipment));
+        when(equipmentRepo.save(equipment)).thenReturn(equipment);
+
+        Equipment result = service.markInService(1);
+
+        assertThat(result.isOutOfService()).isFalse();
+        verify(equipmentRepo).save(equipment);
+    }
+
+    //SAD PATH: Medarbejderen sætter udstyr i drift der ikke findes - der vises en fejl og intet gemmes
+    @Test
+    void markInService_throwErrorIfEquipmentNotFound() {
+        when(equipmentRepo.findById(99)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.markInService(99))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Equipment with id 99 not found");
+
+        verify(equipmentRepo, never()).save(any());
     }
 
 }

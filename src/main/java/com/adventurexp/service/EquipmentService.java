@@ -39,6 +39,26 @@ public class EquipmentService {
         return equipmentRepo.findAllByOutOfServiceTrue();
     }
 
+    public List<Equipment> getEquipmentInService() {
+        return equipmentRepo.findAllByOutOfServiceFalse();
+    }
+
+    public Equipment markOutOfService(Integer equipmentId) {
+        Equipment equipment = equipmentRepo.findById(equipmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Equipment with id " + equipmentId + " not found"));
+
+        equipment.setOutOfService(true);
+        return equipmentRepo.save(equipment);
+    }
+
+    public Equipment markInService(Integer equipmentId) {
+        Equipment equipment = equipmentRepo.findById(equipmentId)
+                .orElseThrow(() -> new IllegalArgumentException("Equipment with id " + equipmentId + " not found"));
+
+        equipment.setOutOfService(false);
+        return equipmentRepo.save(equipment);
+    }
+
     public boolean availabilityCheckForBooking(ActivityType activity, Booking booking) {
         List<Equipment> allEquipment = getEquipmentOverview();
         List<Equipment> activityEquipment = new ArrayList<>();
