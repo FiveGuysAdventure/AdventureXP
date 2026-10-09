@@ -129,11 +129,25 @@ function employeeShop() {
             <ul id="product-list">
                <li>Loading products...</li>
             </ul>
-            
+        </section>`;
+}
+
+function productAdmin() {
+    return `
+        <section>
+            <h1>Products</h1>
+            <p id="shop-message"></p>
+            <ul id="product-list">
+               <li>Loading products...</li>
+            </ul>
+
             <h2>Add new product</h2>
             <input type="text" id="new-name" placeholder="Name">
             <input type="number" id="new-price" placeholder="Price">
             <button onclick="createProduct()">Add</button>
+
+            <h2>Deleted products</h2>
+            <ul id="inactive-list"></ul>
         </section>`;
 }
 
@@ -151,6 +165,7 @@ const routes = {
     "/inventar": {side: equipmentPage, needsLogin: true},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
     "/employeeShop": {side: employeeShop, needsLogin: false, onRender: loadProducts},
+    "/products": {side: productAdmin, needsLogin: false, onRender: loadProducts},
 
     // Customer directed links
     "/booking-overview": {side: customerBookingPage, needsLogin: false},
@@ -174,7 +189,7 @@ function handleRoutes() {
 const isLoggedIn = () => sessionStorage.getItem("session") !== null;
 
 
-async function login(employee){
+async function login(employee) {
     const response = await fetch(BASE_API + "/api/login", {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -303,7 +318,7 @@ async function loadBookingForm() {
 async function createBooking(booking) {
     const result = await fetch("/api/booking", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {"Content-Type": "application/json"},
         body: JSON.stringify(booking)
     });
 
@@ -353,7 +368,7 @@ function renderBooking() {
 }
 
 //SHOP
-//bliver brugt både i customerShop & employeeShop
+//Henter aktive produkter både i customerShop, employeeShop & productAdmin
 async function loadProducts() {
     const productList = document.getElementById("product-list");
 
@@ -366,13 +381,16 @@ async function loadProducts() {
             const li = document.createElement("li");
             li.textContent = product.productName + " - " + product.price + " kr. ";
 
-            //Tilføjelse til employeeShop delen af siden
+            //Kun salg side
             if (location.pathname === "/employeeShop") {
                 const button = document.createElement("button");
                 button.textContent = "Sælg";
                 button.addEventListener("click", () => sellProduct(product));
                 li.append(button);
+            }
 
+            //Admin side til redigering af produkter
+            if (location.pathname === "/products") {
                 const priceButton = document.createElement("button");
                 priceButton.textContent = "Change price";
                 priceButton.addEventListener("click", () => updatePrice(product));
@@ -384,11 +402,13 @@ async function loadProducts() {
                 li.append(deleteButton);
             }
 
-
             productList.append(li);
         });
     } catch (err) {
         productList.innerHTML = "Failed to load products";
+    }
+    if (location.pathname === "/products") {
+        loadInactiveProducts();
     }
 }
 
@@ -460,7 +480,7 @@ async function deleteProduct(product) {
         return;
     }
 
-    const response = await fetch("api/products/" + product.productId, {
+    const response = await fetch("/api/products/" + product.productId, {
         method: "DELETE"
     });
 
@@ -473,5 +493,4 @@ async function deleteProduct(product) {
 }
 
 window.onpopstate = handleRoutes;
-handleRoutes();
 
