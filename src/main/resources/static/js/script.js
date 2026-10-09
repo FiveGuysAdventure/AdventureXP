@@ -153,7 +153,7 @@ function employeeShop() {
 function productAdmin() {
     return `
         <section>
-            <h1>Products</h1>
+            <h1>Admin Products</h1>
             <p id="shop-message"></p>
             <ul id="product-list">
                <li>Loading products...</li>
@@ -164,7 +164,7 @@ function productAdmin() {
             <input type="number" id="new-price" placeholder="Price">
             <button onclick="createProduct()">Add</button>
 
-            <h2>Deleted products</h2>
+            <h2>Inactive products</h2>
             <ul id="inactive-list"></ul>
         </section>`;
 }
@@ -390,6 +390,35 @@ function renderBooking() {
     bookingForm.addEventListener("submit", handleBookingSubmit);
 }
 
+async function loadBookingCalendar() {
+    const container = document.getElementById("booking-calendar");
+    const response = await fetch("/api/booking-overview",);
+
+    const bookings = await response.json();
+
+    const calendar = new calendarJs(container, {
+        manualEditingEnabled: false,
+        dragAndDropForEventsEnabled: false,
+        autoRefreshTimerDelay: 0,
+        allowHtmlInDisplay: false
+    });
+
+    calendar.setEvents(bookings.map(booking => ({
+        id: String(booking.bookingId),
+        from: new Date(booking.startTime),
+        to: new Date(booking.endTime),
+        title: booking.activityName + " · " + booking.employeeName,
+        description:
+            "Dato: " + booking.bookingDate +
+            "\nTid: " + booking.startTime.substring(11, 16) +
+            " – " + booking.endTime.substring(11, 16),
+        group: booking.employeeName,
+        isAllDay: false,
+        repeatEvery: 0,
+        showAlerts: false
+    })));
+}
+
 //SHOP
 //Henter aktive produkter både i customerShop, employeeShop & productAdmin
 async function loadProducts() {
@@ -419,10 +448,10 @@ async function loadProducts() {
                 priceButton.addEventListener("click", () => updatePrice(product));
                 li.append(priceButton);
 
-                const deleteButton = document.createElement("button");
-                deleteButton.textContent = "Delete";
-                deleteButton.addEventListener("click", () => deleteProduct(product));
-                li.append(deleteButton);
+                const removeButton = document.createElement("button");
+                removeButton.textContent = "Remove";
+                removeButton.addEventListener("click", () => removeProduct(product));
+                li.append(removeButton);
             }
 
             productList.append(li);
@@ -433,34 +462,6 @@ async function loadProducts() {
     if (location.pathname === "/products") {
         loadInactiveProducts();
     }
-}
-async function loadBookingCalendar() {
-    const container = document.getElementById("booking-calendar");
-    const response = await fetch("/api/booking-overview", );
-
-    const bookings = await response.json();
-
-    const calendar = new calendarJs(container, {
-        manualEditingEnabled: false,
-        dragAndDropForEventsEnabled: false,
-        autoRefreshTimerDelay: 0,
-        allowHtmlInDisplay: false
-    });
-
-    calendar.setEvents(bookings.map(booking => ({
-        id: String(booking.bookingId),
-        from: new Date(booking.startTime),
-        to: new Date(booking.endTime),
-        title: booking.activityName + " · " + booking.employeeName,
-        description:
-            "Dato: " + booking.bookingDate +
-            "\nTid: " + booking.startTime.substring(11, 16) +
-            " – " + booking.endTime.substring(11, 16),
-        group: booking.employeeName,
-        isAllDay: false,
-        repeatEvery: 0,
-        showAlerts: false
-    })));
 }
 
 //feature til employeeShop delen
@@ -524,24 +525,61 @@ async function updatePrice(product) {
 }
 
 //feature til employeeShop delen
-async function deleteProduct(product) {
+async function removeProduct(product) {
     const message = document.getElementById("shop-message");
 
-    if (!confirm("Delete " + product.productName + "?")) {
+    if (!confirm("Remove " + product.productName + "?")) {
         return;
     }
 
-    const response = await fetch("/api/products/" + product.productId, {
-        method: "DELETE"
+    const response = await fetch("/api/products/" + product.productId + "/deactivate", {
+        method: "PUT"
     });
 
     if (response.ok) {
-        message.textContent = product.productName + " deleted";
+        message.textContent = product.productName + " removed";
         loadProducts();
     } else {
-        message.textContent = "Product could not be deleted";
+        message.textContent = "Product could not be removed";
+    }
+}
+
+//feature til Admin side af produkter
+async function loadInactiveProducts() {
+    const inactiveList = document.getElementById("inactive-list");
+
+    const response = await fetch("/api/products/inactive");
+    const products = await response.json();
+
+    inactiveList.innerHTML = "";
+    products.forEach(product => {
+        const li = document.createElement("li");
+        li.textContent = product.productName + " - " + product.price + " kr. ";
+
+        const activateButton = document.createElement("button");
+        activateButton.textContent = "Activate";
+        activateButton.addEventListener("click", () => activateProduct(product));
+        li.append(activateButton);
+        inactiveList.append(li);
+    });
+}
+
+//feature til Admin side af produkter: sætter inaktivt produkt tilbage i shoppen
+async function activateProduct(product) {
+    const message = document.getElementById("shop-message");
+
+    const response = await fetch("/api/products/" + product.productId + "/activate", {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = product.productName + " added to Shop";
+        loadProducts();
+    } else {
+        message.textContent = "Product could not be added";
     }
 }
 
 window.onpopstate = handleRoutes;
+handleRoutes();
 
