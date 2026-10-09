@@ -144,7 +144,19 @@ function reservationPage() {
 }
 
 function equipmentPage() {
-    return 'Inventory';
+    return `
+        <section>
+            <h1>Admin Inventory</h1>
+            <p id="equipment-message"></p>
+
+            <h2>In service</h2>
+            <ul id="equipment-list">
+                <li>Loading equipment...</li>
+            </ul>
+
+            <h2>Out of service</h2>
+            <ul id="out-of-service-list"></ul>
+        </section>`;
 }
 
 function employeePage() {
@@ -237,8 +249,8 @@ function productAdmin() {
 }
 
 // BASE API
-const BASE_API = "https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
-//const BASE_API = "http://localhost:8080"
+//const BASE_API = "https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
+const BASE_API = "http://localhost:8080"
 
 const routes = {
     // Homepage and Log-in routing
@@ -247,7 +259,7 @@ const routes = {
 
     // Company internal links
     "/booking-overview": {side: bookingSchedulePage, needsLogin: true, onRender: loadBookingCalendar},
-    "/inventar": {side: equipmentPage, needsLogin: true},
+    "/inventar": {side: equipmentPage, needsLogin: false, onRender: loadEquipment},
     "/employees": {side: employeePage, needsLogin: true, onRender: loadEmployees},
     "/employeeShop": {side: employeeShop, needsLogin: true, onRender: loadProducts},
     "/products": {side: productAdmin, needsLogin: true, onRender: loadProducts},
@@ -452,7 +464,7 @@ async function loadStartTimes(activityId) {
         });
     } catch (err) {
         console.error(err);
-        }
+    }
 }
 
 async function handleBookingSubmit(e) {
@@ -684,6 +696,77 @@ async function activateProduct(product) {
         loadProducts();
     } else {
         message.textContent = "Product could not be added";
+    }
+}
+
+//EQUIPMENT
+//Henter udstyr i drift og ude af drift på Admin Inventory
+async function loadEquipment() {
+    const equipmentList = document.getElementById("equipment-list");
+    const outOfServiceList = document.getElementById("out-of-service-list");
+
+    const response = await fetch("/api/equipment");
+    const equipment = await response.json();
+
+    equipmentList.innerHTML = "";
+    equipment.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.equipmentName + " ";
+
+        const button = document.createElement("button");
+        button.textContent = "Out of service";
+        button.addEventListener("click", () => markOutOfService(item));
+        li.append(button);
+
+        equipmentList.append(li);
+    });
+
+    const outResponse = await fetch("/api/equipment/out-of-service");
+    const outOfService = await outResponse.json();
+
+    outOfServiceList.innerHTML = "";
+    outOfService.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.equipmentName + " ";
+
+        const button = document.createElement("button");
+        button.textContent = "Back in service";
+        button.addEventListener("click", () => markInService(item));
+        li.append(button);
+
+        outOfServiceList.append(li);
+    });
+}
+
+//Sætter udstyr ude af drift
+async function markOutOfService(item) {
+    const message = document.getElementById("equipment-message");
+
+    const response = await fetch("/api/equipment/" + item.equipmentId + "/out-of-service", {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = item.equipmentName + " is out of service";
+        loadEquipment();
+    } else {
+        message.textContent = "Equipment could not be updated";
+    }
+}
+
+//Sætter udstyr i drift igen
+async function markInService(item) {
+    const message = document.getElementById("equipment-message");
+
+    const response = await fetch("/api/equipment/" + item.equipmentId + "/in-service", {
+        method: "PUT"
+    });
+
+    if (response.ok) {
+        message.textContent = item.equipmentName + " is back in service";
+        loadEquipment();
+    } else {
+        message.textContent = "Equipment could not be updated";
     }
 }
 
