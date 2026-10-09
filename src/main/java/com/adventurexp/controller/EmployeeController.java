@@ -17,12 +17,12 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("api/employees")
+    @GetMapping("/api/employees")
     public List<Employee> getAllEmployees() {
         return employeeService.getListOfEmployees();
     }
 
-    @PostMapping("api/login")
+    @PostMapping("/api/login")
     public ResponseEntity<Employee> login(@RequestBody Employee employee) {
         Optional<Employee> employeeData = employeeService.login(employee.getEmployeeEmail(), employee.getEmployeePassword());
 

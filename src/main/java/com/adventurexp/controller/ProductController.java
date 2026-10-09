@@ -43,7 +43,7 @@ public class ProductController {
         }
     }
 
-    @DeleteMapping("/api/products/{id}")
+    @PutMapping("/api/products/{id}/deactivate")
     public ResponseEntity<Product> deactivateProduct(@PathVariable Integer id) {
         try {
             return ResponseEntity.ok(productService.deactivateProduct(id));
