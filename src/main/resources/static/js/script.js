@@ -401,14 +401,9 @@ async function loadProducts() {
 }
 async function loadBookingCalendar() {
     const container = document.getElementById("booking-calendar");
-    const count = document.getElementById("booking-count");
-    const response = await fetch("/api/booking-overview", {
-        cache: "no-store"
-    });
+    const response = await fetch("/api/booking-overview", );
 
     const bookings = await response.json();
-
-    if (!container.isConnected) return;
 
     const calendar = new calendarJs(container, {
         manualEditingEnabled: false,
@@ -431,8 +426,6 @@ async function loadBookingCalendar() {
         repeatEvery: 0,
         showAlerts: false
     })));
-
-    count.textContent = bookings.length + " bookinger";
 }
 
 //feature til employeeShop delen
