@@ -13,7 +13,7 @@ public class BookingFormData {
 //    private List<LocalTime> startTimeIntervalList;
 
 
-    public BookingFormData(List<ActivityType> activityTypeList, List<Employee> employeeList, /*List<LocalTime> startTimeIntervalList*/) {
+    public BookingFormData(List<ActivityType> activityTypeList, List<Employee> employeeList /*List<LocalTime> startTimeIntervalList*/) {
         this.activityTypeList = activityTypeList;
         this.employeeList = employeeList;
         //this.startTimeIntervalList = startTimeIntervalList;
