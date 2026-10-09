@@ -78,3 +78,21 @@ CREATE TABLE employee_schedule
     FOREIGN KEY (employee_id) REFERENCES employee (employee_id) ON DELETE CASCADE,
     FOREIGN KEY (activity_id) REFERENCES activity_type (activity_id) ON DELETE CASCADE
 );
+
+CREATE TABLE product
+(
+    product_id   INT AUTO_INCREMENT PRIMARY KEY,
+    product_name VARCHAR(60) NOT NULL UNIQUE,
+    price        INT         NOT NULL,
+    active       BOOLEAN     NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE sale
+(
+    sale_id    INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT      NOT NULL,
+    quantity   INT      NOT NULL,
+    unit_price INT      NOT NULL,
+    sale_time  DATETIME NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES product (product_id)
+);
