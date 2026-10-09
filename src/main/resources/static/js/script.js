@@ -1,7 +1,44 @@
 function homePage() {
-    return `Homepage`;
-}
+    return `
+<section class="activities">
+    <h1>Vores aktiviteter</h1>
+    <p>Experience Adventure ( Age restrictions may wary).</p>
+    <div class="cards">
+       <article class="card">
+    <h2>GoKart</h2>
+    <p><strong>Price per person:</strong> 450 DKK</p>
+    <p><strong>Max people per run:</strong> 10</p>
+    <p><strong>Duration:</strong> 60 minutes</p>
+    <p><strong>Age restriction:</strong> Age restriction: 8+</p>
+</article>
 
+      <article class="card">
+        <h2>Minigolf</h2>
+        <p><strong>Price per person:</strong> 200 DKK</p>
+        <p><strong>Max people per run:</strong> 20</p>
+        <p><strong>Duration:</strong> 60 minutes </p>
+        <p><strong>Age restriction:</strong> Age restriction: 6+</p>
+      </article>
+
+      <article class="card">
+        <h2>Paintball</h2>
+        <p><strong>Price per person:</strong> 200 DKK</p>
+        <p><strong>Max people per run:</strong> 16 </p>
+        <p><strong>Duration:</strong> 60 minutes </p>
+        <p><strong>Age restriction:</strong> Age restriction: 12+</p>
+      </article>
+
+      <article class="card">
+        <h2>Sumo wrestling</h2>
+        <p><strong>Price per person:</strong> Pris </p>
+        <p><strong>Max people per run:</strong> 8 </p>
+        <p><strong>Duration:</strong> 30 minutes</p>
+        <p><strong>Age restriction:</strong> [Age restriction: 6+</p>
+      </article>
+    </div>
+  </section>
+    `;
+}
 function bookingPage() {
     return `<h1>Book en aktivitet</h1>
 
