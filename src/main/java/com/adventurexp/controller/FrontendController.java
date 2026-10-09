@@ -14,7 +14,8 @@ public class FrontendController {
             "/employees",
             "/employeeShop",
             "/booking-overview",
-            "/customerShop"
+            "/customerShop",
+            "/products"
     })
     public String forwardToIndex() {
         return "forward:/index.html";
