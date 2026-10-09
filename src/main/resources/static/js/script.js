@@ -256,7 +256,7 @@ function updateNav() {
     if (loginLink) loginLink.hidden = loggedIn;
 }
 // BASE API
-const BASE_API = "https://adventurexp5https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
+const BASE_API = "https://adventurexp5g-eyccewdaf3bzgbfd.swedencentral-01.azurewebsites.net/"
 //const BASE_API = "http://localhost:8080"
 
 const routes = {
